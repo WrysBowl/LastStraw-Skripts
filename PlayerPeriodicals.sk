@@ -1,0 +1,5 @@
+on join:
+    while player is online:
+        wait 1 second
+        if metadata tag "interruptActionBar" of player is not set:
+            send action bar "&c[Health: %player's health%]" to player
