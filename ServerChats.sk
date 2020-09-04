@@ -1,0 +1,22 @@
+on chat:
+	if message contains ("Motherfucker", "Motherfuckers", "Motherfucks", "Fucker", "Fucked", "Fucks", "Fucking", "Fuck", "Fuckin", "Retard", "Retarded", "Retards", "Rape", "Rapes", "Raped", "Rapist", "Raping", "Fag", "Fags", "Faggot", "Faggots", "Nigga", "Niga", "Niggas", "Nigas", "Nigger", "Niger", "Niggers", "Nigers" or "Nick gurr"):
+		message formatted "&c[Chat Filter] &7%player%: &f%message%" to all players where [input has permission "staffchat"]
+		stop
+	cancel event
+	set {_message} to "&8[&6%player's level%&8] &7%player%: &f%message%"
+	if message contains "[item]":
+		set {_itemLines} to formatted name of player's tool
+		while {_endLore} is not set:
+			add 1 to {_line}
+			if line {_line} of lore of player's tool is set:
+				set {_itemLines} to "%{_itemLines}%%nl%%line {_line} of lore of player's tool%"
+			else:
+				set {_endLore} to true
+		set {_item} to formatted "<tooltip:%{_itemLines}%>%name of player's tool%<reset>"
+		replace "<none>" in {_item} with "%player's tool%"
+		if length of {_item} <= 300:
+			replace "[item]" in {_message} with "%{_item}%"
+		else:
+			send "%nl%&cThis item is too large to be displayed in chat!%nl%" to player
+			stop
+	send formatted "%{_message}%" to all players
