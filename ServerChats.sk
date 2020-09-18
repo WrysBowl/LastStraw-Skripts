@@ -3,7 +3,7 @@ on chat:
 		message formatted "&c[Chat Filter] &7%player%: &f%message%" to all players where [input has permission "staffchat"]
 		stop
 	cancel event
-	set {_message} to "&8[&6%player's level%&8] &7%player%: &f%message%"
+	set {_message} to "&8[&6%player's level%&8] %player's group% &7%player%: &f%message%"
 	if message contains "[item]":
 		set {_itemLines} to formatted name of player's tool
 		while {_endLore} is not set:
@@ -19,4 +19,12 @@ on chat:
 		else:
 			send "%nl%&cThis item is too large to be displayed in chat!%nl%" to player
 			stop
+	if metadata tag "chat" of player is true:
+		send formatted "&9Party > &b%player%: &f%message%" to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
+		stop
+	if {StaffChat::%player's uuid%} is true:
+		loop all players:
+			if loop-player has permission "staff":
+				send formatted "&9Staff > &b%player%: &f%message%" to loop-player
+		stop
 	send formatted "%{_message}%" to all players

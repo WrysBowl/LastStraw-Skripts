@@ -1,0 +1,130 @@
+function itemGenerator(item: item, name: string, basePercent: number, baseMultiplier: number, stats: strings, statValues: numbers, lore: strings, classReq: string, levelReq: integer) :: item:
+	loop length of {_name} times: #Finds the color code in the name
+		if char at (loop-value)-1 in {_name} is "&":
+			set {_prefixColor} to "&%char at (loop-value + 1) in {_name}%"
+	if {_basePercent} < 100:
+		set {_randomPercentage} to ((random number between 0 and 100)*(1/random number between 1 and 10))
+		if {_randomPercentage} < {_basePercent}:
+			set {_randomPercentage} to {_basePercent}
+		if {_randomPercentage} is between 0 and 40:
+			set {_prefixColor} to "&7"
+			set {_rarity} to "Common"
+			add 1 to {_statRolls}
+		else if {_randomPercentage} is between 40 and 69:
+			set {_prefixColor} to "&a"
+			set {_rarity} to "Uncommon"
+			add 2 to {_statRolls}
+		else if {_randomPercentage} is between 70 and 84:
+			set {_prefixColor} to "&9"
+			set {_rarity} to "Rare"
+			add 3 to {_statRolls}
+		else if {_randomPercentage} is between 85 and 94:
+			set {_prefixColor} to "&6"
+			set {_rarity} to "Legendary"
+			add 4 to {_statRolls}
+		else if {_randomPercentage} is between 95 and 100:
+			set {_prefixColor} to "&5"
+			set {_rarity} to "Mythical"
+			add 5 to {_statRolls}
+		if {_randomPercentage} >= 20:
+			add ({_randomPercentage}*{_statRolls}) to {_extraStatPool} #To be used for applying extra stat percentages
+		set {_item}'s name to "%{_prefixColor}%%{_name}%"
+		set {_itemDrop} to {_item} 
+		set line 1 of {_itemDrop}'s lore to "%{_prefixColor}%%{_rarity}%: &7%{_randomPercentage}%%%"
+		add "{Rarity:%{_randomPercentage}%}" to {_itemDrop}'s nbt
+		add 2 to {_loreLine}
+		if {_item} is a helmet, chestplate, leggings or boots: #Adds strings to a list for stat add
+			add "HP" to {_baseStats::*}
+			add "Defense" to {_baseStats::*}
+		else if {_item} is a sword, bow or stick:
+			add "Damage" to {_baseStats::*}
+			add "AttackSpeed" to {_baseStats::*}
+		loop {_baseStats::*}: #Checks for the main four stats and adds them to the item accordingly
+			add 1 to {_loreLine}
+			set {_baseMultiplier} to rounded up ({_baseMultiplier}*({_randomPercentage}/100))
+			if loop-value is "HP":
+				set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%%11*{_baseMultiplier}% %loop-value%"
+				add "{%loop-value%:%11*{_baseMultiplier}%}" to {_itemDrop}'s nbt
+			else if loop-value is "Defense":
+				set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%%9*{_baseMultiplier}% %loop-value%"
+				add "{%loop-value%:%9*{_baseMultiplier}%}" to {_itemDrop}'s nbt
+			else if loop-value is "Damage":
+				set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%%1*{_baseMultiplier}% %loop-value%"
+				add "{%loop-value%:%1*{_baseMultiplier}%}" to {_itemDrop}'s nbt
+			else if loop-value is "AttackSpeed":
+				set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%%10*{_baseMultiplier}%%% %loop-value%"
+				add "{%loop-value%:%10*{_baseMultiplier}%}" to {_itemDrop}'s nbt
+		loop {_statRolls} times:
+			add 1 to {_loreLine}
+			if {_extraStatPool} > 0:
+				set {_randBonusValue} to (random number between 1 and 1.5)*{_randomPercentage}
+				if ({_extraStatPool} - {_randBonusValue}) < 0:
+					set {_randBonusValue} to difference between {_extraStatPool} and 0
+				if {_randBonusValue} > 100:
+					set {_randBonusValue} to 100
+				if loop-value is 1:
+					if {_classReq} is "Warrior":
+						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}% Strength"
+						add "{Strength:%{_randBonusValue}%}" to {_itemDrop}'s nbt
+					else if {_classReq} is "Archer":
+						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}% Dexterity"
+						add "{Dexterity:%{_randBonusValue}%}" to {_itemDrop}'s nbt
+					else if {_classReq} is "Mage":
+						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}% Intelligence"
+						add "{Dexterity:%{_randBonusValue}%}" to {_itemDrop}'s nbt
+					else if {_classReq} is "Shaman":
+						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}% Wisdom"
+						add "{Dexterity:%{_randBonusValue}%}" to {_itemDrop}'s nbt
+				else if loop-value is 2:
+					set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}% Stamina"
+					add "{Stamina:%{_randBonusValue}%}" to {_itemDrop}'s nbt
+				else:
+					if {_enchantList::*} is not set:
+						set {_list} to "Luck,HPRegen,MPRegen,Block,Critical"
+						set {_enchantList::*} to {_list} split at ","
+					set {_randRoll} to (random element out of {_enchantList::*})
+					if {_randRoll} contains "Luck":
+						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}/10%%% Luck"
+						add "{Luck:%{_randBonusValue}/10%}" to {_itemDrop}'s nbt
+						remove "Luck" from {_enchantList::*}
+					else if {_randRoll} contains "HPRegen":
+						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}/10% HP/5 sec"
+						add "{HPRegen:%{_randBonusValue}/10%}" to {_itemDrop}'s nbt
+						remove "HPRegen" from {_enchantList::*}
+					else if {_randRoll} contains "MPRegen":
+						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}/10% MP/5 sec"
+						add "{MPRegen:%{_randBonusValue}/10%}" to {_itemDrop}'s nbt
+						remove "MPRegen" from {_enchantList::*}
+					else if {_randRoll} contains "Block":
+						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}/10%%% Block"
+						add "{Block:%{_randBonusValue}/10%}" to {_itemDrop}'s nbt
+						remove "Block" from {_enchantList::*}
+					else if {_randRoll} contains "Critical":
+						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}/10%%% Crit Chance"
+						add "{Critical:%{_randBonusValue}/10%}" to {_itemDrop}'s nbt
+						remove "Critical" from {_enchantList::*}
+				remove {_randBonusValue} from {_extraStatPool}
+	if {_stats::*} is not "":
+		loop size of {_stats::*} times:
+			add 1 to {_loreLine}
+			set {_statValues::%loop-value%} to {_statValues::%loop-value%}*({_randomPercentage}/100)
+			set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_statValues::%loop-value%}% %{_stats::%loop-value%}%"
+			add "{%{_stats::%loop-value%}%:%{_statValues::%loop-value%}%}" to {_itemDrop}'s nbt
+	if {_lore::*} is not "":
+		add 1 to {_loreLine}
+		loop size of {_lore::*} times:
+			add 1 to {_loreLine}
+			set line {_loreLine} of {_itemDrop}'s lore to "&8%{_lore::%loop-value%}%"
+		add 2 to {_loreLine}
+	if {_classReq} is not "":
+		add 1 to {_loreLine}
+		set line {_loreLine} of {_itemDrop}'s lore to "&7Cls. &8%{_classReq}%"
+		add "{ClassReq:%{_levelReq}%}" to {_itemDrop}'s nbt
+	if {_levelReq} > 0:
+		add 1 to {_loreLine}
+		set line {_loreLine} of {_itemDrop}'s lore to "&7Lvl. &8%{_levelReq}%"
+		add "{LevelReq:%{_levelReq}%}" to {_itemDrop}'s nbt
+	add "{AttributeModifiers:[{AttributeName:""generic.armor"",Name:""armor"",Amount:0,Operation:0,UUIDLeast:1,UUIDMost:1}]}" to {_itemDrop}'s nbt
+	add "{Unbreakable:1b}" to {_itemDrop}'s nbt
+	set {_itemDrop} to {_itemDrop} with all flags hidden
+	return {_itemDrop}

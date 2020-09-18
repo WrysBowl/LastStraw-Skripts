@@ -1,0 +1,279 @@
+on quit:
+	broadcast "%player% left"
+	
+	
+on skript stop:
+	log "Server Stoped!" to "log.log"
+
+
+on skript start:
+	log "Server Started!" to "log.log"
+
+	
+command /saveitems [<text>] [<text>]:
+	permission: test
+	trigger:
+		arg-1 is not set:
+			execute player command "/saveitems help"
+			stop
+		if arg-1 is "reload":
+			if player has permission "op":
+				execute player command "/skript reload test"
+				stop
+		if arg-1 is "help":
+			message "&b-----------------&2[&aHelp&2]&b-----------------"
+			message "&a/saveitems Set <1,2,3>"
+			message "&a/saveitems Give <1,2,3>"
+			message "&a/saveitems Info <1,2,3>"
+			message "&a/saveitems Reload"
+			message "&a/saveitems Help"
+			stop
+		if arg-2 is not "1" or "2" or "3" or "all":
+			message "&6Please Enter A Profile <1/2/3>"
+			stop
+		arg-2 is "1" or "2" or "3" or "all"
+		if arg-1 is "set":
+			arg-2 is not "all"
+			delete {inv::%player's uuid%::%arg-2%::*}
+			loop 41 times:
+				add 1 to {_slot}
+				set {_item} to slot {_slot}-1 of player
+				if {_item} is not set:
+					set {_item} to "air" parsed as item
+				set {_slotx} to {_slot}-1
+				{_item} is not air
+				set {inv::%player's uuid%::%arg-2%::%{_slotx}%} to {_item}
+			message "&6Saved Inventory!"
+		if arg-1 is "delete":
+			if arg-2 is "all":
+				loop 3 times:
+					add 1 to {_number}
+					delete {inv::%player's uuid%::%{_number}%::*}
+				message "&6Deleted All Saved Inventorys!"
+			else:
+				delete {inv::%player's uuid%::%arg-2%::*}
+				message "&6Deleted Saved Inventory!"
+		if arg-1 is "give":
+			arg-2 is not "all"
+			loop 41 times:
+				add 1 to {_slot}
+				set {_slotx} to {_slot}-1
+				if {inv::%player's uuid%::%arg-2%::%{_slotx}%} is not set:
+					set slot {_slotx} of player to air
+				else:
+					set slot {_slotx} of player to {inv::%player's uuid%::%arg-2%::%{_slotx}%}
+			message "&6Received Saved Inventory!"
+		if arg-1 is "Info":
+			arg-2 is not "all"
+			message " "
+			loop 41 times:
+				add 1 to {_slot}
+				set {_slotx} to {_slot}-1
+				if {inv::%player's uuid%::%arg-2%::%{_slotx}%} is not set:
+					message "%{_slotx}%: air"
+				else:
+					message "%{_slotx}%: %{inv::%player's uuid%::%arg-2%::%{_slotx}%}%"
+			message " "
+			
+on drop:
+	wait 1 tick
+	set {_check} to 0
+	while {_check} < 20:
+		add 1 to {_check}
+		wait 1 tick
+		if name of event-item is set:
+			if line 1 of event-item's lore is set:
+				set {_name} to "%name of event-item% %line 1 of event-item's lore%"
+			else:
+				set {_name} to "&7%name of event-item%"
+				if {_name} is "&7<none>":
+					set {_name} to "&7%event-item%"
+		else:
+			set {_name} to "&7%event-item%"
+		set {_amount} to item amount of event-item
+		set {_name} to "&7%{_amount}%&7x&r %{_name}%"
+		set display name of the event-entity to "%{_name}%"
+		wait 10 ticks
+		delete {_del::*}
+		delete {_number}
+	delete {_del::*}
+	delete {_number}
+
+on pick up:
+	set player's helmet to player's helmet
+	
+command /updateranks [<offline player>]:
+	permission: op
+	trigger:
+		if arg-1 has permission "staff":
+			set arg-1's tablist name to "%colored arg-1's group% &f%arg-1%"
+
+command /rankadd [<offline player>] [<text>]:
+	permission: op
+	trigger:
+		execute console command "/lp user %arg-1% parent add %arg-2%"
+		wait 1 second
+		execute console command "/updateranks"
+
+command /rankremove [<offline player>] [<text>]:
+	permission: op
+	trigger:
+		execute console command "/lp user %arg-1% parent remove %arg-2%"
+		wait 1 second
+		execute console command "/updateranks"
+
+command /key [<text>] [<text>]:
+	trigger:
+		if player doesn't have permission "op":
+			if arg-1 is not "claim":
+				message "&cInvaild Permissions"
+				stop
+		if arg-1 is not set:
+			message "&a---------------[Help]---------------"
+		if arg-1 is "create":
+			if arg-2 is set:
+				set {_code} to arg-2
+				send formatted "<tooltip:Click To View><suggest command:%{_code}%>%{_code}%<reset>"
+				add {_code} to {code::*}
+				stop
+			loop 20 times:
+				set {_rand} to random integer between 1 and 9
+				set {rand2::*} to "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y" and "Z"
+				set {_rand2} to random element out of {rand2::*}
+				chance of 50%:
+					add {_rand} to {_code::*}
+				else:
+					add {_rand2} to {_code::*}
+			loop 20 times:
+				add 1 to {_value}
+				if {_code} is not set:
+					set {_code} to {_code::%{_value}%}
+				else:
+					set {_code} to "%{_code}%%{_code::%{_value}%}%"
+			send formatted "<tooltip:Click To View><suggest command:%{_code}%>%{_code}%<reset>"
+			add {_code} to {code::*}
+		if arg-1 is "delete":
+			delete {code::*}
+		if arg-1 is "list":
+			loop {code::*}:
+				add 1 to {_number}
+				send formatted "&a(%{_number}%&a)&b <tooltip:Click To View><suggest command:%loop-value%>%loop-value%<reset>"
+		if arg-1 is "claim":
+			loop {code::*}:
+				add 1 to {_number}
+				set {_arg2} to arg-2
+				if loop-value is arg-2:
+					if {_arg2} contains "[Claimed]":
+						message "&cKey Is Invalid"
+						stop
+					set {_code} to arg-2
+					set {code::%{_number}%} to "%{_code}% [Claimed] [%player%]"
+					message "&aClaimed Key: %{_code}%"
+					stop
+				if loop-value contains "%arg-2% [Claimed]":
+					if loop-value contains "%arg-2% [Claimed] [%player%]":
+						message "&cYou Allready Claimed this key"
+						stop
+					else:
+						message "&cKey Is Allready Claimed"
+						stop
+			message "&cKey Is Invalid"
+			
+
+on join:
+	set player's display name to "%player's group% %player%"
+	set player's tablist name to "%colored player's group% &f%player%"
+	wait 50 ticks
+
+command /nick [<player>] [<text>] [<text>]:
+	permission: op
+	trigger:
+		set arg-1's display name to "%arg-3% %arg-2%"
+		set arg-1's tablist name to "%colored arg-3% &f%arg-2%"
+
+command /sc:
+	permission: op
+	trigger:
+		if {StaffChat::%player's uuid%} is true:
+			set {StaffChat::%player's uuid%} to false
+			message "&bStaff Chat Turned Off"
+		else:
+			set {StaffChat::%player's uuid%} to true
+			message "&bStaff Chat Turned On"
+			
+on leftclick:
+	{Reach.%player's uuid%} is true
+	if {ReachValue.%player's uuid%} is not set:
+		set {_reach} to 11
+	else:
+		set {_reach} to {ReachValue.%player's uuid%}+1
+	if distance between player and targeted block < {_reach}:
+		set block at targeted block to air
+		levelIncreaseParty(1, player)
+		levelIncrease(1, player)
+
+on rightclick:
+	{Reach.%player's uuid%} is true
+	if {ReachValue.%player's uuid%} is not set:
+		set {_reach} to 11
+	else:
+		set {_reach} to {ReachValue.%player's uuid%}+1
+	if distance between player and targeted block < {_reach}:
+		set {_tool} to player's tool
+		set {_x} to targeted block's x-coordinate
+		set {_y} to targeted block's y-coordinate
+		set {_z} to targeted block's z-coordinate
+		set {_yaw} to yaw of player
+		set {_pitch} to pitch of player
+		if {_pitch} > -35:
+			if {_pitch} > 35:
+				add 1 to {_y}
+			else:
+				if player's facing is north:
+					add 1 to {_z}
+				if player's facing is east:
+					remove 1 from {_x}
+				if player's facing is south:
+					remove 1 from {_z}
+				if player's facing is west:
+					add 1 to {_x}
+		else:
+			remove 1 from {_y}
+		set {_loc} to location({_x}, {_y}, {_z}, (player's world))
+		set {_dis} to distance between {_loc} and player
+		{_dis} > 1
+		set {_loc2} to location({_x}, {_y}+-1, {_z}, (player's world))
+		set {_dis} to distance between {_loc2} and player
+		{_dis} > 1
+		block at {_loc} is air
+		set block at {_loc} to {_tool}
+
+command /Reach [<text>]:
+	permission: op
+	trigger:
+		if arg-1 is "on":
+			message "&6Reach Turned On!"
+			set {Reach.%player's uuid%} to true
+		else if arg-1 is "off":
+			message "&6Reach Turned Off!"
+			set {Reach.%player's uuid%} to false
+		else:
+			message "&6Reach Value Set To: %arg-1%&6!"
+			set {ReachValue.%player's uuid%} to arg-1 parsed as number
+
+
+on block place:
+	if {Reach.%player's uuid%} is true:
+		cancel event
+
+on block break:
+	if {Reach.%player's uuid%} is true:
+		cancel event
+
+on join:
+	create nametag "bed"
+	set prefix of nametag "red" to "&c[Red] &f"
+	create nametag "blue"
+	set prefix of nametag "blue" to "&9[Blue] &f"
+	create nametag "none"
+

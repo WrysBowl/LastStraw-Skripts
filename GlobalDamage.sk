@@ -1,0 +1,32 @@
+on damage of player:
+	if metadata tag "party" of victim is "false":
+		if metadata tag "party" of attacker is "false":
+			set {_check} to 1
+	if (metadata tag "party" of victim) != (metadata tag "party" of attacker):
+		set {_check} to 1
+	if {_check} is 1:
+		set metadata tag "health" of victim to (metadata tag "health" of victim) - damage
+		set {_hp} to (metadata tag "health" of victim)/10
+		if {_hp} <= 0:
+			stop
+		set victim's health to (metadata tag "health" of victim)/10
+		set damage to 0
+	else:
+		cancel event
+		message "&6You can not attack your own party members!" to attacker
+
+
+on heal:
+	cancel event
+	set metadata tag "health" of player to (metadata tag "health" of player)
+	set player's health to (metadata tag "health" of player)/10
+
+on death of player:
+	if attacker is player:
+		set the death message to "&a%player% Was Killed By %attacker%&a!"
+	else:
+		if attacker is set:
+			set the death message to "&a%player% Was Killed By A %Attacker%&a!"
+		else:
+			set the death message to "&a%player% Died!"
+	set metadata tag "health" of victim to 100

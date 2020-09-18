@@ -1,0 +1,79 @@
+command /test:
+	trigger:
+		spawn slime with nbt "{Size:2}"
+		make player ride last spawned slime
+		set {_slime} to last spawned slime
+		while player is riding {_slime}:
+			wait 5 ticks
+			set {_loc} to {_slime}'s location
+			set yaw of {_loc} to player's yaw
+			teleport {_slime} to {_loc}
+			#push {_slime} in direction of player at speed 1
+
+command /genitem [<text>]:
+	permission: staff
+	trigger:
+		if arg-1 is not set:
+			message "&2/&aGenItem&b Item Type&2|&bItem Name&2|&bBase Percent&2|&bBase Multiplier&2|&bStat&2|&bStat Values&2|&bLore&2|&bClass&2|&bLevel Requrment"
+			message "&2/&aGenItem&b list&2|&bDelete&2|&bReload"
+			message "&aUse a | For every new string use a , For More Then 1 Values in A string"
+			send formatted "&2EX: <tooltip:Click For Example><suggest command:/genitem Feather|test|1|1|test|1|test|Mage,Archer|1>&a/genitem Feather|test|1|1|test|1|test|Mage,Archer|1"
+			stop
+		if arg-1 is "list":
+			message "&b------------&a[HISTORY]&b------------"
+			loop {EnteredItems::*}:
+				add 1 to {_number}
+				set {_code} to loop-value
+				send formatted "<tooltip:Click To View><suggest command:%{_code}%>&2(&a%{_number}%&2)&f %{_code}%"
+				message " "
+			stop
+		if arg-1 is "delete":
+			delete {EnteredItems::*}
+			stop
+		if arg-1 is "reload":
+			execute player command "skript reload test"
+			stop
+		set {_code} to arg-1
+		set {_code::*} to {_code} split at "|"
+		loop {_code::*}:
+			add 1 to {_number}
+			if {_number} is 1:
+				set {_check} to loop-value parsed as item
+				set {_code} to loop-value
+			else if {_number} is 2 or 5 or 7 or 8:
+				set {_codemore::*} to loop-value split at ","
+				loop {_codemore::*}:
+					add 1 to {_number2}
+					if {_value} is not set:
+						set {_value} to loop-value-2
+					else:
+						set {_value} to "%{_value}%"" and ""%loop-value-2%"
+				set {_code} to "%{_code}%, (""%{_value}%"")"
+				delete {_value}
+			else:
+				set {_code} to "%{_code}%, %loop-value%"
+			if {_number} is 3 or 4 or 6 or 9:
+				if loop-value parsed as number is not a number:
+					set {_check2} to true
+		if {_number} is not 9:
+			message "&4!ERROR!&c Code: Invaild ## of Strings"
+			stop
+		if {_check} is not a item:
+			message "&4!ERROR!&c Code: Invaild Item"
+			stop
+		if {_check2} is true:
+			message "&4!ERROR!&c Code: String Must Be A Number"
+			stop
+		set {_code} to "add itemGenerator(%{_code}%) to {_drops::*}"
+		send formatted "<tooltip:Click To View><suggest command:%{_code}%>%{_code}%"
+		set {_value} to {EnteredItems::1}
+		set {_value1} to {EnteredItems::2}
+		set {_value2} to {EnteredItems::3}
+		set {_value3} to {EnteredItems::4}
+		set {_value4} to {EnteredItems::5}
+		set {EnteredItems::5} to {_value3}
+		set {EnteredItems::4} to {_value2}
+		set {EnteredItems::3} to {_value1}
+		set {EnteredItems::2} to {_value}
+		set {EnteredItems::1} to {_code}
+		delete {EnteredItems::6}

@@ -1,0 +1,62 @@
+function levelIncrease(exp: number, player: player):
+	set {_uuid} to {_player}'s uuid
+	if {_player}'s level >= 100:
+		set {_player}'s level to 100
+		set {_player}'s level progress to 0
+		stop
+	set {_levelCeiling} to rounded up (({_player}'s level)^4/100)
+	if ({exp::%{_uuid}%}+{_exp}) >= {_levelCeiling}:
+		set {exp::%{_uuid}%} to (({_exp}+{exp::%{_uuid}%}) - {_levelCeiling})
+		add 1 to {_player}'s level
+		exit 1 section
+	else:
+		add {_exp} to {exp::%{_uuid}%}
+	set metadata tag "interruptActionBar" of {_player} to true
+	send action bar "&5+ %{_exp}% EXP" to {_player}
+	set {_player}'s level progress to ({exp::%{_uuid}%}/{_levelCeiling})
+	
+command /level:
+	trigger:
+		set {_player} to player
+		set {_uuid} to uuid of player
+		set {_exp} to 0
+		set {_levelCeiling} to rounded up (({_player}'s level)^4/100)
+		set {_xp} to ({exp::%{_uuid}%}+{_exp})
+		set {_xp2} to difference between {_xp} and {_levelCeiling}
+		set {_xp4} to {_xp}+{_xp2}
+		set {_xp3} to {_xp}/{_xp4}
+		set {_xp3} to {_xp3}*100
+		message "&aLevel: %player's Level%&a Xp: %{_xp}% &aXp Needed: %{_xp2}% &a[%{_xp3}%&a%%]"
+	
+function levelIncreaseParty(exp: number, player: player):
+	set {_partyMembers::*} to all players where [(metadata tag "party" of {_player}) = (metadata tag "party" of {_player})]
+	set {_size} to size of {_partyMembers::*}
+	set {_size} to {_size}-1
+	set {_size} to {_size}/4
+	set {_exp} to {_exp}*{_size}
+	loop {_partyMembers::*}:
+		add 1 to {_number}
+		{_player} is not {_partyMembers::%{_number}%}
+		set {_player} to {_partyMembers::%{_number}%}
+		set {_uuid} to {_player}'s uuid
+		if {_player}'s level >= 100:
+			set {_player}'s level to 100
+			set {_player}'s level progress to 0
+			stop
+		set {_levelCeiling} to rounded up (({_player}'s level)^4/100)
+		if ({exp::%{_uuid}%}+{_exp}) >= {_levelCeiling}:
+			set {exp::%{_uuid}%} to (({_exp}+{exp::%{_uuid}%}) - {_levelCeiling})
+			add 1 to {_player}'s level
+			exit 1 section
+		else:
+			add {_exp} to {exp::%{_uuid}%}
+		set metadata tag "interruptActionBar" of {_player} to true
+		send action bar "&5+ %{_exp}% EXP" to {_player}
+		set {_player}'s level progress to ({exp::%{_uuid}%}/{_levelCeiling})
+    
+command /resetEXP:
+    trigger:
+        delete {exp::%player's uuid%}
+        send "&5EXP has been reset"
+        set player's level to 1
+        set player's level progress to 0

@@ -1,0 +1,114 @@
+command /Cratedelete [<number>] [<number>] [<number>]:
+	permission: op
+	trigger:
+		set {_tp} to location(arg-1, arg-2, arg-3, (player's world))
+		loop 100 times:
+			add 1 to {_number}
+			if {listcrates::%{_number}%} is {_tp}:
+				delete {listcrates::%{_number}%}
+				message "&6Deleted Crate"
+				execute player command "crate list"
+
+command /Crate [<text>]:
+	permission: op
+	trigger:
+		set {_loc} to location of block at player
+		if arg-1 is "add":
+			set {_size} to size of {listcrates::*}
+			if {_size} is 100:
+				message "&cYou can only place a max of 100 crates!"
+				stop
+			loop {listcrates::*}:
+				if location of block at player is loop-value:
+					message "&cThere is already a crate here!"
+					stop
+			add {_loc} to {listcrates::*}
+			message "&6Added Crate at %{_loc}%"
+		else if arg-1 is "delete":
+			loop 100 times:
+				add 1 to {_number}
+				if location of block at player is {listcrates::%{_number}%}:
+					delete {listcrates::%{_number}%}
+					message "&6Deleted Crate"
+					if block at {_loc} is chest:
+						set block at {_loc} to air
+					stop
+			message "&cNo Crate Found at %{_loc}%"
+		else if arg-1 is "deleteall":
+			loop {listcrates::*}:
+				if block at loop-value is chest:
+					set block at loop-value to air
+			delete {listcrates::*}
+			message "&6Deleted all Crates"
+		else if arg-1 is "list":
+			loop {listcrates::*}:
+				add 1 to {_number}
+				set {_x} to x location of block at loop-value
+				set {_y} to y location of block at loop-value
+				set {_z} to z location of block at loop-value
+				send formatted "&2(&a%{_number}%&2)&b %loop-value% <tooltip:&aTp><command:/tp %player% %{_x}% %{_y}% %{_z}%>&aTp <tooltip:&cDelete><command:/Cratedelete %{_x}% %{_y}% %{_z}%>&cDelete"
+		else if arg-1 is "spawn":
+			set {_spawnloc} to random element out of {listcrates::*}
+			if block at {_spawnloc} is chest:
+				message "&cThere is already a crate here!"
+				stop
+			broadcast "&6A Loot Chest Was Spoted At %{_spawnloc}%&6!"
+			delete block at {_spawnloc}'s inventory
+			set block at {_spawnloc} to chest
+			set {_items::*} to dirt,stone,cobblestone,chest,white wool and torch,shulker box #shulker box is the item that spawns for rare loot
+			set {_rareitems::*} to emerald, diamond, gold ingot, iron ingot and coal #chance of 10% of this spawning from a shunlker box
+			set {_slot} to -1
+			loop 27 times:
+				add 1 to {_slot}
+				set {_item} to random element out of {_items::*}
+				chance of 50%
+				set slot {_slot} of block at {_spawnloc}'s inventory to {_item}
+				set {_rad} to random integer between 0 and 10
+				loop {_rad} times:
+					chance of 10%
+					{_item} is shulker box
+					set {_item} to random element out of {_rareitems::*}
+					set slot {_slot} of block at {_spawnloc}'s inventory to {_item}
+			loop all items in block at {_spawnloc}'s inventory:
+				if loop-item is shulker box:
+					set loop-item to air
+			wait 5 seconds
+			delete block at {_spawnloc}'s inventory
+			set block at {_spawnloc} to air
+			broadcast "&6The Loot Chest Has Despawned"
+		else if arg-1 is "reload":
+			execute player command "/skript reload GlobalCrates"
+		else if arg-1 is "help":
+			message "&b---------------&2[&aHelp&2]&b---------------"
+			message "&a/Crate add"
+			message "&a/Crate delete"
+			message "&a/Crate deleteall"
+			message "&a/Crate list"
+			message "&a/Crate spawn"
+			message "&a/Crate reload"
+			message "&a/Crate help"
+		else if arg-1 is not set:
+			execute player command "/crate help"
+
+on block place of chest:
+	if player's tool is chest named "&aLoot Chest":
+		cancel event
+		if player is not sneaking:
+			set {_loc} to location of event-block
+			set {_size} to size of {listcrates::*}
+			if {_size} is 100:
+				message "&cYou can only place a max of 100 crates!"
+				stop
+			loop {listcrates::*}:
+				if location of event-block is loop-value:
+					message "&cThere is already a crate here!"
+					stop
+			add {_loc} to {listcrates::*}
+			message "&6Added Crate at %{_loc}%"
+		else:
+			loop 100 times:
+				add 1 to {_number}
+				if location of event-block is {listcrates::%{_number}%}:
+					delete {listcrates::%{_number}%}
+					message "&6Deleted Crate"
+					stop

@@ -1,0 +1,95 @@
+function hotbarItems(player: player):
+	set {_uuid} to {_player}'s uuid
+	loop 6 times:
+		set slot loop-value of {_player}'s inventory to green stained glass pane named "&aSkill %loop-value%"
+	set slot 7 of {_player}'s inventory to potion of healing named "&cHealing Potion" with lore "&7%{healthPotions::%{_uuid}%} ? 0% left", "" and "&c+50 HP &7when used" with nbt "{HideFlags:63}"
+	set slot 8 of {_player}'s inventory to potion of water breathing named "&bMana Potion" with lore "&7%{manaPotions::%{_uuid}%} ? 0% left", "" and "&b+50 MP &7when used" with nbt "{HideFlags:63}"
+	
+function armor(player: player, profile: integer):
+	set {_uuid} to {_player}'s uuid	
+	if {profiles::%{_uuid}%::%{_profile}%} contains "Red":
+		set {_item2} to leather chestplate named "&c%{_player}%&c's Chestplate"
+		set {_item3} to leather leggings named "&c%{_player}%&c's Leggings"
+		set {_item4} to leather boots named "&c%{_player}%&c's Boots"
+		dye {_item2} red
+		dye {_item3} red
+		dye {_item4} red
+	else if {profiles::%{_uuid}%::%{_profile}%} contains "Blue":
+		set {_item2} to leather chestplate named "&9%{_player}%&9's Chestplate"
+		set {_item3} to leather leggings named "&9%{_player}%&9's Leggings"
+		set {_item4} to leather boots named "&9%{_player}%&9's Boots"
+		dye {_item2} blue
+		dye {_item3} blue
+		dye {_item4} blue
+	add "{AttributeModifiers:[{AttributeName:""generic.armor"",Name:""armor"",Amount:0,Operation:0,UUIDLeast:1,UUIDMost:1}]}" to ({_item2}'s nbt, {_item3}'s nbt and {_item4}'s nbt)
+	add "{Unbreakable:1b}" to ({_item2}'s nbt, {_item3}'s nbt and {_item4}'s nbt)
+	set {_item2} to {_item2} with all flags hidden
+	set {_item3} to {_item3} with all flags hidden
+	set {_item4} to {_item4} with all flags hidden
+	
+	set {_player}'s chestplate to {_item2}
+	set {_player}'s leggings to {_item3}
+	set {_player}'s boots to {_item4}
+	
+	if {profiles::%{_uuid}%::%{_profile}%} contains "Warrior":
+		set {_player}'s helmet to ("0845" parsed as an offline player)'s skull named "&cWarrior" with lore "", "&6RIGHT CLICK" and "&6Select Armor!"
+	else if {profiles::%{_uuid}%::%{_profile}%} contains "Archer":
+		set {_player}'s helmet to ("SweetBiaSweet" parsed as an offline player)'s skull named "&bArcher" with lore "", "&6RIGHT CLICK" and "&6Select Armor!"
+	else if {profiles::%{_uuid}%::%{_profile}%} contains "Mage":
+		set {_player}'s helmet to ("051r1S" parsed as an offline player)'s skull named "&dMage" with lore "", "&6RIGHT CLICK" and "&6Select Armor!"
+	else if {profiles::%{_uuid}%::%{_profile}%} contains "Shaman":
+		set {_player}'s helmet to ("123hane123" parsed as an offline player)'s skull named "&aShaman" with lore "", "&6RIGHT CLICK" and "&6Select Armor!"
+	else:
+		set {_player}'s helmet to air
+
+function armorGUI(player: player):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set metadata tag "characterInventory" of {_player} to chest inventory with 6 rows named "Character"
+	loop 54 times:
+		set slot (loop-value - 1) of metadata tag "characterInventory" of {_player} to gray stained glass pane named "&7"
+	loop 27 times:
+		add 1 to {_loop}
+		if {_loop} = (6, 15, 24, 33, 42 or 51):
+			add 4 to {_loop}
+		set slot ({_loop}-1) of metadata tag "characterInventory" of {_player} to slot (loop-value + 8) of {_player}'s inventory
+	set slot 16 of metadata tag "characterInventory" of {_player} to ({armorPlayer::%{_uuid}%::%{_profile}%::1} ? (red stained glass pane named "&cNo Helmet"))
+	set slot 25 of metadata tag "characterInventory" of {_player} to ({armorPlayer::%{_uuid}%::%{_profile}%::2} ? (red stained glass pane named "&cNo Chestplate"))
+	set slot 34 of metadata tag "characterInventory" of {_player} to ({armorPlayer::%{_uuid}%::%{_profile}%::3} ? (red stained glass pane named "&cNo Leggings"))
+	set slot 43 of metadata tag "characterInventory" of {_player} to ({armorPlayer::%{_uuid}%::%{_profile}%::4} ? (red stained glass pane named "&cNo Boots"))
+	set slot 24 of metadata tag "characterInventory" of {_player} to {_player}'s offhand tool
+	set slot 26 of metadata tag "characterInventory" of {_player} to slot 0 of {_player}'s inventory
+	if {_player}'s offhand tool is air:
+		set slot 24 of metadata tag "characterInventory" of {_player} to red stained glass pane named "&cNo Offhand"
+	if slot 0 of {_player}'s inventory is air:
+		set slot 26 of metadata tag "characterInventory" of {_player} to red stained glass pane named "&cNo Tool"
+	set slot (5, 14, 23, 32, 41 and 50) of metadata tag "characterInventory" of {_player} to black stained glass pane named "&7"
+	set slot 47 of metadata tag "characterInventory" of {_player} to potion of healing named "&cHealing Potion" with lore "&7%{healthPotions::%{_uuid}%} ? 0% left", "" and "&c+50 HP &7when used" with nbt "{HideFlags:63}"
+	set slot 48 of metadata tag "characterInventory" of {_player} to potion of water breathing named "&bMana Potion" with lore "&7%{manaPotions::%{_uuid}%} ? 0% left", "" and "&b+50 MP &7when used" with nbt "{HideFlags:63}"
+	set slot 49 of metadata tag "characterInventory" of {_player} to {_player}'s helmet named "%{profiles::%{_uuid}%::%{_profile}%}%" with lore ("", "&6Click any armor" and "&6to equip it") with all flags hidden
+	open (metadata tag "characterInventory" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+	
+function profileInv(player: player, profile: text, type: text):
+	set {_uuid} to {_player}'s uuid
+	if {_player}'s level >= 5:
+		if {_type} is "save":
+			delete {inv::%{_uuid}%::%{_profile}%::*}
+			loop 41 times:
+				add 1 to {_slot}
+				set {_item} to slot {_slot}-1 of {_player}
+				if {_item} is not set:
+					set {_item} to "air" parsed as item
+				set {_slotx} to {_slot}-1
+				{_item} is not air
+				set {inv::%{_uuid}%::%{_profile}%::%{_slotx}%} to {_item}
+		else if {_type} is "load":
+			loop 41 times:
+				add 1 to {_slot}
+				set {_slotx} to {_slot}-1
+				if {inv::%{_uuid}%::%{_profile}%::%{_slotx}%} is not set:
+					set slot {_slotx} of {_player} to air
+				else:
+					set slot {_slotx} of {_player} to {inv::%{_uuid}%::%{_profile}%::%{_slotx}%}
+		else if {_type} is "delete":
+			delete {inv::%{_uuid}%::%{_profile}%::*}

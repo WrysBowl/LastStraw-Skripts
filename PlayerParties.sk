@@ -1,0 +1,96 @@
+command /party [<text>] [<player>]:
+	aliases: p
+	trigger:
+		if {profiles::%player's uuid%::%metadata tag ""profile"" of player%} contains "Red":
+			set {_clanColor} to "Red"
+		else if {profiles::%player's uuid%::%metadata tag ""profile"" of player%} contains "Blue":
+			set {_clanColor} to "Blue"
+		set {_arg-1} to arg-1
+		set {_arg-2} to arg-2
+		if {_arg-1} is not "create" or "invite" or "help" or "leave" or "join" or "info" or "chat" or "kick":
+			set {_arg-1} to "%{_arg-1}%%{_arg-2}%"
+		if arg-1 is not set:
+			message "&b---------------&2[&aHelp&2]&b---------------"
+			message "&a/party invite <player>"
+			message "&a/party leave"
+			message "&a/party join <player>"
+			message "&a/party info"
+			message "&a/party chat"
+		if {_arg-1} is "invite":
+			if arg-2 is set:
+				if {profiles::%arg-2's uuid%::%metadata tag ""profile"" of arg-2%} contains {_clanColor}:
+					if metadata tag "party" of arg-2 is not set:
+						message "&aInvited %arg-2%&6!"
+						send formatted "&aWould you like to join %player%&a's Party?  <tooltip:&a&lYes><cmd:/party join %player%>&a&l[Yes]  <tooltip:&c&lNo>&c&l[No]" to arg-2
+						set metadata tag "invite" of arg-2 to "%metadata tag ""invite"" of arg-2% %player%"
+					else:
+						message "&cThis player is already in a team!"
+				else:
+					message "&cThis player is not in your clan"
+			else:
+				message "&cPlease enter a player. /party invite <player>"
+		else if {_arg-1} is "leave":
+			if metadata tag "party" of player is set:
+				message "&c%player%&c left the party!" to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
+				clear metadata tag "party" of player
+				clear metadata tag "chat" of player
+				clear player's scoreboard
+				set {_partyMembers::*} to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
+				if size of {_partyMembers::*} is 1:
+					message "&cYou were the only person in the party, so it has been disbanded." to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
+					clear metadata tag "party" of {_partyMembers::*}
+					clear {_partyMembers::*}'s scoreboard
+					stop
+				if "%{_partySize::*}%" does not contain "%metadata tag ""party"" of {_partyMembers::*}%":
+					set metadata tag "party" of {_partyMembers::*} to a random player out of {_partyMembers::*}
+				exit 1 section
+			else:
+				message "&cYou are not in a party!"
+		else if {_arg-1} is "join":
+			if arg-2 is set:
+				if {profiles::%arg-2's uuid%::%metadata tag ""profile"" of arg-2%} contains {_clanColor}:
+					if metadata tag "party" of player is not set:
+						set {_inviteList::*} to metadata tag "invite" of player split at " "
+						loop size of {_inviteList::*} times:
+							if {_inviteList::%loop-value%} is arg-2:
+								set metadata tag "party" of player to arg-2
+								set metadata tag "party" of arg-2 to arg-2
+								message "&a%player%&a joined the party!" to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
+								clear metadata tag "invite" of player
+								clear metadata tag "invite" of arg-2
+								exit 4 sections
+						message "&cThis player has not invited you!"
+					else:
+						message "&cYou are already in a party."
+				else:
+					message "&cThis player is not in your clan"
+			else:
+				message "&cType /party join <player> to join a party."
+		else if {_arg-1} is "info":
+			set {_partyMembers::*} to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
+			if metadata tag "party" of player is not set:
+				message "&cYou are not in a team!"
+			else:
+				message "&b---------------&2[&aInfo&2]&b---------------"
+				message "&aYou are in %metadata tag ""party"" of player%&a's party!"
+				message "&aTotal Party Members: %size of {_partyMembers::*}%"
+				message "&aPlayers: %{_partyMembers::*}%"
+		else if {_arg-1} is "chat":
+			if metadata tag "party" of player is set:
+				if metadata tag "chat" of player is true:
+					set metadata tag "chat" of player to "false"
+					message "&cParty chat has been toggled off."
+					exit 2 sections
+				else:
+					set metadata tag "chat" of player to true
+					message "&aParty chat has been toggled on."
+		else if {_arg-1} is "kick":
+			if arg-2 is set:
+				if (metadata tag "party" of arg-2) = "%player%":
+					message "&c%arg-2%&c left the party!" to all players where [(metadata tag "party" of input) = (metadata tag "party" of arg-2)]
+					clear metadata tag "party" of arg-2
+					clear arg-2's scoreboard
+				else:
+					message "&cYou are not the leader of this party."
+			else:
+				message "&cType /party kick <player> to kick a player."

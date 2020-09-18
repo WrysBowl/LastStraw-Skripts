@@ -1,0 +1,39 @@
+on place:
+    if player's gamemode is not creative:
+        cancel event
+        
+on inventory click:
+	if player's gamemode is not creative:
+		if event-inventory is player's inventory:
+			if (integers between 1 and 8) contains index of event-slot:
+				cancel event
+		else if "%event-slot%" contains "crafting slot":
+			cancel event
+            
+on player drop:
+    if player's gamemode is not creative:
+        if (integers between 1 and 8) contains hotbar slot of player:
+            cancel event
+        
+on swap item:
+    if player's gamemode is not creative:
+        cancel event
+    
+on exp spawn:
+    cancel event
+	
+on inventory click:
+	if metadata tag "inventoryOpened" of player is true:
+		cancel event
+
+on inventory close:
+	clear metadata tag "inventoryOpened" of player
+	
+on fade:
+    cancel event
+
+on break of ripe wheat plant:
+    cancel event
+    
+on hunger meter change:
+    cancel event

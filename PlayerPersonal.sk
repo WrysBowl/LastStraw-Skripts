@@ -1,0 +1,68 @@
+on consume of potion:
+	cancel event
+	if "%event-item%" contains "Healing Potion":
+		if {healthPotions::%player's uuid%} >= 1:
+			set metadata tag "health" of player to (metadata tag "health" of player) + 50
+			remove 1 from {healthPotions::%player's uuid%}
+	else if "%event-item%" contains "Mana Potion":
+		if {manaPotions::%player's uuid%} >= 1:
+			set metadata tag "mana" of player to (metadata tag "mana" of player) + 50
+			remove 1 from {manaPotions::%player's uuid%}
+	hotbarItems(player)
+	
+on gamemode change:
+	wait 1 tick
+	if player's gamemode is not creative:
+		hotbarItems(player)
+	else:
+		set slot (1, 2, 3, 4, 5, 6, 7 and 8) of player's inventory to air
+
+on inventory click:
+	if player's gamemode is survival:
+		set {_item} to event-slot
+		if event-slot is (player's helmet, player's chestplate, player's leggings or player's boots):
+			set event-slot to air
+			wait 3 ticks
+			set event-slot to {_item}
+	if "%event-slot%" contains "helmet":
+		armorGUI(player)
+	if event-inventory = (metadata tag "characterInventory" of player):
+		set {_profile} to metadata tag "profile" of player
+		if index of event-slot is not (16, 25, 34 or 43):
+			if event-slot is a helmet:
+				remove event-item from player
+				give {armorPlayer::%player's uuid%::%{_profile}%::1} to player
+				set {armorPlayer::%player's uuid%::%{_profile}%::1} to event-item
+			else if event-slot is a chestplate:
+				remove event-item from player
+				give {armorPlayer::%player's uuid%::%{_profile}%::2} to player
+				set {armorPlayer::%player's uuid%::%{_profile}%::2} to event-item
+			else if event-slot is leggings:
+				remove event-item from player
+				give {armorPlayer::%player's uuid%::%{_profile}%::3} to player
+				set {armorPlayer::%player's uuid%::%{_profile}%::3} to event-item
+			else if event-slot is boots:
+				remove event-item from player
+				give {armorPlayer::%player's uuid%::%{_profile}%::4} to player
+				set {armorPlayer::%player's uuid%::%{_profile}%::4} to event-item
+			else:
+				stop
+			armorGUI(player)
+		else:
+			if index of event-slot is 16:
+				player has enough space for {armorPlayer::%player's uuid%::%{_profile}%::1}
+				give {armorPlayer::%player's uuid%::%{_profile}%::1} to player
+				delete {armorPlayer::%player's uuid%::%{_profile}%::1}
+			else if index of event-slot is 25:
+				player has enough space for {armorPlayer::%player's uuid%::%{_profile}%::2}
+				give {armorPlayer::%player's uuid%::%{_profile}%::2} to player
+				delete {armorPlayer::%player's uuid%::%{_profile}%::2}
+			else if index of event-slot is 34:
+				player has enough space for {armorPlayer::%player's uuid%::%{_profile}%::3}
+				give {armorPlayer::%player's uuid%::%{_profile}%::3} to player
+				delete {armorPlayer::%player's uuid%::%{_profile}%::3}
+			else if index of event-slot is 43:
+				player has enough space for {armorPlayer::%player's uuid%::%{_profile}%::4}
+				give {armorPlayer::%player's uuid%::%{_profile}%::4} to player
+				delete {armorPlayer::%player's uuid%::%{_profile}%::4}
+			armorGUI(player)
