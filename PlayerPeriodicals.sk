@@ -3,66 +3,27 @@ on join:
 	set metadata tag "mana" of player to 100
 	while player is online:
 		scrollPartyScore(player, (metadata tag "partyShift" of player))
+		set {_maxHP} to hpStat(player)
+		set {_maxMP} to mpStat(player)
+		set {_hpRegen} to HPRegenStat(player)
+		set {_mpRegen} to MPRegenStat(player)
 		loop 5 times:
-			send action bar "&c[Health: %metadata tag ""health"" of player%]     &b[Mana: %metadata tag ""mana"" of player%]" to player
+			send action bar "&c[Health: %metadata tag ""health"" of player%&4/&c%{_maxHP}% ❤]     &b[Mana: %metadata tag ""mana"" of player%&3/&b%{_maxMP}% ♤]" to player
 			wait 1 second
 		if metadata tag "interruptActionBar" of player is not set:
-			if metadata "health" of player > 100:
-				set  metadata tag "health" of player to 100
-			if metadata "mana" of player > 100:
-				set  metadata tag "mana" of player to 100
-			send action bar "&c[Health: %metadata tag ""health"" of player%]     &b[Mana: %metadata tag ""mana"" of player%]" to player
+			set metadata "health" of player to (metadata "health" of player)+{_hpRegen}
+			set metadata "mana" of player to (metadata "mana" of player)+{_mpRegen}
+			if metadata "health" of player > {_maxHP}:
+				set metadata tag "health" of player to hpStat(player)
+			if metadata "mana" of player > {_maxMP}:
+				set metadata tag "mana" of player to mpStat(player)
+			send action bar "&c[Health: %metadata tag ""health"" of player%&4/&c%{_maxHP}% ❤]     &b[Mana: %metadata tag ""mana"" of player%&3/&b%{_maxMP}% ♤]" to player
 		else:
+			wait 1 second
 			clear metadata tag "interruptActionBar" of player
 
 every 10 minutes:
 	send "&6[Broadcast] &eSaved all inventories of level 5+" to all players where [input's level > 5]
+	execute console command "updateranks"
 	loop all players:
-		set {_profile} to metadata tag "profile" of loop-player
-		profileInv({_player}, "%{_profile}%","save")
-
-function scrollPartyScore(player: player, scroll: object):
-	set {_uuid} to {_player}'s uuid
-	set {_levelCeiling} to rounded up (({_player}'s level)^4/100)
-	set {_partyMembers::*} to all players where [(metadata tag "party" of input) = (metadata tag "party" of {_player})]
-	set title of {_player}'s scoreboard to "&6&lSiege &7(%player count%&7/%max player count%&7)"
-	set line 15 of {_player}'s scoreboard to ""
-	set line 14 of {_player}'s scoreboard to "&6Profile: &7%{_player}%"
-	set line 13 of {_player}'s scoreboard to " &7➤ Level: &5%{_player}'s level% &5(&d%{exp::%{_uuid}%}/{_levelCeiling}%&d%%&5)"
-	set line 12 of {_player}'s scoreboard to " &7➤ Balance: &a0"
-	if metadata tag "party" of {_player} is set:
-		set line 11 of {_player}'s scoreboard to "&6Party: &7%size of {_partyMembers::*}% &8[&7%metadata tag ""party"" of {_player}%&8]"
-		loop size of {_partyMembers::*} times:
-			add " &7+ &a%{_partyMembers::%loop-value%}%&2:" to {_scoreLines::*}
-			add " &7+ &4[&c%metadata tag ""health"" of {_partyMembers::%loop-value%}%&4/&c100]" to {_scoreLines::*}
-			add " &7+ &b[&3%metadata tag ""mana"" of {_partyMembers::%loop-value%}%&3/&b100]" to {_scoreLines::*}
-		loop size of {_scoreLines::*} times:
-			if size of {_scoreLines::*} > 10:
-				set {_loopValue} to loop-value + {_scroll}-1
-			else:
-				set {_loopValue} to loop-value
-			set line (11 - (loop-value)) of {_player}'s scoreboard to "%{_scoreLines::%{_loopValue}%}%"
-		set {_profile} to metadata tag "profile" of {_player}
-		set line 1 of {_player}'s scoreboard to "&6Character %{_profile} ? 0%: %{profiles::%{_uuid}%::%{_profile}%} ? ""Undetermined""%"
-			
-		
-
-on tool change:
-	if player is sneaking:
-		set {_addNum} to metadata tag "partyShift" of player
-		set {_partyMembers::*} to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
-		set {_oldSlot} to (player's current hotbar slot)
-		wait 1 ticks
-		if (player's current hotbar slot) > {_oldSlot}:
-			if (metadata tag "partyShift" of player) <= ((size of {_partyMembers::*})*2)- (1 + (size of {_partyMembers::*})):
-				add 1 to {_addNum}
-		else if (metadata tag "partyShift" of player) > 1:
-			remove 1 from {_addNum}
-		if (player's current hotbar slot) is 8:
-			if {_oldSlot} is 0:
-				remove 1 from {_addNum}
-		else if (player's current hotbar slot) is 0:
-			if {_oldSlot} is 8:
-				add 1 to {_addNum}
-		set metadata tag "partyShift" of player to {_addNum}
-		scrollPartyScore(player, (metadata tag "partyShift" of player))
+		profileInv(loop-player,"save")
