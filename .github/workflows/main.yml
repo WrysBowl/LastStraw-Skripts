@@ -8,14 +8,18 @@ on:
     branches: [ master ]
 
 jobs:
-  - name: FTP-Deploy-Action
-    uses: SamKirkland/FTP-Deploy-Action@2.0.0
-    env:
-      FTP_SERVER: ${{ secrets.FTP_SERVER }}
-      FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-      FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-      LOCAL_DIR: plugins/skript
-      METHOD: sftp
-      PORT: 22
-      ARGS: --delete
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    steps:
+      - name: FTP-Deploy-Action
+        uses: SamKirkland/FTP-Deploy-Action@2.0.0
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          LOCAL_DIR: plugins/skript
+          METHOD: sftp
+          PORT: 22
+          ARGS: --delete
 
