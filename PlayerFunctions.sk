@@ -1,35 +1,34 @@
 function hotbarItems(player: player):
 	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
 	loop 6 times:
-		set slot loop-value of {_player}'s inventory to green stained glass pane named "&aSkill %loop-value%"
-	set slot 7 of {_player}'s inventory to potion of healing named "&cHealing Potion" with lore "&7%{healthPotions::%{_uuid}%} ? 0% left", "" and "&c+50 HP &7when used" with nbt "{HideFlags:63}"
-	set slot 8 of {_player}'s inventory to potion of water breathing named "&bMana Potion" with lore "&7%{manaPotions::%{_uuid}%} ? 0% left", "" and "&b+50 MP &7when used" with nbt "{HideFlags:63}"
+		if {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%} is set:
+			set slot loop-value of {_player}'s inventory to lime stained glass pane named "%{savedSkills::%{_uuid}%::%{_profile}%::%loop-value%}%" with nbt "{HideFlags:63}"
+		else:
+			set slot loop-value of {_player}'s inventory to green stained glass pane named "&aSkill %loop-value%" with nbt "{HideFlags:63}"
+	set slot 7 of {_player}'s inventory to potion of healing named "&cHealing Potion:&7 10" with lore "&c+50 HP &7when used" with nbt "{HideFlags:63}"
+	set slot 8 of {_player}'s inventory to potion of water breathing named "&bMana Potion:&7 10" with lore "&b+50 MP &7when used" with nbt "{HideFlags:63}"
 	
 function armor(player: player, profile: integer):
 	set {_uuid} to {_player}'s uuid	
+	set {_profile} to metadata tag "profile" of {_player}
 	if {profiles::%{_uuid}%::%{_profile}%} contains "Red":
-		set {_item2} to leather chestplate named "&c%{_player}%&c's Chestplate"
-		set {_item3} to leather leggings named "&c%{_player}%&c's Leggings"
-		set {_item4} to leather boots named "&c%{_player}%&c's Boots"
-		dye {_item2} red
-		dye {_item3} red
-		dye {_item4} red
+		set {_item::2} to leather chestplate named "&c%{_player}%&c's Chestplate"
+		set {_item::3} to leather leggings named "&c%{_player}%&c's Leggings"
+		set {_item::4} to leather boots named "&c%{_player}%&c's Boots"
+		loop 3 times:
+			dye {_item::%loop-value + 1%} red 
 	else if {profiles::%{_uuid}%::%{_profile}%} contains "Blue":
-		set {_item2} to leather chestplate named "&9%{_player}%&9's Chestplate"
-		set {_item3} to leather leggings named "&9%{_player}%&9's Leggings"
-		set {_item4} to leather boots named "&9%{_player}%&9's Boots"
-		dye {_item2} blue
-		dye {_item3} blue
-		dye {_item4} blue
-	add "{AttributeModifiers:[{AttributeName:""generic.armor"",Name:""armor"",Amount:0,Operation:0,UUIDLeast:1,UUIDMost:1}]}" to ({_item2}'s nbt, {_item3}'s nbt and {_item4}'s nbt)
-	add "{Unbreakable:1b}" to ({_item2}'s nbt, {_item3}'s nbt and {_item4}'s nbt)
-	set {_item2} to {_item2} with all flags hidden
-	set {_item3} to {_item3} with all flags hidden
-	set {_item4} to {_item4} with all flags hidden
-	
-	set {_player}'s chestplate to {_item2}
-	set {_player}'s leggings to {_item3}
-	set {_player}'s boots to {_item4}
+		set {_item::2} to leather chestplate named "&9%{_player}%&9's Chestplate"
+		set {_item::3} to leather leggings named "&9%{_player}%&9's Leggings"
+		set {_item::4} to leather boots named "&9%{_player}%&9 's Boots"
+		loop 3 times:
+			dye {_item::%loop-value + 1%} blue
+	add "{AttributeModifiers:[{AttributeName:""generic.armor"",Name:""armor"",Amount:0,Operation:0,UUIDLeast:1,UUIDMost:1}]}" to ({_item::2}'s nbt, {_item::3}'s nbt and {_item::4}'s nbt)
+	add "{Unbreakable:1b}" to ({_item::2}'s nbt, {_item::3}'s nbt and {_item::4}'s nbt)	
+	set {_player}'s chestplate to {_item::2} with all flags hidden
+	set {_player}'s leggings to {_item::3} with all flags hidden
+	set {_player}'s boots to {_item::4} with all flags hidden
 	
 	if {profiles::%{_uuid}%::%{_profile}%} contains "Warrior":
 		set {_player}'s helmet to ("0845" parsed as an offline player)'s skull named "&cWarrior" with lore "", "&6RIGHT CLICK" and "&6Select Armor!"
@@ -46,8 +45,7 @@ function armorGUI(player: player):
 	set {_uuid} to {_player}'s uuid
 	set {_profile} to metadata tag "profile" of {_player}
 	set metadata tag "characterInventory" of {_player} to chest inventory with 6 rows named "Character"
-	loop 54 times:
-		set slot (loop-value - 1) of metadata tag "characterInventory" of {_player} to gray stained glass pane named "&7"
+	set slot (integers between 0 and 54) of metadata tag "characterInventory" of {_player} to gray stained glass pane named "&7"
 	loop 27 times:
 		add 1 to {_loop}
 		if {_loop} = (6, 15, 24, 33, 42 or 51):
@@ -70,26 +68,204 @@ function armorGUI(player: player):
 	open (metadata tag "characterInventory" of {_player}) to {_player}
 	set metadata tag "inventoryOpened" of {_player} to true
 	
-function profileInv(player: player, profile: text, type: text):
+function profileInv(player: player, type: text):
 	set {_uuid} to {_player}'s uuid
-	if {_player}'s level >= 5:
+	set {_profile} to metadata tag "profile" of {_player}
+	if {level::%{_uuid}%::%{_profile}%} >= 5:
 		if {_type} is "save":
 			delete {inv::%{_uuid}%::%{_profile}%::*}
-			loop 41 times:
-				add 1 to {_slot}
-				set {_item} to slot {_slot}-1 of {_player}
-				if {_item} is not set:
-					set {_item} to "air" parsed as item
-				set {_slotx} to {_slot}-1
-				{_item} is not air
-				set {inv::%{_uuid}%::%{_profile}%::%{_slotx}%} to {_item}
+			set {inv::%{_uuid}%::%{_profile}%::*} to slots (integers between 0 and 35) of {_player}'s inventory
+			levelIncrease(0, {_player})
 		else if {_type} is "load":
-			loop 41 times:
-				add 1 to {_slot}
-				set {_slotx} to {_slot}-1
-				if {inv::%{_uuid}%::%{_profile}%::%{_slotx}%} is not set:
-					set slot {_slotx} of {_player} to air
-				else:
-					set slot {_slotx} of {_player} to {inv::%{_uuid}%::%{_profile}%::%{_slotx}%}
-		else if {_type} is "delete":
-			delete {inv::%{_uuid}%::%{_profile}%::*}
+			loop 36 times:
+				set slot (loop-value -1) of {_player}'s inventory to {inv::%{_uuid}%::%{_profile}%::%loop-value%}
+			set {_player}'s level to {level::%{_uuid}%::%{_profile}%} ? 1
+			set {_player}'s level progress to ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})
+	if {_type} is "delete":
+		delete {profiles::%{_uuid}%::%{_profile}%}
+		delete {inv::%{_uuid}%::%{_profile}%::*}
+		delete {exp::%{_uuid}%::%{_profile}%}
+		delete {level::%{_uuid}%::%{_profile}%}
+		delete {balance::%{_uuid}%::%{_profile}%}
+		delete {armorPlayer::%{_uuid}%::%{_profile}%::*}
+		delete {strengthStat::%{_uuid}%::%{_profile}%}
+		delete {dexterityStat::%{_uuid}%::%{_profile}%}
+		delete {intelligenceStat::%{_uuid}%::%{_profile}%}
+		delete {wisdomStat::%{_uuid}%::%{_profile}%}
+		delete {staminaStat::%{_uuid}%::%{_profile}%}
+
+function strengthStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Strength" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_strength}
+	add "Strength" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_strength}
+	add "Strength" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_strength}
+	add "Strength" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_strength}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Strength" tag of nbt of {_player}'s tool to {_strength}
+	return sum({_strength},{strengthStat::%{_uuid}%::%{_profile}%})
+	
+function dexterityStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Dexterity" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_dexterity}
+	add "Dexterity" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_dexterity}
+	add "Dexterity" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_dexterity}
+	add "Dexterity" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_dexterity}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Dexterity" tag of nbt of {_player}'s tool to {_dexterity}
+	return sum({_dexterity},{dexterityStat::%{_uuid}%::%{_profile}%})
+	
+function intelligenceStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Intelligence" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_intelligence}
+	add "Intelligence" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_intelligence}
+	add "Intelligence" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_intelligence}
+	add "Intelligence" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_intelligence}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Intelligence" tag of nbt of {_player}'s tool to {_intelligence}
+	return sum({_intelligence},{intelligenceStat::%{_uuid}%::%{_profile}%})
+	
+function wisdomStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Wisdom" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_wisdom}
+	add "Wisdom" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_wisdom}
+	add "Wisdom" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_wisdom}
+	add "Wisdom" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_wisdom}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Wisdom" tag of nbt of {_player}'s tool to {_wisdom}
+	return sum({_wisdom},{wisdomStat::%{_uuid}%::%{_profile}%})
+	
+function staminaStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Stamina" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_stamina}
+	add "Stamina" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_stamina}
+	add "Stamina" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_stamina}
+	add "Stamina" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_stamina}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Stamina" tag of nbt of {_player}'s tool to {_stamina}
+	return sum({_stamina},{staminaStat::%{_uuid}%::%{_profile}%})
+	
+function hpStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "HP" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_health}
+	add "HP" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_health}
+	add "HP" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_health}
+	add "HP" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_health}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "HP" tag of nbt of {_player}'s tool to {_health}
+	return sum({_health}, strengthStat({_player}), ((staminaStat({_player}))*4), 100)
+	
+function HPRegenStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "HPRegen" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_HPRegen}
+	add "HPRegen" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_HPRegen}
+	add "HPRegen" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_HPRegen}
+	add "HPRegen" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_HPRegen}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "HPRegen" tag of nbt of {_player}'s tool to {_HPRegen}
+	return sum({_HPRegen}, ((strengthStat({_player}))*0.05))
+	
+function mpStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Mana" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_mana}
+	add "Mana" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_mana}
+	add "Mana" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_mana}
+	add "Mana" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_mana}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Mana" tag of nbt of {_player}'s tool to {_mana}
+	return sum({_mana}, intelligenceStat({_player}), wisdomStat({_player}), 100)
+	
+function MPRegenStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "MPRegen" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_MPRegen}
+	add "MPRegen" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_MPRegen}
+	add "MPRegen" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_MPRegen}
+	add "MPRegen" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_MPRegen}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "MPRegen" tag of nbt of {_player}'s tool to {_MPRegen}
+	return sum({_MPRegen}, ((wisdomStat({_player}))*0.05))
+	
+function blockStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Block" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_block}
+	add "Block" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_block}
+	add "Block" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_block}
+	add "Block" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_block}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Block" tag of nbt of {_player}'s tool to {_block}
+	return sum({_block} ? 0)
+	
+function criticalStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Critical" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_critical}
+	add "Critical" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_critical}
+	add "Critical" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_critical}
+	add "Critical" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_critical}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Critical" tag of nbt of {_player}'s tool to {_critical}
+	return sum({_critical}, ((intelligenceStat({_player}))*0.03), ((dexterityStat({_player}))*0.05))
+	
+function attackStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Damage" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_attack}
+	add "Damage" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_attack}
+	add "Damage" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_attack}
+	add "Damage" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_attack}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Damage" tag of nbt of {_player}'s tool to {_attack}
+	if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Warrior":
+		return sum({_attack}, (strengthStat({_player})*0.4))
+	else if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Mage":
+		return sum({_attack}, (intelligenceStat({_player})*0.4))
+	else if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Archer":
+		return sum({_attack}, (dexterityStat({_player})*0.4))
+	else if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Shaman":
+		return sum({_attack}, (wisdomStat({_player})*0.4))
+	
+function cooldownSpeedStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "CooldownSpeed" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_cooldownSpeed}
+	add "CooldownSpeed" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_cooldownSpeed}
+	add "CooldownSpeed" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_cooldownSpeed}
+	add "CooldownSpeed" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_cooldownSpeed}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "CooldownSpeed" tag of nbt of {_player}'s tool to {_cooldownSpeed}
+	return sum({_cooldownSpeed} ? 0)
+
+function luckStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Luck" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_luck}
+	add "Luck" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_luck}
+	add "Luck" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_luck}
+	add "Luck" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_luck}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Luck" tag of nbt of {_player}'s tool to {_luck}
+	return sum({_luck} ? 0)
+
+function defenseStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Defense" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_defense}
+	add "Defense" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_defense}
+	add "Defense" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_defense}
+	add "Defense" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_defense}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Defense" tag of nbt of {_player}'s tool to {_defense}
+	set {_x} to sum({_defense},{staminaStat::%{_uuid}%::%{_profile}%})
+	set {_x} to ({_x}-1)/(4*log({_x}))
+	if {_x} < 0:
+		set {_x} to 0
+	return ({_x})
