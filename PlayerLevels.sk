@@ -1,34 +1,47 @@
 function levelIncrease(exp: number, player: player):
+	set {_profile} to (metadata tag "profile" of {_player})
 	set {_uuid} to {_player}'s uuid
-	if {_player}'s level >= 100:
-		set {_player}'s level to 100
+	if {level::%{_uuid}%::%{_profile}%} >= 500:
+		set {_player}'s level to 500
 		set {_player}'s level progress to 0
 		stop
-	set {_levelCeiling} to rounded up (({_player}'s level)^4/100)
-	if ({exp::%{_uuid}%}+{_exp}) >= {_levelCeiling}:
-		set {exp::%{_uuid}%} to (({_exp}+{exp::%{_uuid}%}) - {_levelCeiling})
-		add 1 to {_player}'s level
-		exit 1 section
+	else if {level::%{_uuid}%::%{_profile}%} is not set:
+		set {level::%{_uuid}%::%{_profile}%} to 1
+	set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^4/100)
+	if ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
+		if ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
+			set {exp::%{_uuid}%::%{_profile}%} to (({_exp}+{exp::%{_uuid}%::%{_profile}%}) - {_levelCeiling})
+			add 1 to {level::%{_uuid}%::%{_profile}%}
+			add 3 to {statPoints::%{_uuid}%::%{_profile}%}
+			set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^4/100)
+		set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^4/100)
+		if ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
+			wait 1 tick
+			levelIncrease(0, {_player})
+			send title "&5Level Up!" with subtitle "&5>>>>>>[%{level::%{_uuid}%::%{_profile}%}%&5]<<<<<<" to {_player} for 5 seconds with fadein 1 second and fade out 1 second
 	else:
-		add {_exp} to {exp::%{_uuid}%}
+		add {_exp} to {exp::%{_uuid}%::%{_profile}%}
 	set metadata tag "interruptActionBar" of {_player} to true
 	send action bar "&5+ %{_exp}% EXP" to {_player}
-	set {_player}'s level progress to ({exp::%{_uuid}%}/{_levelCeiling})
+	set {_player}'s level to {level::%{_uuid}%::%{_profile}%}
+	set {_player}'s level progress to ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})
 	
 command /level:
 	trigger:
+		set {_profile} to (metadata tag "profile" of player)
 		set {_player} to player
 		set {_uuid} to uuid of player
 		set {_exp} to 0
-		set {_levelCeiling} to rounded up (({_player}'s level)^4/100)
-		set {_xp} to ({exp::%{_uuid}%}+{_exp})
+		set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^4/100)
+		set {_xp} to ({exp::%{_uuid}%::%{_profile}%}+{_exp})
 		set {_xp2} to difference between {_xp} and {_levelCeiling}
 		set {_xp4} to {_xp}+{_xp2}
 		set {_xp3} to {_xp}/{_xp4}
 		set {_xp3} to {_xp3}*100
-		message "&aLevel: %player's Level%&a Xp: %{_xp}% &aXp Needed: %{_xp2}% &a[%{_xp3}%&a%%]"
+		message "&aLevel: %{level::%{_uuid}%::%{_profile}%}%&a Xp: %{_xp}% &aXp Needed: %{_xp2}% &a[%{_xp3}%&a%%]"
 	
 function levelIncreaseParty(exp: number, player: player):
+	set {_profile} to (metadata tag "profile" of {_player})
 	set {_partyMembers::*} to all players where [(metadata tag "party" of {_player}) = (metadata tag "party" of {_player})]
 	set {_size} to size of {_partyMembers::*}
 	set {_size} to {_size}-1
@@ -44,19 +57,30 @@ function levelIncreaseParty(exp: number, player: player):
 			set {_player}'s level progress to 0
 			stop
 		set {_levelCeiling} to rounded up (({_player}'s level)^4/100)
-		if ({exp::%{_uuid}%}+{_exp}) >= {_levelCeiling}:
-			set {exp::%{_uuid}%} to (({_exp}+{exp::%{_uuid}%}) - {_levelCeiling})
+		if ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
+			set {exp::%{_uuid}%::%{_profile}%} to (({_exp}+{exp::%{_uuid}%::%{_profile}%}) - {_levelCeiling})
 			add 1 to {_player}'s level
+			add 3 to {statPoints::%{_uuid}%::%{_profile}%}
 			exit 1 section
 		else:
-			add {_exp} to {exp::%{_uuid}%}
+			add {_exp} to {exp::%{_uuid}%::%{_profile}%}
 		set metadata tag "interruptActionBar" of {_player} to true
 		send action bar "&5+ %{_exp}% EXP" to {_player}
-		set {_player}'s level progress to ({exp::%{_uuid}%}/{_levelCeiling})
+		set {_player}'s level progress to ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})
     
 command /resetEXP:
-    trigger:
-        delete {exp::%player's uuid%}
-        send "&5EXP has been reset"
-        set player's level to 1
-        set player's level progress to 0
+	trigger:
+		set {_player} to player
+		set {_uuid} to player's uuid
+		set {_profile} to (metadata tag "profile" of player)
+		delete {exp::%player's uuid%::%{_profile}%}
+		set {statPoints::%{_uuid}%::%{_profile}%} to 0
+		set {level::%player's uuid%::%{_profile}%} to 1
+		send "&5EXP has been reset"
+		set player's level to 1
+		set player's level progress to 0
+		delete {strengthStat::%{_uuid}%::%{_profile}%}
+		delete {dexterityStat::%{_uuid}%::%{_profile}%}
+		delete {intelligenceStat::%{_uuid}%::%{_profile}%}
+		delete {wisdomStat::%{_uuid}%::%{_profile}%}
+		delete {staminaStat::%{_uuid}%::%{_profile}%}
