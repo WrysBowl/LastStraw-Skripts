@@ -5,10 +5,14 @@ script options:
 on join:
 	clear player's inventory
 	joinGUI(player)
-	set player's gamemode to survival
-	hotbarItems(player)
+	set player's gamemode to adventure
 	if player has not played before:
 		set player's level to 1
+	wait 1 tick
+	set {_player} to player
+	if {_player} has permission "staff":
+		set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
+
 		
 on quit:
 	set {_player} to player
@@ -17,53 +21,72 @@ on quit:
 	set {_perm} to uncolored {profiles::%{_uuid}%::%{_profile}%}
 	set {_perm} to "nte.%{_perm}%"
 	replace " " in {_perm} with ""
-	if {_player} has permission "staff":
+	if player has permission "staff":
 		set {_perm} to "%{_perm}%.Staff"
 	execute console command "lp user %{_player}% permission unset %{_perm}%"
-	profileInv({_player}, "%{_profile}%","save")
+	profileInv(player, "save")
 	clear metadata tag "profile" of player
 	clear metadata tag "class" of player
-	clear metadata tag "ProfilePickOpen" of player
-	
-		
+	clear metadata tag "staff" of player
+	clear metadata tag "partyShift" of player
+	clear metadata tag "invite" of player
+	clear metadata tag "party" of player
+
 on inventory click:
 	if event-inventory = (metadata tag "profileGUI" of player):
-		profileGUIIndexSlot(player, index of event-slot)
+		if "%click type%" is "left mouse button with shift":
+			if index of event-slot is 19: #Profile One
+				set {_profile} to 1
+			else if index of event-slot is 21: #Profile Two
+				set {_profile} to 2
+			else if index of event-slot is 23: #Profile Three
+				set {_profile} to 3
+			else if index of event-slot is 25: #Profile Four
+				set {_profile} to 4
+			set metadata tag "profile" of player to {_profile}
+			profileInv(player, "delete")
+			clear metadata tag "profile" of player
+			joinGUI(player)
+		else:
+			profileGUIIndexSlot(player, index of event-slot)
 	if event-inventory = (metadata tag "profileGUI2" of player):
 		profileGUI2IndexSlot(player, index of event-slot)
 	if event-inventory = (metadata tag "profileGUI3" of player):
 		profileGUI3IndexSlot(player, index of event-slot)
 
 on inventory close:
-	if metadata tag "ProfilePickOpen" of player is true:
-		clear metadata tag "ProfilePickOpen" of player
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	if metadata tag "profile" of player is not set:
+		if event-inventory = (metadata tag "profileGUI" of player):
+			wait 1 tick
+			joinGUI(player)
+	else if event-inventory = (metadata tag "profileGUI2" of player):
 		wait 1 tick
+		if player's current inventory is not ((metadata tag "profileGUI2" of player) or (metadata tag "profileGUI3" of player)):
+			joinGUI(player)
+			clear metadata tag "profile" of player
+	else if event-inventory = (metadata tag "profileGUI3" of player):
+		wait 1 tick
+		{profiles::%{_uuid}%::%{_profile}%} is not set
 		joinGUI(player)
+		clear metadata tag "profile" of player
 
+			
 function joinGUI(player: player):
 	set {_uuid} to {_player}'s uuid
-	set metadata tag "ProfilePickOpen" of {_player} to true
 	set metadata tag "profileGUI" of {_player} to chest inventory with 5 rows named "Pick a Profile"
 	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35 and (integers between 36 and 44)) of metadata tag "profileGUI" of {_player} to green stained glass pane named "&a"
-	if metadata tag "clickedSlot" of {_player} is not 8:
-		set slot 8 of metadata tag "profileGUI" of {_player} to redstone dust named "&cDelete Profile" with lore "&71. Right click on dust" and "&72. Left click on profile"
-	else:
-		set slot 8 of metadata tag "profileGUI" of {_player} to redstone dust named "&cClick a profile to delete" with lore ""
-	set slot 19 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::1} ? ""&cAvailable Profile""% &71"
-	set slot 21 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::2} ? ""&cAvailable Profile""% &72"
-	set slot 23 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::3} ? ""&cAvailable Profile""% &73"
-	set slot 25 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::4} ? ""&cAvailable Profile""% &74"
+	set slot 19 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::1} ? ""&cAvailable Profile""% &71" with lore "&aBalance: %{balance::%{_uuid}%::1} ? 0%", "&dLevel: %{level::%{_uuid}%::1} ? 0%&d %({exp::%{_uuid}%::1}/({level::%{_uuid}%::1}^4/100))*100%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
+	set slot 21 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::2} ? ""&cAvailable Profile""% &72" with lore "&aBalance: %{balance::%{_uuid}%::2} ? 0%","&dLevel: %{level::%{_uuid}%::2} ? 0%&d %({exp::%{_uuid}%::2}/({level::%{_uuid}%::2}^4/100))*100%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
+	set slot 23 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::3} ? ""&cAvailable Profile""% &73" with lore "&aBalance: %{balance::%{_uuid}%::3} ? 0%", "&dLevel: %{level::%{_uuid}%::3} ? 0%&d %({exp::%{_uuid}%::3}/({level::%{_uuid}%::3}^4/100))*100%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
+	set slot 25 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::4} ? ""&cAvailable Profile""% &74" with lore "&aBalance: %{balance::%{_uuid}%::4} ? 0%", "&dLevel: %{level::%{_uuid}%::4} ? 0%&d %({exp::%{_uuid}%::4}/({level::%{_uuid}%::4}^4/100))*100%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
 	open (metadata tag "profileGUI" of {_player}) to {_player}
 	set metadata tag "inventoryOpened" of {_player} to true
 
 function profileGUIIndexSlot(player: player, slot: object):
 	set {_uuid} to {_player}'s uuid
-	if {_slot} is 8:
-		set metadata tag "clickedSlot" of {_player} to {_slot}
-		clear metadata tag "ProfilePickOpen" of {_player}
-		close {_player}'s inventory
-		joinGUI({_player})
-		stop
 	if {_slot} is 19: #Profile One
 		set {_profile} to 1
 	else if {_slot} is 21: #Profile Two
@@ -73,36 +96,29 @@ function profileGUIIndexSlot(player: player, slot: object):
 	else if {_slot} is 25: #Profile Four
 		set {_profile} to 4
 	if {_profile} is 1, 2, 3 or 4:
-		if metadata tag "clickedSlot" of {_player} is not 8:
-			if {profiles::%{_uuid}%::%{_profile}%} is not set:
-				clear metadata tag "ProfilePickOpen" of {_player}
-				close {_player}'s inventory
-				joinGUI2({_player}, {_profile})
-			else:
-				set metadata tag "profile" of {_player} to {_profile}
-				clear metadata tag "ProfilePickOpen" of {_player}
-				close {_player}'s inventory
-				send title "&aSelected %{profiles::%{_uuid}%::%{_profile}%}%!" to {_player}
-				set {_perm} to uncolored {profiles::%{_uuid}%::%{_profile}%}
-				set {_perm} to "nte.%{_perm}%"
-				replace " " in {_perm} with ""
-				if {_player} has permission "staff":
-					set {_perm} to "%{_perm}%.Staff"
-				execute console command "lp user %{_player}% permission set %{_perm}% true"
-				profileInv({_player}, "%{_profile}%","load")
-				armor({_player}, {_profile})
-				wait 1 tick
-				execute console command "updateranks %{_player}%"
+		if {profiles::%{_uuid}%::%{_profile}%} is not set:
+			joinGUI2({_player}, {_profile})
 		else:
-			clear metadata tag "clickedSlot" of {_player}
-			delete {profiles::%{_uuid}%::%{_profile}%}
-			clear metadata tag "ProfilePickOpen" of {_player}
+			set metadata tag "profile" of {_player} to {_profile}
 			close {_player}'s inventory
-			joinGUI({_player})
+			send title "&aSelected %{profiles::%{_uuid}%::%{_profile}%}%!" to {_player} for 5 seconds with fadein 1 second and fade out 1 second
+			set {_perm} to uncolored {profiles::%{_uuid}%::%{_profile}%}
+			set {_perm} to "nte.%{_perm}%"
+			replace " " in {_perm} with ""
+			if {_player} has permission "staff":
+				set {_perm} to "%{_perm}%.Staff"
+			execute console command "lp user %{_player}% permission set %{_perm}% true"
+			profileInv({_player}, "load")
+			wait 1 tick
+			armor({_player}, {_profile})
+			set metadata tag "health" of {_player} to (hpStat({_player}))
+		if {_player} has permission "staff":
+			set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
+
+
 			
 function joinGUI2(player: player, profile: integer):
 	set {_uuid} to {_player}'s uuid
-	set metadata tag "ProfilePickOpen" of {_player} to true
 	set metadata tag "profile" of {_player} to {_profile}
 	set metadata tag "profileGUI2" of {_player} to chest inventory with 5 rows named "Pick a Class"
 	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35 and (integers between 36 and 44)) of metadata tag "profileGUI2" of {_player} to lime stained glass pane named "&a"
@@ -118,23 +134,18 @@ function profileGUI2IndexSlot(player: player, slot: object):
 	set {_uuid} to {_player}'s uuid
 	if {_slot} is 19: #Warrior Class
 		clear metadata tag "ProfilePickOpen" of {_player}
-		close {_player}'s inventory
 		joinGUI3({_player}, "Warrior")
 	else if {_slot} is 21: #Archer Class
 		clear metadata tag "ProfilePickOpen" of {_player}
-		close {_player}'s inventory
 		joinGUI3({_player}, "Archer")
 	else if {_slot} is 23: #Mage Class
 		clear metadata tag "ProfilePickOpen" of {_player}
-		close {_player}'s inventory
 		joinGUI3({_player}, "Mage")
 	else if {_slot} is 25: #Shaman Class
 		clear metadata tag "ProfilePickOpen" of {_player}
-		close {_player}'s inventory
 		joinGUI3({_player}, "Shaman")
 	else if {_slot} is 31:
 		clear metadata tag "ProfilePickOpen" of {_player}
-		close {_player}'s inventory
 		joinGUI({_player})
 		
 		
@@ -144,8 +155,8 @@ function joinGUI3(player: player, class: string):
 	set metadata tag "class" of {_player} to {_class}
 	set metadata tag "profileGUI3" of {_player} to chest inventory with 5 rows named "Pick a Team"
 	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35 and (integers between 36 and 44)) of metadata tag "profileGUI3" of {_player} to lime stained glass pane named "&a"
-	set slot 21 of metadata tag "profileGUI3" of {_player} to blue wool named "&9Blue Team"
-	set slot 23 of metadata tag "profileGUI3" of {_player} to red wool named "&cRed Team"
+	set slot 21 of metadata tag "profileGUI3" of {_player} to blue wool named "&9Knights"
+	set slot 23 of metadata tag "profileGUI3" of {_player} to red wool named "&cCrusaders"
 	set slot 31 of metadata tag "profileGUI3" of {_player} to barrier named "&cBack"
 	open (metadata tag "profileGUI3" of {_player}) to {_player}
 	set metadata tag "inventoryOpened" of {_player} to true
@@ -159,21 +170,19 @@ function profileGUI3IndexSlot(player: player, slot: object):
 	else if {_slot} is 23: #Red Team
 		set {profiles::%{_uuid}%::%{_profile}%} to "&cRed %{_class}%"
 	else if {_slot} is 31:
-		clear metadata tag "ProfilePickOpen" of {_player}
-		close {_player}'s inventory
 		joinGUI2({_player}, {_profile})
 	if {_slot} is 21 or 23:
-		clear metadata tag "ProfilePickOpen" of {_player}
-		close {_player}'s inventory
-		send title "&aSelected %{profiles::%{_uuid}%::%{_profile}%}%!" to {_player}
+		send title "&aSelected %{profiles::%{_uuid}%::%{_profile}%}%!" to {_player} for 5 seconds with fadein 1 second and fade out 1 second
 		set {_perm} to uncolored {profiles::%{_uuid}%::%{_profile}%}
 		set {_perm} to "nte.%{_perm}%"
 		replace " " in {_perm} with ""
 		if {_player} has permission "staff":
 			set {_perm} to "%{_perm}%.Staff"
 		execute console command "lp user %{_player}% permission set %{_perm}% true"
-		profileInv({_player}, "%{_profile}%","load")
-		profileInv({_player}, "%{_profile}%","delete")
 		armor({_player}, {_profile})
+		hotbarItems({_player})
+		close {_player}'s inventory
+		levelIncrease(0, {_player})
 		wait 1 tick
-		execute console command "updateranks %{_player}%"
+		if {_player} has permission "staff":
+			set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
