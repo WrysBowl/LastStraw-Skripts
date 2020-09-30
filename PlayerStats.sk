@@ -1,0 +1,163 @@
+
+on inventory click:
+	if event-inventory = (metadata tag "StatsGUI" of player):
+		StatsGUIIndexSlot(player, index of event-slot, click type)
+
+
+
+
+on player tool change:
+	if player's tool is not a helmet, chestplate, leggings or boots:
+		wait 1 tick
+		set metadata tag "mpRegen" of player to MPRegenStat(player)
+		set metadata tag "hpRegen" of player to HPRegenStat(player)
+		set metadata tag "mpMax" of player to mpStat(player)
+		set metadata tag "hpMax" of player to hpStat(player)
+
+command /Stats:
+	trigger:
+		StatsGUI(player)
+
+command /Xp [<number>]:
+	trigger:
+		levelIncrease(arg-1, player)
+
+
+
+command /Points:
+	trigger:
+		set {_player} to player
+		set {_profile} to (metadata tag "profile" of {_player})
+		set {_uuid} to {_player}'s uuid
+		message "%{statPoints::%{_uuid}%::%{_profile}%} ? 0%"
+		
+
+function StatsGUI(player: player):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set metadata tag "StatsGUI" of {_player} to chest inventory with 6 rows named "&8Stat's Menu"
+	set slot (integers between 0 and 53) of metadata tag "StatsGUI" of {_player} to light gray stained glass pane named "&a"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "StatsGUI" of {_player} to yellow stained glass pane named "&a"
+	set slot 20  of metadata tag "StatsGUI" of {_player} to Iron Sword named "&cStrength &4(&c%{strengthStat::%{_uuid}%::%{_profile}%} ? 0%&4)" with lore "&4+&c 1 Hp" and "&4+&c 0.05 HP/5 Sec" and " " and "&4Warrior Bonus:" and "&4+&c 0.4 Damage" with nbt "{HideFlags:63}"
+	set slot 22  of metadata tag "StatsGUI" of {_player} to enchanted book named "&aDexterity &2(&a%{dexterityStat::%{_uuid}%::%{_profile}%} ? 0%&2)" with lore "&2+&a 0.05 Critical" and " " and "&2Archer Bonus:" and "&2+&a 0.4 Damage" with nbt "{HideFlags:63}"
+	set slot 24  of metadata tag "StatsGUI" of {_player} to experience bottle named "&bIntelligence &3(&b%{intelligenceStat::%{_uuid}%::%{_profile}%} ? 0%&3)" with lore "&3+ &b1 MP" and "&3+&b 0.03 Critical" and " " and "&3Mage Bonus:" and "&3+&b 0.4 Damage" with nbt "{HideFlags:63}"
+	set slot 30  of metadata tag "StatsGUI" of {_player} to totem of undying named "&dWisdom &5(&d%{wisdomStat::%{_uuid}%::%{_profile}%} ? 0%&5)" with lore "&5+ &d1 MP" and "&5+&d 0.05 MP/5 Sec" and " " and "&5Shaman Bonus:" and "&5+&d 0.4 Damage" with nbt "{HideFlags:63}"
+	set slot 32  of metadata tag "StatsGUI" of {_player} to Golden Apple named "&eStamina &6(&e%{staminaStat::%{_uuid}%::%{_profile}%} ? 0%&6)" with lore "&6+&e 4 Hp" and "&6+&e 1 Defense" with nbt "{HideFlags:63}"
+	set slot 31  of metadata tag "StatsGUI" of {_player} to {_player}'s head named "&bStats &3(&b%{statPoints::%{_uuid}%::%{_profile}%} ? 0%&3)" with lore "&2•&a Defense: %defenseStat({_player}) ? ""NaN""%" and "&2•&a Luck: %luckStat({_player}) ? ""NaN""%" and "&2•&a Cooldown Speed: %cooldownSpeedStat({_player}) ? ""NaN""%" and "&2•&a Attack: %attackStat({_player}) ? ""NaN""%" and "&2•&a Critical: %criticalStat({_player}) ? ""NaN""%" and "&2•&a Block: %blockStat({_player}) ? ""NaN""%" and "&2•&a MP Regen: %MPRegenStat({_player}) ? ""NaN""%" and "&2•&a Hp: %hpStat({_player}) ? ""NaN""%"
+	set {_price} to ({strengthStat::%{_uuid}%::%{_profile}%}+{dexterityStat::%{_uuid}%::%{_profile}%}+{intelligenceStat::%{_uuid}%::%{_profile}%}+{wisdomStat::%{_uuid}%::%{_profile}%}+{staminaStat::%{_uuid}%::%{_profile}%})*150
+	set slot 8  of metadata tag "StatsGUI" of {_player} to Barrier named "&cReset All Stats!" with lore "&eCosts: &6%{_price}%"
+	open (metadata tag "StatsGUI" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+#{strengthStat::%{_uuid}%::%{_profile}%}
+#{dexterityStat::%{_uuid}%::%{_profile}%}
+#{intelligenceStat::%{_uuid}%::%{_profile}%}
+#{wisdomStat::%{_uuid}%::%{_profile}%}
+#{staminaStat::%{_uuid}%::%{_profile}%}
+#-------------------------------------
+#defenseStat({player})
+#luckStat({player})
+#cooldownSpeedStat({player})
+#attackStat({player})
+#criticalStat({player})
+#blockStat({player})
+#MPRegenStat({player})
+#hpStat({player})
+
+
+function StatsGUIIndexSlot(player: player, slot: object, clicktype: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_Total} to ({strengthStat::%{_uuid}%::%{_profile}%}+{dexterityStat::%{_uuid}%::%{_profile}%}+{intelligenceStat::%{_uuid}%::%{_profile}%}+{wisdomStat::%{_uuid}%::%{_profile}%}+{staminaStat::%{_uuid}%::%{_profile}%})
+	set {_clicktype} to "%{_clicktype}%"
+	if {statPoints::%{_uuid}%::%{_profile}%} is not set:
+		set {statPoints::%{_uuid}%::%{_profile}%} to 0
+	set {_points} to {statPoints::%{_uuid}%::%{_profile}%}
+	if {_slot} is 8:
+		if {Balance::%{_uuid}%::%{_profile}%} >= {_Total}*150:
+			set {Balance::%{_uuid}%::%{_profile}%} to {Balance::%{_uuid}%::%{_profile}%}-({_Total}*150)
+			set {statPoints::%{_uuid}%::%{_profile}%} to {_Total}+{statPoints::%{_uuid}%::%{_profile}%}
+			delete {strengthStat::%{_uuid}%::%{_profile}%}
+			delete {dexterityStat::%{_uuid}%::%{_profile}%}
+			delete {intelligenceStat::%{_uuid}%::%{_profile}%}
+			delete {wisdomStat::%{_uuid}%::%{_profile}%}
+			delete {staminaStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+		else:
+			message "&cYou need %{_Total}*150%&c Coins!" to {_player}
+			stop
+	if {_slot} is 20:
+		if {_clicktype} contains "right":
+			if {_points} < 10:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 10 to {strengthStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+		else:
+			if {_points} < 1:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 1 to {strengthStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+	if {_slot} is 22:
+		if {_clicktype} contains "right":
+			if {_points} < 10:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 10 to {dexterityStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+		else:
+			if {_points} < 1:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 1 to {dexterityStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+	if {_slot} is 24:
+		if {_clicktype} contains "right":
+			if {_points} < 10:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 10 to {intelligenceStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+		else:
+			if {_points} < 1:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 1 to {intelligenceStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+	if {_slot} is 30:
+		if {_clicktype} contains "right":
+			if {_points} < 10:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 10 to {wisdomStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+		else:
+			if {_points} < 1:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 1 to {wisdomStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+	if {_slot} is 32:
+		if {_clicktype} contains "right":
+			if {_points} < 10:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 10 to {staminaStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
+		else:
+			if {_points} < 1:
+				message "&cYou have No Stat Points!" to {_player}
+				stop
+			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
+			add 1 to {staminaStat::%{_uuid}%::%{_profile}%}
+			StatsGUI({_player})
