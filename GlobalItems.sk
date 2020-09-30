@@ -38,7 +38,7 @@ function itemGenerator(item: item, name: string, basePercent: number, baseMultip
 			add "Defense" to {_baseStats::*}
 		else if {_item} is a sword, bow or stick:
 			add "Damage" to {_baseStats::*}
-			add "AttackSpeed" to {_baseStats::*}
+			add "CooldownSpeed" to {_baseStats::*}
 		loop {_baseStats::*}: #Checks for the main four stats and adds them to the item accordingly
 			add 1 to {_loreLine}
 			set {_baseMultiplier} to rounded up ({_baseMultiplier}*({_randomPercentage}/100))
@@ -51,7 +51,7 @@ function itemGenerator(item: item, name: string, basePercent: number, baseMultip
 			else if loop-value is "Damage":
 				set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%%1*{_baseMultiplier}% %loop-value%"
 				add "{%loop-value%:%1*{_baseMultiplier}%}" to {_itemDrop}'s nbt
-			else if loop-value is "AttackSpeed":
+			else if loop-value is "CooldownSpeed":
 				set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%%10*{_baseMultiplier}%%% %loop-value%"
 				add "{%loop-value%:%10*{_baseMultiplier}%}" to {_itemDrop}'s nbt
 		loop {_statRolls} times:
@@ -71,10 +71,10 @@ function itemGenerator(item: item, name: string, basePercent: number, baseMultip
 						add "{Dexterity:%{_randBonusValue}%}" to {_itemDrop}'s nbt
 					else if {_classReq} is "Mage":
 						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}% Intelligence"
-						add "{Dexterity:%{_randBonusValue}%}" to {_itemDrop}'s nbt
+						add "{Intelligence:%{_randBonusValue}%}" to {_itemDrop}'s nbt
 					else if {_classReq} is "Shaman":
 						set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}% Wisdom"
-						add "{Dexterity:%{_randBonusValue}%}" to {_itemDrop}'s nbt
+						add "{Wisdom:%{_randBonusValue}%}" to {_itemDrop}'s nbt
 				else if loop-value is 2:
 					set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%+ &8%{_randBonusValue}% Stamina"
 					add "{Stamina:%{_randBonusValue}%}" to {_itemDrop}'s nbt
