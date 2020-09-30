@@ -22,9 +22,7 @@ on chat:
 	if metadata tag "chat" of player is true:
 		send formatted "&9Party > &b%player%: &f%message%" to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
 		stop
-	if {StaffChat::%player's uuid%} is true:
-		loop all players:
-			if loop-player has permission "staff":
-				send formatted "&9Staff > &b%player%: &f%message%" to loop-player
+	if metadata tag "staff" of player is true:
+		send formatted "&9Staff > &b%player%: &f%message%" to all players where [input has permission "staff"]
 		stop
 	send formatted "%{_message}%" to all players
