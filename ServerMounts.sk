@@ -1,0 +1,383 @@
+command /slime:
+	trigger:
+		summon squid
+		set {_Squid} to last spawned mob
+		make player ride {_Squid}
+		while vehicle of player is {_Squid}:
+			wait 1 ticks
+			add "{Rotation:[%player's yaw%f, 0.0f]}" to {_Squid}'s nbt
+			add "{Invulnerable:1b}" to {_Squid}'s nbt
+			set {_loc} to location in front of {_Squid}
+			set {_locblock} to block at {_loc}
+			if {_locblock} is air:
+				push {_Squid} (direction from {_Squid} to {_loc}) at speed 1
+			else:
+				dismount any passengers from {_Squid} 
+				kill {_Squid}
+				create a fake explosion at {_loc}
+				set {_hit} to true
+		kill {_Squid}
+		if {_hit} is true:
+			set {_hit} to false
+			set {_spawnid} to {_loc}
+			set {_spawnid} to "%{_spawnid}%"
+			message "%{_spawnid}%"
+			drawRings particle "explosionhuge", center location of {_loc}, id "%{_spawnid}%", rainbowMode true, randomRotation true, animated true, radius 1, ringCount 1, ringDensity 3, visibleRange 32, pulseDelay 1
+			loop all players in radius 4 of {_loc}:
+				loop-player is not player
+				set {_dmg} to a random integer between 15 and 25
+				damage loop-player by {_dmg}
+			wait 5 tick
+			stopEffect id "%{_spawnid}%"
+
+
+
+on left click:
+	location of target block is (location -21.5, 17.5, 203.5 in world "spawn"):
+		cancel event
+		MountGui(player)
+
+on inventory click:
+	if event-inventory = (metadata tag "MountGUI" of player):
+		MountGUIIndexSlot(player, index of event-slot, click type)
+
+
+
+
+function MountGui(player: player):
+	add enderman spawn egg named "&6[&eEndermen&6]" to {_CMounts::*}
+	add Sheep spawn egg named "&6[&eSheep&6]" to {_CMounts::*}
+	add Zombie spawn egg named "&6[&eZombie&6]" to {_CMounts::*}
+	add Cow spawn egg named "&6[&eCow&6]" to {_CMounts::*}
+	add Drowned spawn egg named "&6[&eDrowned&6]" to {_CMounts::*}
+	add Llama spawn egg named "&6[&eLlama&6]" to {_CMounts::*}
+	add Polar Bear spawn egg named "&6[&ePolar Bear&6]" to {_CMounts::*}
+	add Panda spawn egg named "&6[&ePanda&6]" to {_CMounts::*}
+	add Witch spawn egg named "&6[&eWitch&6]" to {_CMounts::*}
+#
+	add bee spawn egg named "&6[&eBee&6]" to {_RMounts::*}
+	add Blaze spawn egg named "&6[&eBlaze&6]" to {_RMounts::*}
+	add Horse spawn egg named "&6[&eHorse&6]" to {_RMounts::*}
+	add Skeleton Horse spawn egg named "&6[&eSkeleton Horse&6]" to {_RMounts::*}
+	add Mooshroom spawn egg named "&6[&eMooshroom&6]" to {_RMounts::*}
+#
+	add ghast spawn egg named "&6[&eIron Golem&6]" to {_XRMounts::*}
+	add sheep spawn egg named "&6[&eRainbow Sheep&6]" to {_XRMounts::*}
+	add Zoglin spawn egg named "&6[&eZoglin&6]" to {_XRMounts::*}
+#
+	add sheep spawn egg named "&6[&eSheep Train&6]" to {_XXRMounts::*}
+#  common: 95% rare: 3.5% Epic: 1.35% Legandary: .15%
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set metadata tag "MountGUI" of {_player} to chest inventory with 2 rows named "&8Mount List"
+	set {_slot} to -1
+	loop {_CMounts::*}:
+		add 1 to {_slot}
+		set {_item} to loop-value
+		set name of {_item} to "&7[Common] %{_item}'s name%"
+		add "&710.55%%" to lore of {_item}
+		set slot {_slot} of metadata tag "MountGUI" of {_player} to {_item}
+	loop {_RMounts::*}:
+		add 1 to {_slot}
+		set {_item} to loop-value
+		set name of {_item} to "&9[Rare] %{_item}'s name%"
+		add "&7.7%%" to lore of {_item}
+		set slot {_slot} of metadata tag "MountGUI" of {_player} to {_item}
+	loop {_XRMounts::*}:
+		add 1 to {_slot}
+		set {_item} to loop-value
+		set name of {_item} to "&5[Epic] %{_item}'s name%"
+		add "&7.45%%" to lore of {_item}
+		set slot {_slot} of metadata tag "MountGUI" of {_player} to {_item}
+	loop {_XXRMounts::*}:
+		add 1 to {_slot}
+		set {_item} to loop-value
+		set name of {_item} to "&6[Legandary] %{_item}'s name%"
+		add "&7.15%%" to lore of {_item}
+		set slot {_slot} of metadata tag "MountGUI" of {_player} to {_item}
+	open (metadata tag "MountGUI" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+function MountGUIIndexSlot(player: player, slot: object, clicktype: object):
+	set {_uuid} to {_player}'s uuid
+
+
+
+on right click holding a player head:
+	tool is player head named "&5Mount Loot Crate"
+	cancel event
+	if location of target block is not (location -21.5, 17.5, 203.5 in world "spawn") or (location -20.5, 16.5, 203.5 in world "spawn") or (location -21.5, 16.5, 202.5 in world "spawn") or (location -22.5, 16.5, 203.5 in world "spawn") or (location -21.5, 16.5, 204.5 in world "spawn"):
+		message "&cPlease Use This At The Mount Crate!"
+		stop
+	else:
+		if {PlayerAtBox} is true:
+			message "&cPlease wait, somone is using the crate!" to player
+			stop
+		set {_uuid} to player's uuid
+		set {_profile} to metadata tag "profile" of player
+		remove 1 of tool from tool
+		set {PlayerAtBox} to true
+		set metadata tag "NoMove" of player to true
+		set metadata tag "AtBox" of player to true
+		set {_Common} to location -19.5, 16, 203.5 in world "spawn"
+		set {_chest} to location -21.5, 17, 203.5 in world "spawn"
+		set yaw of {_Common} to 90
+		set pitch of {_Common} to 0
+		set metadata tag "NoMove" of player to true
+		set {_temp} to block below {_chest}
+		set {_temp2} to block below {_temp}
+		spawn armor stand at block below {_temp2}
+		set {_fallingChest} to last spawned entity
+		add "{NoGravity:1b}" to nbt of {_fallingChest}
+		add "{DropItem:0b}" to nbt of {_fallingChest}
+		add "{Invisible:1b}" to nbt of {_fallingChest}
+		add "{DisabledSlots:2039583}" to nbt of {_fallingChest}
+		add "{Rotation:[-90f, 1f]}" to NBT of {_fallingChest}
+		set {_fallingChest}'s name to "&5Mount Loot Crate"
+		set {x.cord} to {_fallingChest}'s x-coordinate
+		set {y.cord} to {_fallingChest}'s y-coordinate
+		set {z.cord} to {_fallingChest}'s z-coordinate
+		set {_fallingChestup} to location({x.cord}, ({y.cord}+.35), {z.cord}, world "spawn")
+		teleport {_fallingChest} to {_fallingChestup}
+		add "{ArmorItems:[{},{},{},{id:""minecraft:player_head"",Count:1b,tag:{SkullOwner:{Id:[I;1049324767,745688397,-1636073904,-1503116338],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiY2E0YjY5ZWFmOGRjYjdhYzM3MjgyMjhkZThhNjQ0NDA3ODcwMTMzNDJkZGFhYmMxYjAwZWViOGVlYzFlMiJ9fX0=""}]}}}}]}"  to NBT of {_fallingChest}
+		add "{CustomNameVisible:1b}" to NBT of {_fallingChest}
+		loop 90 times:
+			wait 1 tick
+			play sound "block.note_block.harp" with volume .5 and pitch loop-value/50+.2 at player for all players
+			add 7 to {_yaw}
+			set {_pitch} to 0
+			push {_fallingChest} up at speed 1
+			set {x.cord} to {_fallingChest}'s x-coordinate
+			set {y.cord} to {_fallingChest}'s y-coordinate
+			set {z.cord} to {_fallingChest}'s z-coordinate
+			add .012 to {y.cord}
+			set {_fallingChestup} to location({x.cord}, ({y.cord}), {z.cord}, world "spawn")
+			teleport {_fallingChest} to {_fallingChestup}
+			set {_fallingChestupz} to location({x.cord}, ({y.cord}+1.5), {z.cord}, world "spawn")
+			set {_fallingChestupzz} to location({x.cord}, ({y.cord}+.9), {z.cord}, world "spawn")
+			drawDot count 1, particle "redstone", RGB 128, 0, 128, center location of {_fallingChestupz}, visibleRange 32, pulseDelay 0, keepFor 10 ticks
+			drawDot count 1, particle "fireworkspark", center location of {_fallingChestupz}, visibleRange 32, pulseDelay 0, keepFor 5 ticks
+			add "{Rotation:[%{_yaw}%f, %{_pitch}%f]}" to NBT of {_fallingChest}
+		drawRings particle "enchantmenttable", center location of {_fallingChestupzz}, id "%player%3", rainbowMode true, randomRotation true, animated true, radius 1, ringCount 4, ringDensity 10, visibleRange 32, pulseDelay 2
+		drawRings particle "portal", center location of {_fallingChestupzz}, id "%player%4", rainbowMode true, randomRotation true, animated true, radius 1, ringCount 1, ringDensity 20, visibleRange 32, pulseDelay 1
+		loop 30 times:
+			wait 1 tick
+			play sound "block.beacon.activate" with volume 2 and pitch loop-value/20+.8 at player for  all players
+		stopEffect id "%player%3"
+		stopEffect id "%player%4"
+		set {_loc} to location of {_fallingChest}
+		wait 10 ticks
+		play sound "entity.generic.explode" with volume 2 and pitch 1.3 at player for  all players
+		drawDot count 1, particle "explosionlarge", center location of {_fallingChestupz}, visibleRange 32, pulseDelay 0, keepFor 10 ticks
+		message "&6You Won:"
+		add enderman spawn egg named "&6[&eEndermen&6]" to {_CMounts::*}
+		add Sheep spawn egg named "&6[&eSheep&6]" to {_CMounts::*}
+		add Zombie spawn egg named "&6[&eZombie&6]" to {_CMounts::*}
+		add Cow spawn egg named "&6[&eCow&6]" to {_CMounts::*}
+		add Drowned spawn egg named "&6[&eDrowned&6]" to {_CMounts::*}
+		add Llama spawn egg named "&6[&eLlama&6]" to {_CMounts::*}
+		add Polar Bear spawn egg named "&6[&ePolar Bear&6]" to {_CMounts::*}
+		add Panda spawn egg named "&6[&ePanda&6]" to {_CMounts::*}
+		add Witch spawn egg named "&6[&eWitch&6]" to {_CMounts::*}
+#
+		add bee spawn egg named "&6[&eBee&6]" to {_RMounts::*}
+		add Blaze spawn egg named "&6[&eBlaze&6]" to {_RMounts::*}
+		add Horse spawn egg named "&6[&eHorse&6]" to {_RMounts::*}
+		add Skeleton Horse spawn egg named "&6[&eSkeleton Horse&6]" to {_RMounts::*}
+		add Mooshroom spawn egg named "&6[&eMooshroom&6]" to {_RMounts::*}
+#
+		add ghast spawn egg named "&6[&eIron Golem&6]" to {_XRMounts::*}
+		add sheep spawn egg named "&6[&eRainbow Sheep&6]" to {_XRMounts::*}
+		add Zoglin spawn egg named "&6[&eZoglin&6]" to {_XRMounts::*}
+#
+		add sheep spawn egg named "&6[&eSheep Train&6]" to {_XXRMounts::*}
+		chance of 5%:
+			chance of 30%:
+				chance of 10%:
+					set {_mount} to a random element out of {_XXRMounts::*}
+					set {_rare} to "&6[Legandary]"
+				else:
+					set {_mount} to a random element out of {_XRMounts::*}
+					set {_rare} to "&5[Epic]"
+			else:
+				set {_mount} to a random element out of {_RMounts::*}
+				set {_rare} to "&9[Rare]"
+		else:
+			set {_mount} to a random element out of {_CMounts::*}
+			set {_rare} to "&7[Common]"
+		message "&e+ %{_rare}% &6%name of {_mount}%"
+		give player {_mount}
+		set {_raindome} to random integer between 1 and 3
+		loop {_raindome} times:
+			set {_raindome3} to random integer between 1 and 5000
+			message "&e+ &6%{_raindome3}%&6 Coins"
+			add {_raindome3} to {_totalCoinsToGive}
+			set {Balance::%{_uuid}%::%{_profile}%} to {Balance::%{_uuid}%::%{_profile}%}+{_raindome3}
+		set {_fallingChestupzz} to location(({x.cord}+.5), ({y.cord}-.3), {z.cord}, world "spawn")
+		teleport {_fallingChest} to {_fallingChestupzz}
+		add "{Rotation:[%{_yaw}%f, %{_pitch}%f]}" to NBT of {_fallingChest}
+		set helmet slot of {_fallingChest} to {_mount}
+		set name of {_fallingChest} to "%{_rare}% %name of {_mount}%"
+		wait 50 ticks
+		set helmet slot of {_fallingChest} to sunflower
+		set name of {_fallingChest} to "&e%{_totalCoinsToGive}%&e Coins"
+		wait 50 ticks
+		kill {_fallingChest}
+		set {PlayerAtBox} to false
+		
+
+
+on sneak toggle:
+	set {_Move} to metadata tag "NoMove" of player
+	set {_Move2} to metadata tag "AtBox" of player
+	if {_Move} is true:
+		set metadata tag "NoMove" of player to false
+		set metadata tag "AtBox" of player to false
+		stopEffect id "%player%3"
+		stopEffect id "%player%4"
+
+on right click holding spawn egg:
+	set {_name} to uncolored name of player's tool
+	{_name} is set
+	cancel event
+	set {_name} to uncolored name of player's tool
+	set {_name::*} to {_name} split at "["
+	set {_name} to {_name::2}
+	set {_name::*} to {_name} split at "]"
+	set {_name} to {_name::1}
+	mountmob(player,{_name})
+
+On Target:
+	if event-entity's name is "Mount":
+		cancel event
+
+command /mounts [<text>]:
+	trigger:
+		set {_mount} to player's vehicle
+		if {_mount} is set:
+			message "&cYou can not use this well on another mount!"
+			stop
+		mountmob(player,arg-1)
+
+on right click on sheep:
+	if name of event-entity is "Sheep Train":
+		set {_mount} to player's vehicle
+		if {_mount} is set:
+			message "&cYou can not use this well on another mount!" to player
+			stop
+		make player ride event-entity
+
+
+function mountmob(player: player,mount: text):
+	{_player} is not sneaking
+	set {_mana} to metadata tag "mana" of {_player}
+	set {_mountplayer} to {_player}'s vehicle
+	if {_mountplayer} is set:
+		message "&cYou can not use this well on another mount!" to {_player}
+		stop
+	if {_mana} < 50:
+		message "&bYou Need 50 ♤ to spawn a mount!" to {_player}
+		stop
+	set metadata tag "mana" of {_player} to (metadata tag "mana" of {_player})-50
+	message "&6Spawned %{_mount}%&6!" to {_player}
+	if {_mount} is "Rainbow Sheep":
+		set {_rainbow} to true
+		set {_mount} to "Sheep"
+	if {_mount} is "Sheep Train":
+		set {_train} to true
+		set {_mount} to "Sheep"
+	if {_mount} is "Rock":
+		set {_rock} to true
+		set {_mount} to "silverfish"
+	set {_mount} to {_mount} parsed as entitytype
+	summon {_mount} at {_player}
+	set {_entity} to last spawned mob
+	add "{Invulnerable:1b}" to nbt of last spawned mob
+	add "{Attributes:[{Name:generic.attack_damage,Base:0}]}" to nbt of last spawned mob
+	add "{Tame:1b}" to nbt of last spawned mob
+	add "{IsBaby:0b}" to nbt of last spawned mob
+	add "{SaddleItem:{id:""minecraft:saddle"",Count:1b},ArmorItem:{}}" to nbt of last spawned mob
+	force {_player} to leave from any vehicles
+	if {_rock} is true:
+		add "{Silent:1b}" to nbt of {_entity}
+		apply potion of invisibility of tier 1 without particles to {_entity} for 999 days
+		summon falling stone at {_entity}
+		set {_RockMob} to last spawned entity
+		make {_RockMob} ride {_entity}
+		add "{Invulnerable:1b}" to nbt of {_RockMob}
+		add "{NoGravity:1b}" to nbt of {_RockMob}
+		add "{Time:1}" to nbt of {_RockMob}
+		make {_player} ride {_RockMob}
+	else:
+		make {_player} ride {_entity}
+	wait 2 ticks
+	set {_entity}'s name to "Mount"
+	if {_train} is true:
+		set {_entity}'s name to "Sheep Train"
+	set {_Color::*} to red and blue and yellow and aqua and purple and light blue and orange
+	if {_train} is true:
+		set {_rainbow::*} to "&4" and "&c" and "&6" and "&e" and "&2" and "&a" and "&b" and "&9" and "&d" and "&5"
+		loop 5 times:
+			summon sheep at {_player}
+			add "{Invulnerable:1b}" to nbt of last spawned mob
+			set {_sheepClone.%loop-value%} to last spawned mob
+			wait 2 ticks
+			set name of {_sheepClone.%loop-value%} to "Sheep Train"
+			loop all mobs in radius 1 of {_sheepClone.%loop-value%}:
+				name of loop-entity is "Sheep Train"
+				set {_color} to random element out of {_color::*}
+				set the colour of the loop-entity to {_color}
+		loop all mobs in radius 1 of {_entity}:
+			set {_color} to random element out of {_color::*}
+			set the colour of the loop-entity to {_color}
+	wait 2 ticks
+	while {_player} is riding {_entity} or {_RockMob}:
+		if distance between {_entity} and {_player} > 2:
+			exit 1 loop
+		wait 5 tick
+		set {_newloc} to location in front of {_player}
+		set {_newloc} to location in front of {_newloc}
+		set {_newloc} to location in front of {_newloc}
+		set {_newloc} to location in front of {_newloc}
+		set {_loc} to location of block above target block of {_player}
+		make {_entity} pathfind to {_newloc} with speed 2
+		if {_train} is true:
+			make {_sheepClone.1} pathfind to {_entity} with speed 2.5
+			make {_sheepClone.2} pathfind to {_sheepClone.1} with speed 2.5
+			make {_sheepClone.3} pathfind to {_sheepClone.2} with speed 2.5
+			make {_sheepClone.4} pathfind to {_sheepClone.3} with speed 2.5
+			make {_sheepClone.5} pathfind to {_sheepClone.4} with speed 2.5
+			set {_SheepColorMob} to {_sheepClone.1} parsed as entitytype
+			loop all sheep:
+				name of loop-entity is "Sheep Train"
+				set {_rainbow::*} to "&4" and "&c" and "&6" and "&e" and "&2" and "&a" and "&b" and "&9" and "&d" and "&5"
+				set {_color} to random element out of {_color::*}
+				set {_color} to color of {_color}
+				set the colour of the loop-entity to {_color}
+				if distance between {_entity} and loop-entity > 30:
+					teleport loop-entity to {_entity}
+		if {_rock} is true:
+			add "{Time:1}" to nbt of {_RockMob}
+		if {_rainbow} is true:
+			set name of {_entity} to "Jeb_"
+			loop all mobs in radius 1 of {_entity}:
+				name of loop-entity is "Jeb_"
+				set {_rainbow::*} to "&4" and "&c" and "&6" and "&e" and "&2" and "&a" and "&b" and "&9" and "&d" and "&5"
+				set {_color} to random element out of {_color::*}
+				set {_color} to color of {_color}
+				set the colour of the loop-entity to {_color}
+		add "{Rotation:[%{_player}'s yaw%f, 0.0f]}" to {_entity}'s nbt
+	wait 1 tick
+	set {_loc} to location of {_entity}
+	teleport {_entity} to location(0, -10, 0, world "spawn")
+	kill {_entity}
+	kill {_RockMob}
+	if {_train} is true:
+		loop 5 times:
+			teleport {_sheepClone.%loop-value%} to location(0, -10, 0, world "spawn")
+			kill {_sheepClone.%loop-value%}
+	teleport {_player} to {_loc}
+
+
+
+
