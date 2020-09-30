@@ -1,10 +1,5 @@
-on quit:
-	broadcast "%player% left"
-	
-	
 on skript stop:
 	log "Server Stoped!" to "log.log"
-
 
 on skript start:
 	log "Server Started!" to "log.log"
@@ -75,38 +70,21 @@ command /saveitems [<text>] [<text>]:
 					message "%{_slotx}%: %{inv::%player's uuid%::%arg-2%::%{_slotx}%}%"
 			message " "
 			
-on drop:
-	wait 1 tick
-	set {_check} to 0
-	while {_check} < 20:
-		add 1 to {_check}
-		wait 1 tick
-		if name of event-item is set:
-			if line 1 of event-item's lore is set:
-				set {_name} to "%name of event-item% %line 1 of event-item's lore%"
-			else:
-				set {_name} to "&7%name of event-item%"
-				if {_name} is "&7<none>":
-					set {_name} to "&7%event-item%"
-		else:
-			set {_name} to "&7%event-item%"
-		set {_amount} to item amount of event-item
-		set {_name} to "&7%{_amount}%&7x&r %{_name}%"
-		set display name of the event-entity to "%{_name}%"
-		wait 10 ticks
-		delete {_del::*}
-		delete {_number}
-	delete {_del::*}
-	delete {_number}
-
-on pick up:
-	set player's helmet to player's helmet
+on item spawn:
+	if line 1 of event-item's lore is set:
+		set {_lore} to ": %line 1 of event-item's lore%"
+		if length of {_lore} < 3:
+			set {_lore} to ""
+	else:
+		set {_lore} to ""
+	if item amount of event-item > 1:
+		set {_itemAmount} to "&7+%item amount of event-item% "
+	else:
+		set {_itemAmount} to ""
+	set {_itemName} to "%{_itemAmount}%%name of event-item%%{_lore}%"
+	if {_itemName} does not contain "<none>":
+		set display name of event-entity to "%{_itemName}%"
 	
-command /updateranks [<offline player>]:
-	permission: op
-	trigger:
-		if arg-1 has permission "staff":
-			set arg-1's tablist name to "%colored arg-1's group% &f%arg-1%"
 
 command /rankadd [<offline player>] [<text>]:
 	permission: op
@@ -183,7 +161,6 @@ command /key [<text>] [<text>]:
 on join:
 	set player's display name to "%player's group% %player%"
 	set player's tablist name to "%colored player's group% &f%player%"
-	wait 50 ticks
 
 command /nick [<player>] [<text>] [<text>]:
 	permission: op
@@ -194,11 +171,11 @@ command /nick [<player>] [<text>] [<text>]:
 command /sc:
 	permission: op
 	trigger:
-		if {StaffChat::%player's uuid%} is true:
-			set {StaffChat::%player's uuid%} to false
+		if metadata tag "staff" of player is true:
+			set metadata tag "staff" of player to false
 			message "&bStaff Chat Turned Off"
 		else:
-			set {StaffChat::%player's uuid%} to true
+			set metadata tag "staff" of player to true
 			message "&bStaff Chat Turned On"
 			
 on leftclick:
@@ -269,11 +246,3 @@ on block place:
 on block break:
 	if {Reach.%player's uuid%} is true:
 		cancel event
-
-on join:
-	create nametag "bed"
-	set prefix of nametag "red" to "&c[Red] &f"
-	create nametag "blue"
-	set prefix of nametag "blue" to "&9[Blue] &f"
-	create nametag "none"
-
