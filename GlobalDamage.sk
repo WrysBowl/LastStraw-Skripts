@@ -1,25 +1,58 @@
 on damage of player:
-	if metadata tag "party" of victim is "false":
-		if metadata tag "party" of attacker is "false":
+	if victim's vehicle is not attacker:
+		if metadata tag "party" of victim is "false":
+			if metadata tag "party" of attacker is "false":
+				set {_check} to 1
+		if (metadata tag "party" of victim) != (metadata tag "party" of attacker):
 			set {_check} to 1
-	if (metadata tag "party" of victim) != (metadata tag "party" of attacker):
-		set {_check} to 1
-	if {_check} is 1:
-		set metadata tag "health" of victim to (metadata tag "health" of victim) - damage
-		set {_hp} to (metadata tag "health" of victim)/10
-		if {_hp} <= 0:
-			stop
-		set victim's health to (metadata tag "health" of victim)/10
-		set damage to 0
+		if {_check} is 1:
+			if attacker is a player:
+				if blockStat(victim) > random number between 0 and 100:
+					stop
+				else:
+					if criticalStat(attacker) > random number between 0 and 100:
+						set metadata tag "health" of victim to metadata tag "health" of victim - ((attackStat(attacker))*2)*(1-(defenseStat(victim)/100))
+					else:
+						set metadata tag "health" of victim to metadata tag "health" of victim - (attackStat(attacker))*(1-(defenseStat(victim)/100))
+			else:
+				set metadata tag "health" of victim to (metadata tag "health" of victim) - damage
+			set damage to 0
+			if metadata tag "health" of victim <= 0:
+				set damage to victim's health
+		else:
+			cancel event
+			message "&6You can not attack your own party members!" to attacker
 	else:
 		cancel event
-		message "&6You can not attack your own party members!" to attacker
 
-
-on heal:
-	cancel event
-	set metadata tag "health" of player to (metadata tag "health" of player)
-	set player's health to (metadata tag "health" of player)/10
+on damage of a mob:
+	if the attacker is a player:
+		if nbt of victim contains "{Invulnerable:1b}":
+			cancel event
+			stop
+		set {_mobUUID} to victim's uuid
+		set {_uuid} to attacker's uuid
+		set {_profile} to metadata tag "profile" of attacker
+		if ("LevelReq" tag of nbt of attacker's tool) > attacker's level:
+			send "&cYou are not a high enough level to use this!" to attacker
+			cancel event
+		else if ("ClassReq" tag of nbt of attacker's tool) is set:
+			if "%{profiles::%{_uuid}%::%{_profile}%}%" does not contain ("ClassReq" tag of nbt of attacker's tool):
+				send "&cYou are not of the required class to use this!" to attacker
+				cancel event
+		else:
+			if criticalStat(attacker) > random number between 0 and 100:
+				set metadata tag "currentDamaged" of victim to ((attackStat(attacker))*2 + metadata tag "currentDamaged" of victim)
+			else:
+				set metadata tag "currentDamaged" of victim to (attackStat(attacker) + metadata tag "currentDamaged" of victim)
+	else:
+		set metadata tag "currentDamaged" of victim to ((metadata tag "currentDamaged" of victim) + final damage)
+	set {_mobHealth} to ((metadata tag "health" of victim)-(metadata tag "currentDamaged" of victim))
+	set victim's health to {_mobHealth}
+	set the damage to 0
+	set display name of victim to "&c%metadata tag ""name"" of victim% %{_mobHealth}% / %metadata tag ""health"" of victim% &c❤"
+	if {_mobHealth} <= 0: #fail safe code to kill mob 
+		set victim's health to 0
 
 on death of player:
 	if attacker is player:
@@ -29,4 +62,6 @@ on death of player:
 			set the death message to "&a%player% Was Killed By A %Attacker%&a!"
 		else:
 			set the death message to "&a%player% Died!"
-	set metadata tag "health" of victim to 100
+	wait 2 ticks
+	force victim to respawn
+	set metadata tag "health" of victim to (hpStat(victim))
