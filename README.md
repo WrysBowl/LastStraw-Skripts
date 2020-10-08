@@ -1,1 +1,1 @@
-# The server's scripts
+# The server's scripts.
