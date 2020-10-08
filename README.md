@@ -1,1 +1,1 @@
-# TempSkripts
+# The server's scripts
