@@ -72,7 +72,8 @@ command /saveitems [<text>] [<text>]:
 			
 on item spawn:
 	if line 1 of event-item's lore is set:
-		set {_lore} to ": %line 1 of event-item's lore%"
+		set {_size} to size of event-item's lore
+		set {_lore} to ": %line {_size} of event-item's lore%"
 		if length of {_lore} < 3:
 			set {_lore} to ""
 	else:

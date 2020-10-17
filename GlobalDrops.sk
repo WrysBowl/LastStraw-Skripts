@@ -1,0 +1,420 @@
+on spawn of a mob:
+	wait 11 ticks
+	if metadata tag "name" of mob is set:
+		set {_Level} to metadata tag "name" of mob
+	else:
+		set {_Level} to name of mob
+	set {_Level::*} to {_Level} split at "]"
+	set {_Level2::*} to {_Level::1} split at "["
+	set {_Level} to {_Level2::2}
+	set {_Level} to {_Level} parsed as number
+	{_Level} is set
+	{_Level} is not ""
+	if metadata tag "MobLevel" of mob is not set:
+		set metadata tag "MobLevel" of mob to {_Level}
+
+
+function GenMobLoot(player: player, loc: location, level: text, name: text):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_luck} to luckStat({_player})
+	set {_level} to {_level} parsed as number
+	{_level} is set
+	{_level} is not ""
+	if {_level} is between 1 and 16:
+		set {_Loot.Table} to 1
+	else if {_level} is between 17 and 24:
+		set {_Loot.Table} to 2
+	else if {_level} is between 25 and 34:
+		set {_Loot.Table} to 3
+	else if {_level} is between 35 and 46:
+		set {_Loot.Table} to 4
+	else if {_level} is between 47 and 54:
+		set {_Loot.Table} to 5
+	else if {_level} is between 55 and 64:
+		set {_Loot.Table} to 6
+	else if {_level} is between 65 and 74:
+		set {_Loot.Table} to 7
+	else if {_level} is between 75 and 84:
+		set {_Loot.Table} to 8
+	else if {_level} is between 85 and 95:
+		set {_Loot.Table} to 9
+	else if {_level} is between 96 and 100:
+		set {_Loot.Table} to 10
+	else:
+		set {_Loot.Table} to 0
+	set {_item::*} to CreateItem({_Loot.Table}, {_luck}, "%{_name}%")
+	drop {_item::*} at {_loc}
+
+function CreateItem(loot: number, luck: number, name: text) :: items:
+	set {_r} to random integer between 1 and 16
+	chance of {_luck}%:
+		chance of 10%
+		add 1 to {_loot}
+	if {_loot} > 10:
+		set {_loot} to 10
+	if {_loot} is 1:
+		if {_r} is 1:
+			add itemGenerator(Leather Boots, ("Brown Crocs"), (1), (1), (""), (1), ("Good luck walking across the barn"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 2:
+			add itemGenerator(Wooden Sword, ("Fractured Sword"), (1), (1), (""), (1), ("Almost in 2 Pieces"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 3:
+			add itemGenerator(Bow, ("Flimsy Bow"), (1), (1), (""), (1), ("Crafted with twine"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 4:
+			add itemGenerator(Stick, ("Splintered Wand"), (1), (1), (""), (1), ("Don't poke yourself!"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 5:
+			add itemGenerator(Wooden Axe, ("Cracked Axe"), (1), (1), (""), (1), ("It's not broken yet"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 6:
+			add itemGenerator(Leather Helmet, ("Ripped Hood"), (1), (1), (""), (1), ("Just to be safe"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 7:
+			add itemGenerator(Leather Chestplate, ("Tattered Cloth"), (1), (1), (""), (1), ("Anything to cover up"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 8:
+			add itemGenerator(Leather Leggings, ("Torn Leggings"), (1), (1), (""), (1), ("They look like jeans"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 9:
+			add itemGenerator(Leather Boots, ("Broken Sandals"), (1), (1), (""), (1), ("Just go barefoot"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 10:
+			add itemGenerator(Wooden Sword, ("Blade Fragment"), (1), (1), (""), (1), ("Once a sword, always a sword"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 11:
+			add itemGenerator(Bow, ("Worn Bow"), (1), (1), (""), (1), ("Ask your Granddad about the manufacturers "), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 12:
+			add itemGenerator(Stick, ("Broken Staff"), (1), (1), (""), (1), ("Basically just a wand"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 13:
+			add itemGenerator(Wooden Sword, ("DIY Hatchet"), (1), (1), (""), (1), ("It's automatically a broken tool"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 14:
+			add itemGenerator(Leather Helmet, ("Twine Cap"), (1), (1), (""), (1), ("Adam and Eve's fine craftsmanship"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 15:
+			add itemGenerator(Leather Chestplate, ("Cloth Rags"), (1), (1), (""), (1), ("The raincoat of the old days"), (""), (random integer between 1 and 14)) to {_items::*}
+		else if {_r} is 16:
+			add itemGenerator(Leather Leggings, ("Snapped Splints"), (1), (1), (""), (1), ("Time to revisit the doctor"), (""), (random integer between 1 and 14)) to {_items::*}
+	else if {_loot} is 2:
+		if {_r} is 1:
+			add itemGenerator(Wooden Sword, ("Dull Sword"), (1), (1), (""), (1), ("Almost child friendly"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 2:
+			add itemGenerator(Bow, ("Used Bow"), (1), (1), (""), (1), ("Years of string pulling"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 3:
+			add itemGenerator(Stick, ("Smooth Wand"), (1), (1), (""), (1), ("Sweaty hands"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 4:
+			add itemGenerator(Wooden Axe, ("Blunt Axe"), (1), (1), (""), (1), ("It's still usable"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 5:
+			add itemGenerator(Leather Helmet, ("Old Cap"), (1), (1), (""), (1), ("For the 90's kids"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 6:
+			add itemGenerator(Leather Chestplate, ("Faded Garment"), (1), (1), (""), (1), ("Next level peasantry"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 7:
+			add itemGenerator(Leather Leggings, ("Gray Slacks"), (1), (1), (""), (1), ("Is the color right?"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 8:
+			add itemGenerator(Leather Boots, ("Old Boots"), (1), (1), (""), (1), ("It's humid in here"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 9:
+			add itemGenerator(Wooden Sword, ("Battle-worn Sword"), (1), (1), (""), (1), ("Worn down through many wars"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 10:
+			add itemGenerator(Bow, ("Old Piercer"), (1), (1), (""), (1), ("A common gangster name for it's day"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 11:
+			add itemGenerator(Stick, ("Dead-Man's Staff"), (1), (1), (""), (1), ("They said it would be difficult to pry it away"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 12:
+			add itemGenerator(Wooden Axe, ("Peasant's Hatchet"), (1), (1), (""), (1), ("Ol' reliable"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 13:
+			add itemGenerator(Leather Helmet, ("Old Man's Beret"), (1), (1), (""), (1), ("My grandfather wore this"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 14:
+			add itemGenerator(Leather Chestplate, ("Leather Jerkin"), (1), (1), (""), (1), ("Fashionable for the elderly"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 15:
+			add itemGenerator(Leather Leggings, ("Brown Trowsers"), (1), (1), (""), (1), ("Quite snazzy!"), (""), (random integer between 16 and 24)) to {_items::*}
+		else if {_r} is 16:
+			add itemGenerator(Leather Boots, ("Leather Trekkers"), (1), (1), (""), (1), ("For the toughest travellers"), (""), (random integer between 16 and 24)) to {_items::*}
+	else if {_loot} is 3:
+		if {_r} is 1:
+			add itemGenerator(Wooden Sword, ("Whiddled Cedar"), (1), (1), (""), (1), ("Outdoor wood!"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 2:
+			add itemGenerator(Bow, ("Wooden Bow"), (1), (1), (""), (1), ("A proper bow"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 3:
+			add itemGenerator(Stick, ("Oak Staff"), (1), (1), (""), (1), ("Put the stick back!"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 4:
+			add itemGenerator(Wooden Axe, ("Wooden Club"), (1), (1), (""), (1), ("OOGA BOOGA"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 5:
+			add itemGenerator(Leather Helmet, ("Wolf Scalp"), (1), (1), (""), (1), ("I smell something"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 6:
+			add itemGenerator(Leather Chestplate, ("Deer Pelt"), (1), (1), (""), (1), ("Haven't cleaned it"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 7:
+			add itemGenerator(Leather Leggings, ("Hide Leggings"), (1), (1), (""), (1), ("I feel like a deer"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 8:
+			add itemGenerator(Leather Boots, ("Cloth Trackers"), (1), (1), (""), (1), ("Nice and comfy"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 9:
+			add itemGenerator(Wooden Sword, ("Sharpened Dagger"), (1), (1), (""), (1), ("Small stabby stabby"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 10:
+			add itemGenerator(Bow, ("Sideways Crossbow"), (1), (1), (""), (1), ("Isn't this just a regular bow?"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 11:
+			add itemGenerator(Stick , ("Dark Oak Staff "), (1), (1), (""), (1), ("Slightly sturdier than the other one! "), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 12:
+			add itemGenerator(Stone Shovel , ("Big Rock on a Stick "), (1), (1), (""), (1), ("Uhh, it could work as a mace? "), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 13:
+			add itemGenerator(Leather Helmet , ("Cloth Hood "), (1), (1), (""), (1), ("A very basic hood "), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 14:
+			add itemGenerator(Leather Chestplate , ("Cloth Cape"), (1), (1), (""), (1), ("No need for armor!"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 15:
+			add itemGenerator(Leather Leggings, ("Toughened Legskins"), (1), (1), (""), (1), ("What did you kill?"), (""), (random integer between 24 and 34)) to {_items::*}
+		else if {_r} is 16:
+			add itemGenerator(Leather Boots, ("Deer Hooves"), (1), (1), (""), (1), ("Run like a deer :D"), (""), (random integer between 24 and 34)) to {_items::*}
+	else if {_loot} is 4:
+		if {_r} is 1:
+			add itemGenerator(Iron Sword, ("Scottish Claymore"), (1), (1), (""), (1), ("The classic sword"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 2:
+			add itemGenerator(Bow, ("Long Bow"), (1), (1), (""), (1), ("How do I carry this?"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 3:
+			add itemGenerator(Stick, ("Iron-Head Staff"), (1), (1), (""), (1), ("It's like a heavy club"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 4:
+			add itemGenerator(Iron Shovel, ("Iron Mace"), (1), (1), (""), (1), ("This deals damage!"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 5:
+			add itemGenerator(Iron Helmet, ("Iron Helmet"), (1), (1), (""), (1), ("It gets stuffy in here"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 6:
+			add itemGenerator(Chainmail Chestplate, ("Chainmail"), (1), (1), (""), (1), ("All linked up"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 7:
+			add itemGenerator(Iron Leggings, ("Steel Greeves"), (1), (1), (""), (1), ("No one can hurt me!"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 8:
+			add itemGenerator(Iron Boots, ("Clunky Sabatons"), (1), (1), (""), (1), ("Clonk Clonk Clonk"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 9:
+			add itemGenerator(Iron Sword , ("Long Sword "), (1), (1), (""), (1), ("That one the knights always use "), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 10:
+			add itemGenerator(Bow, ("Reinforced Bow"), (1), (1), (""), (1), ("Pierce through thick armor"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 11:
+			add itemGenerator(Stick, ("Ember Scepter"), (1), (1), (""), (1), ("The flames burn bright!"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 12:
+			add itemGenerator(Iron Axe, ("Copper Axe"), (1), (1), (""), (1), ("Cut your enemies to pieces"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 13:
+			add itemGenerator(Iron Helmet, ("Panoply Topper"), (1), (1), (""), (1), ("Hard to get out"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 14:
+			add itemGenerator(Iron Chestplate, ("Panoply Plate"), (1), (1), (""), (1), ("Stronger then ever"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 15:
+			add itemGenerator(Iron Leggings, ("Panoply Stockings"), (1), (1), (""), (1), ("Knights protection"), (""), (random integer between 34 and 46)) to {_items::*}
+		else if {_r} is 16:
+			add itemGenerator(Iron Boots, ("Panoply Boot"), (1), (1), (""), (1), ("Protect and serve!"), (""), (random integer between 34 and 46)) to {_items::*}
+	else if {_loot} is 5:
+		if {_r} is 1:
+			add itemGenerator(Iron Sword, ("Glowing Molten Sword"), (1), (1), (""), (1), ("The sword glows with the ambience of burning heat"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 2:
+			add itemGenerator(Bow, ("Napalm Arrows"), (1), (1), (""), (1), ("The arrows flown by this bow ignite with" and "the psychotic fire of Napalm"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 3:
+			add itemGenerator(Stick, ("Fireball Flinger"), (1), (1), (""), (1), ("Shooting star? No, that's just me my bad"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 4:
+			add itemGenerator(Wooden Axe, ("Spirit Chastiefol"), (1), (1), (""), (1), ("Gifted by the fairies of the forest," and "this weapon grants the user incredible magic power"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 5:
+			add itemGenerator(skull of ("apexwolf98" parsed as an offline player), ("Helm of the Flame Spirits"), (1), (1), (""), (1), ("This helmet was forged with the cremated remains of once vibrant forests"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 6:
+			add itemGenerator(Leather Chestplate, ("Garment of the Flame Spirits"), (1), (1), (""), (1), ("In a ritual, flame spirits gathered in a circle" and "and poured their life force into the making of this garment"), (""), (random integer between 46 and 54)) to {_items::*}
+			dye {_items::1} red
+		else if {_r} is 7:
+			add itemGenerator(Leather Leggings, ("Platelegs of the Flame Spirits"), (1), (1), (""), (1), ("Forged with living fire, and fueled" and "by torrent hatred"), (""), (random integer between 46 and 54)) to {_items::*}
+			dye {_items::1} red
+		else if {_r} is 8:
+			add itemGenerator(Leather Boots, ("Sabatons of the Flame Spirits"), (1), (1), (""), (1), ("You will feel the curl of withering plants under" and "your feet as they burn"), (""), (random integer between 46 and 54)) to {_items::*}
+			dye {_items::1} red
+		else if {_r} is 9:
+			add itemGenerator(Iron Sword , ("Frost-Bit Blade"), (1), (1), (""), (1), ("Drops the temperature of the air" and "everywhere you go"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 10:
+			add itemGenerator(Bow , ("Bow of Cryogenesis"), (1), (1), (""), (1), ("Birds will freeze and drop like flies" and "as the arrows fly by"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 11:
+			add itemGenerator(Stick , ("Shard of Glaciers"), (1), (1), (""), (1), ("The power of a mountain slide is on your side"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 12:
+			add itemGenerator(Wooden Axe, ("Nature's Wrath"), (1), (1), (""), (1), ("Oh that person doesn't recycle?" and "Just use this"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 13:
+			add itemGenerator(skull of ("Icewavezero" parsed as an offline player), ("Freezing Shroud of Giants"), (1), (1), (""), (1), ("The giants of the nordic realm crafted this shroud with shards of ice magic"), (""), (random integer between 46 and 54)) to {_items::*}
+		else if {_r} is 14:
+			add itemGenerator(Leather Chestplate, ("Freezing Plates of Giants"), (1), (1), (""), (1), ("The ring of hammers pounding on these frost-crusted" and "plates can still be felt"), (""), (random integer between 46 and 54)) to {_items::*}
+			dye {_items::1} blue
+		else if {_r} is 15:
+			add itemGenerator(Leather Leggings, ("Freezing Platelegs of Giants"), (1), (1), (""), (1), ("The frost giants blessed these sheets" and "of metal with sub-zero frost"), (""), (random integer between 46 and 54)) to {_items::*}
+			dye {_items::1} blue
+		else if {_r} is 16:
+			add itemGenerator(Leather Boots, ("Freezing Sabatons of Giants"), (1), (1), (""), (1), ("Did somethnig shatter? Oh, it's" and "just the concrete under you"), (""), (random integer between 46 and 54)) to {_items::*}
+			dye {_items::1} blue
+	else if {_loot} is 6:
+		if {_r} is 1:
+			add itemGenerator(Wooden Sword, ("Imbued Blade"), (1), (1), (""), (1), ("The last thing they'll see"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 2:
+			add itemGenerator(Bow, ("Enchanted Bow"), (1), (1), (""), (1), ("Glowing purple with power"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 3:
+			add itemGenerator(Stick, ("Grimwood Wand"), (1), (1), (""), (1), ("From the depths of the dark forests"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 4:
+			add itemGenerator(Axe, ("Blood Bone Axe"), (1), (1), (""), (1), ("Imbued with the blood of victims"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 5:
+			add itemGenerator(Leather Helmet, ("Bone Crest"), (1), (1), (""), (1), ("Ancient DNA flows through you"), (""), (random integer between 54 and 64)) to {_items::*}
+			dye {_items::1} white
+		else if {_r} is 6:
+			add itemGenerator(Leather Chestplate, ("Exoskeleton"), (1), (1), (""), (1), ("I'm just big-boned"), (""), (random integer between 54 and 64)) to {_items::*}
+			dye {_items::1} white
+		else if {_r} is 7:
+			add itemGenerator(Leather Leggings, ("Mammoth Bones"), (1), (1), (""), (1), ("Manny was the last mammoth"), (""), (random integer between 54 and 64)) to {_items::*}
+			dye {_items::1} white
+		else if {_r} is 8:
+			add itemGenerator(Leather Boots, ("Bone Clackers"), (1), (1), (""), (1), ("Protect your actual bones"), (""), (random integer between 54 and 64)) to {_items::*}
+			dye {_items::1} white
+		else if {_r} is 9:
+			add itemGenerator(Stone Sword, ("Charming Sword"), (1), (1), (""), (1), ("Created from pure magic"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 10:
+			add itemGenerator(Bow, ("Warsong"), (1), (1), (""), (1), ("Do I hear music? Oh, it's just the arrows"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 11:
+			add itemGenerator(Stick, ("Branch of the World Tree"), (1), (1), (""), (1), ("When the world tree started dying, a branch broke off." and "It's raw power still swims inside"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 12:
+			add itemGenerator(Blaze Rod, ("Hellfire Mace"), (1), (1), (""), (1), ("Glowing with power!"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 13:
+			add itemGenerator(Leather Helmet, ("Aegis Head Gear"), (1), (1), (""), (1), ("Quite small for a human, but then again it" and "wasn't designed for one"), (""), (random integer between 54 and 64)) to {_items::*}
+			dye {_items::1} magenta
+		else if {_r} is 14:
+			add itemGenerator(Iron Chestplate, ("Aegis Chestplate"), (1), (1), (""), (1), ("Magically sealed by wizards from the sky" and "villages to be unscratchable"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 15:
+			add itemGenerator(Iron Leggings, ("Aegis Platelegs"), (1), (1), (""), (1), ("One day, bulk of this armor fell from" and "the skies. They glow bright yellow"), (""), (random integer between 54 and 64)) to {_items::*}
+		else if {_r} is 16:
+			add itemGenerator(Gold Boots, ("Aegis Plated Boots"), (1), (1), (""), (1), ("Surprisingly light, but as hard as" and "the wizards willed it to be"), (""), (random integer between 54 and 64)) to {_items::*}
+	else if {_loot} is 7:
+		if {_r} is 1:
+			add itemGenerator(Gold Sword, ("Baptized Blade"), (1), (1), (""), (1), ("Cooled in Holy Water"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 2:
+			add itemGenerator(Bow , ("Sun Rays"), (1), (1), (""), (1), ("The arrows penetrate the clouds above, allowing light to break through"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 3:
+			add itemGenerator(Stick, ("Lightbringer"), (1), (1), (""), (1), ("A glorified sparkler, if you may"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 4:
+			add itemGenerator(Golden Axe, ("Paladins Pounder"), (1), (1), (""), (1), ("A relic of the Earth and Sky realm's alliance." and "A powerful force to be reckoned with"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 5:
+			add itemGenerator(Gold Helmet, ("Angel Hair"), (1), (1), (""), (1), ("No, not the pasta"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 6:
+			add itemGenerator(Gold Chestplate, ("Angel Wings"), (1), (1), (""), (1), ("Who said something about an airplane?"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 7:
+			add itemGenerator(Gold Leggings, ("Battle Angel Leggings"), (1), (1), (""), (1), ("These pants are never coming off"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 8:
+			add itemGenerator(Gold Boots, ("Angel Sandals"), (1), (1), (""), (1), ("The cleanest shoes on the market"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 9:
+			add itemGenerator(iron sword, ("Charlemagne’s Durandal"), (1), (1), (""), (1), ("Given to him by an Angel"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 10:
+			add itemGenerator(Bow , ("Dawn"), (1), (1), (""), (1), ("It was said that the arrows fired from this bow" and "are our sunsets and day breaks"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 11:
+			add itemGenerator(Stick, ("Staff of Saints"), (1), (1), (""), (1), ("Saints did not belong to any of the four" and "known realms. It was never explained"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 12:
+			add itemGenerator(Stick, ("Staff of Saints"), (1), (1), (""), (1), ("Saints did not belong to any of the four known realms." and "It was never explained"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 13:
+			add itemGenerator(Gold Helmet, ("Deity's Visionaries"), (1), (1), (""), (1), ("The foresight of a god!"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 14:
+			add itemGenerator(Gold Chestplate, ("Deity's Prescence"), (1), (1), (""), (1), ("Don't come too close, I'm hot"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 15:
+			add itemGenerator(Gold Leggings, ("Deity's White Cloth"), (1), (1), (""), (1), ("The clean white cloth of greek gods"), (""), (random integer between 64 and 74)) to {_items::*}
+		else if {_r} is 16:
+			add itemGenerator(Gold Boots, ("Sunwalkers"), (1), (1), (""), (1), ("Feet burning? Unheard of!"), (""), (random integer between 64 and 74)) to {_items::*}
+	else if {_loot} is 8:
+		if {_r} is 1:
+			add itemGenerator(Stone Sword, ("Demon Dagger"), (1), (1), (""), (1), ("A dagger that sends all victims to the depths of Hell"), (""), (random integer between 74 and 84)) to {_items::*}
+		else if {_r} is 2:
+			add itemGenerator(Bow, ("Devil's Cross"), (1), (1), (""), (1), ("Satin's pride and joy"), (""), (random integer between 74 and 84)) to {_items::*}
+		else if {_r} is 3:
+			add itemGenerator(Stick, ("Shadow Weaver"), (1), (1), (""), (1), ("Are you scared of Aracnids? They're everywhere"), (""), (random integer between 74 and 84)) to {_items::*}
+		else if {_r} is 4:
+			add itemGenerator(Stone Sword, ("Shadow-Forged Battleaxe"), (1), (1), (""), (1), ("Cut Light Into Pieces"), (""), (random integer between 74 and 84)) to {_items::*}
+		else if {_r} is 5:
+			add itemGenerator(Leather Cap, ("Corrupt Casque "), (1), (1), (""), (1), ("Keeps You Hiden"), (""), (random integer between 74 and 84)) to {_items::*}
+			dye {_items::1} gray
+		else if {_r} is 6:
+			add itemGenerator(Leather Chestplate, ("Corrupted Plate"), (1), (1), (""), (1), ("Wear it to harness catastrophic power, don't worry"), (""), (random integer between 74 and 84)) to {_items::*}
+			dye {_items::1} black
+		else if {_r} is 7:
+			add itemGenerator(Leather Leggings, ("Corrupted Leggings"), (1), (1), (""), (1), ("Leggings of the corrupted souls"), (""), (random integer between 74 and 84)) to {_items::*}
+			dye {_items::1} black
+		else if {_r} is 8:
+			add itemGenerator(Leather Boots, ("Corrupted Boots"), (1), (1), (""), (1), ("With each step, you kill a life"), (""), (random integer between 74 and 84)) to {_items::*}
+			dye {_items::1} black
+		else if {_r} is 9:
+			add itemGenerator(Stone Sword, ("Soul Reaper"), (1), (1), (""), (1), ("Passed down through millenia of death and despair"), (""), (random integer between 74 and 84)) to {_items::*}
+		else if {_r} is 10:
+			add itemGenerator(Bow, ("Eternal Flames"), (1), (1), (""), (1), ("You should never have wished to meet me"), (""), (random integer between 74 and 84)) to {_items::*}
+		else if {_r} is 11:
+			add itemGenerator(Stick, ("Staff of Devils"), (1), (1), (""), (1), ("The devils originated from the depths of the Fire Realm." and "They were so evil that the menacing fire realm itself" and "had to part ways"), (""), (random integer between 74 and 84)) to {_items::*}
+		else if {_r} is 12:
+			add itemGenerator(Stone Axe, ("Hatchet of Yin"), (1), (1), (""), (1), ("The evil of the universe"), (""), (random integer between 74 and 84)) to {_items::*}
+		else if {_r} is 13:
+			add itemGenerator(Leather Cap, ("Devil's Horns"), (1), (1), (""), (1), ("Pure hatred glows within it's core"), (""), (random integer between 74 and 84)) to {_items::*}
+			dye {_items::1} black
+		else if {_r} is 14:
+			add itemGenerator(Leather Chestplate, ("Reaper's Plate"), (1), (1), (""), (1), ("A forged masterpiece of the Reaper's cloaks." and "It lacks only it's cold touch"), (""), (random integer between 74 and 84)) to {_items::*}
+			dye {_items::1} black
+		else if {_r} is 15:
+			add itemGenerator(Leather Leggings, ("Reaper's Cloak"), (1), (1), (""), (1), ("The Reaper is known to be one of the most brutal" and "murderers of the old Fire Realm"), (""), (random integer between 74 and 84)) to {_items::*}
+			dye {_items::1} black
+		else if {_r} is 16:
+			add itemGenerator(Leather Boots, ("Dead Weights"), (1), (1), (""), (1), ("Teeming with power, yet heavy with miserable souls" and "it's creators forced into"), (""), (random integer between 74 and 84)) to {_items::*}
+			dye {_items::1} black
+	else if {_loot} is 9:
+		if {_r} is 1:
+			add itemGenerator(Diamond Sword, ("Light Saber"), (1), (1), (""), (1), ("A beam of intense light, totally original"), (""), (random integer between 84 and 94)) to {_items::*}
+		else if {_r} is 2:
+			add itemGenerator(Bow, ("Omega Blaster Rifle"), (1), (1), (""), (1), ("You can't miss with this thing"), (""), (random integer between 84 and 94)) to {_items::*}
+		else if {_r} is 3:
+			add itemGenerator(Stick, ("High Skies Staff"), (1), (1), (""), (1), ("The Sky Village used this staff to intercept the great" and "comet sent from the Saints in an effort to" and "erase the Devils"), (""), (random integer between 84 and 94)) to {_items::*}
+		else if {_r} is 4:
+			add itemGenerator(Iron Axe, ("Stormbreaker"), (1), (1), (""), (1), ("Made in a furnace powered by a neutron star"), (""), (random integer between 84 and 94)) to {_items::*}
+		else if {_r} is 5:
+			add itemGenerator(Leather Cap, ("Nebula Helm"), (1), (1), (""), (1), ("Don't I look fabulous?"), (""), (random integer between 84 and 94)) to {_items::*}
+			dye {_items::1} purple
+		else if {_r} is 6:
+			add itemGenerator(Leather Chestplate, ("Nebula Plates"), (1), (1), (""), (1), ("How did I manage to get my hands on this?"), (""), (random integer between 84 and 94)) to {_items::*}
+			dye {_items::1} purple
+		else if {_r} is 7:
+			add itemGenerator(Leather Leggings, ("Nebula Greaves"), (1), (1), (""), (1), ("Shin protection, is the best protection." and "Especially when it's made of star dust"), (""), (random integer between 84 and 94)) to {_items::*}
+			dye {_items::1} purple
+		else if {_r} is 8:
+			add itemGenerator(Leather Boots, ("Nebula Boots"), (1), (1), (""), (1), ("Step on stars with every step"), (""), (random integer between 84 and 94)) to {_items::*}
+			dye {_items::1} purple
+		else if {_r} is 9:
+			add itemGenerator(Netherite Sword, ("Blade of Dark Matter"), (1), (1), (""), (1), ("Only the wielder is protected, anything else" and "this blade touches materializes to atoms"), (""), (random integer between 84 and 94)) to {_items::*}
+		else if {_r} is 10:
+			add itemGenerator(Bow, ("Omega Ray"), (1), (1), (""), (1), ("Death laser, you know the meme"), (""), (random integer between 84 and 94)) to {_items::*}
+		else if {_r} is 11:
+			add itemGenerator(Stick, ("Tiny Dipper"), (1), (1), (""), (1), ("There is big dipper, little dipper, but no one" and "knows about tiny dipper"), (""), (random integer between 84 and 94)) to {_items::*}
+		else if {_r} is 12:
+			add itemGenerator(Diamond axe, ("Cosmic Catastrophy"), (1), (1), (""), (1), ("A vial of gaseous chaos brewed from" and "the explosion of a star"), (""), (random integer between 84 and 94)) to {_items::*}
+		else if {_r} is 13:
+			add itemGenerator(Leather Helmet, ("Celestial Headdress"), (1), (1), (""), (1), ("You're now a god amongst gods"), (""), (random integer between 84 and 94)) to {_items::*}
+			dye {_items::1} cyan
+		else if {_r} is 14:
+			add itemGenerator(Leather Chestplate, ("Celestial Aura"), (1), (1), (""), (1), ("Feast your eyes on my brilliance!"), (""), (random integer between 84 and 94)) to {_items::*}
+			dye {_items::1} cyan
+		else if {_r} is 15:
+			add itemGenerator(Leather Leggings, ("Ceslestial Stallions"), (1), (1), (""), (1), ("Why ride a horse when you can become one"), (""), (random integer between 84 and 94)) to {_items::*}
+			dye {_items::1} cyan
+		else if {_r} is 16:
+			add itemGenerator(Leather Boots, ("Celestial Hooves"), (1), (1), (""), (1), ("It's like walking on stars"), (""), (random integer between 84 and 94)) to {_items::*}
+			dye {_items::1} cyan
+	else if {_loot} is 10:
+		if {_r} is 1:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 2:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 3:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 4:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 5:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 6:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 7:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 8:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 9:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 10:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 11:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 12:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 13:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 14:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 15:
+			add dirt named "&6Comming Soon" to {_items::*}
+		else if {_r} is 16:
+			add dirt named "&6Comming Soon" to {_items::*}
+	if {_name} contains "Zombie":
+		add rotten flesh to {_items::*}
+	return {_items::*}
+
+command /mobloot [<text>]:
+	trigger:
+		GenMobLoot(player, location of player, arg-1, "none")
+

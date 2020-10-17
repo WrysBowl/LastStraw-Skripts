@@ -18,12 +18,12 @@ on join:
 			if metadata "mana" of player > {_maxMP}:
 				set metadata tag "mana" of player to mpStat(player)
 			send action bar "&c[Health: %metadata tag ""health"" of player%&4/&c%{_maxHP}% ❤]     &b[Mana: %metadata tag ""mana"" of player%&3/&b%{_maxMP}% ♤]" to player
+			set player's health to ((10*(metadata tag "health" of player))/{_maxHP})
 		else:
 			wait 1 second
 			clear metadata tag "interruptActionBar" of player
 
 every 10 minutes:
 	send "&6[Broadcast] &eSaved all inventories of level 5+" to all players where [input's level > 5]
-	execute console command "updateranks"
 	loop all players:
 		profileInv(loop-player,"save")

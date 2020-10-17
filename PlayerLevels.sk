@@ -22,7 +22,9 @@ function levelIncrease(exp: number, player: player):
 	else:
 		add {_exp} to {exp::%{_uuid}%::%{_profile}%}
 	set metadata tag "interruptActionBar" of {_player} to true
-	send action bar "&5+ %{_exp}% EXP" to {_player}
+	set {_exp} to {_exp} parsed as number
+	if {_exp} > 0:
+		send action bar "&5+ %{_exp}% EXP" to {_player}
 	set {_player}'s level to {level::%{_uuid}%::%{_profile}%}
 	set {_player}'s level progress to ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})
 	

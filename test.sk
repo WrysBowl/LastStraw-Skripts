@@ -1,15 +1,3 @@
-command /test:
-	trigger:
-		spawn slime with nbt "{Size:2}"
-		make player ride last spawned slime
-		set {_slime} to last spawned slime
-		while player is riding {_slime}:
-			wait 5 ticks
-			set {_loc} to {_slime}'s location
-			set yaw of {_loc} to player's yaw
-			teleport {_slime} to {_loc}
-			#push {_slime} in direction of player at speed 1
-
 command /genitem [<text>]:
 	permission: staff
 	trigger:
@@ -34,6 +22,7 @@ command /genitem [<text>]:
 			execute player command "skript reload test"
 			stop
 		set {_code} to arg-1
+		replace all "§" with "&" in {_code}
 		set {_code::*} to {_code} split at "|"
 		loop {_code::*}:
 			add 1 to {_number}
@@ -50,6 +39,17 @@ command /genitem [<text>]:
 						set {_value} to "%{_value}%"" and ""%loop-value-2%"
 				set {_code} to "%{_code}%, (""%{_value}%"")"
 				delete {_value}
+			else if {_number} is 3 or 4 or 6 or 9:
+				set {_codemore::*} to loop-value split at ","
+				if size of {_codemore::*} > 0:
+					loop {_codemore::*}:
+						add 1 to {_number2}
+						if {_value} is not set:
+							set {_value} to loop-value-2
+						else:
+							set {_value} to "%{_value}% and %loop-value-2%"
+					set {_code} to "%{_code}%, (%{_value}%)"
+					delete {_value}
 			else:
 				set {_code} to "%{_code}%, %loop-value%"
 			if {_number} is 3 or 4 or 6 or 9:
@@ -61,11 +61,10 @@ command /genitem [<text>]:
 		if {_check} is not a item:
 			message "&4!ERROR!&c Code: Invaild Item"
 			stop
-		if {_check2} is true:
-			message "&4!ERROR!&c Code: String Must Be A Number"
-			stop
+		set {_codeSave} to {_code} 
 		set {_code} to "add itemGenerator(%{_code}%) to {_drops::*}"
 		send formatted "<tooltip:Click To View><suggest command:%{_code}%>%{_code}%"
+		give player {_Object}
 		set {_value} to {EnteredItems::1}
 		set {_value1} to {EnteredItems::2}
 		set {_value2} to {EnteredItems::3}
@@ -77,3 +76,1127 @@ command /genitem [<text>]:
 		set {EnteredItems::2} to {_value}
 		set {EnteredItems::1} to {_code}
 		delete {EnteredItems::6}
+
+
+on pickup:
+	player's gamemode is not creative
+	name of event-item is not set
+	cancel event
+
+on click:
+	wait 1 tick
+	set player's helmet to player's helmet
+
+
+on drop:
+	player's gamemode is not creative
+	name of event-item is not set
+	message "&cYou Cannot Drop Gliched Items!" to player
+	cancel event
+
+on block break:
+	player's gamemode is not creative
+	cancel event
+
+command /removearrows:
+	permission: staff
+	trigger:
+		remove all of the arrows stuck in player
+
+command /kk [<text>]:
+	permission: staff
+	trigger:
+		set {_stuf::*} to arg-1 split at ": "
+		set {_1::*} to {_stuf::2} split at "Lore"
+		set {_2::*} to {_stuf::4} split at "Level"
+		set {_3::*} to {_stuf::3} split at "Type"
+		set {_4::*} to {_stuf::5} split at """"
+		if {_4::1} is not set:
+			set {_stuf2::*} to arg-1 split at ""
+			loop {_stuf2::*}:
+				add 1 to {_reee}
+				if {_stuf2::%{_reee}%} is "1" or "2" or "3" or "4" or "5" or "6" or "7" or "8" or "9" or "0":
+					if {_newlevel} is not set:
+						set {_newlevel} to "%loop-value%"
+					else:
+						set {_newlevel} to "%{_newlevel}%%loop-value%"
+		if {_4::1} is not set:
+			set {_4::1} to {_newlevel}
+		set {_stuff} to "add itemGenerator(%{_2::1}%, (""%{_1::1}%""), (1), (1), (""""), (1), (""%{_3::1}%""), (""""), (%{_4::1}%)) to {_items::*}"
+		send formatted "<tooltip:Click To View><suggest command:%{_stuff}%>%{_stuff}%"
+
+
+command /noooo:
+	permission: staff
+	trigger:
+		SpawnHole(location of player, 4)
+
+function SpawnHole(Location: location, Size: number):
+	if {_Location} is set:
+		loop blocks in radius {_size} around {_Location}:
+			add "%loop-block%" to {_block::*}
+			add location of loop-block to {_blockloc::*}
+			set {_nbt} to nbt of loop-block
+		loop {_block::*}:
+			add 1 to {_loop}
+			loop-value is not "air"
+			set block at {_blockloc::%{_loop}%} to barrier
+		wait 5 seconds
+		loop {_block::*}:
+			add 1 to {_loop2}
+			set {_block} to loop-value
+			set {_block} to {_block} parsed as item
+			{_block} is not air or barrier
+			block at {_blockloc::%{_loop2}%} is barrier
+			set block at {_blockloc::%{_loop2}%} to {_block}
+
+
+
+
+command /ServerStats:
+	trigger:
+		message ""
+		message "&6%player%&6:"
+		message "&6 Play Time: %difference between now and {TimePlayed::%player's uuid%} ? ""Unknown""%"
+		message "&6 Joined: %{TimePlayed::%player's uuid%} ? ""Unknown""%"
+		message "&6Server&6:"
+		message "&6 Total Unique Joins: %size of all offline players%"
+		message "&6 Total Joins: %{totaljoins} ? 0%"
+
+command /Ping:
+	trigger:
+		message "%player's ping% ms"
+
+
+command /walkspeed [<number>]:
+	permission: staff
+	trigger:
+		if arg-1 is not set:
+			message "%player's walk speed% [%(player's walk speed*10/3)^3%]"
+		else:
+			set the player's walk speed to arg-1
+
+function RGB(r:integer,g:integer,b:integer) :: string:
+    set {a::*} to "&0","&1","&2","&3","&4","&5","&6","&7","&8","&9","&a","&b","&c","&d","&e" and "&f"
+    set {_r::*} to {_r},{_g} and {_b}
+    loop {_r::*}:
+        set {_st} to join {_st},{a::%((loop-value-mod(loop-value,16))/16+1)%} and {a::%mod(loop-value,16)+1%} with ""
+    return "&x%{_st}%"
+
+command /colordmg [<text>]:
+	permission: staff
+	trigger:
+		set {_rand} to "false"
+		broadcast "%Rainbow(arg-1, {_rand}) ? ""&cError""%"
+
+command /createNPC <text>:
+	trigger:
+		spawn villager at player
+		set {_npc} to last spawned villager
+		add "{Invulnerable:1b}" to nbt of {_npc}
+		add "{Attributes:[{Name:generic.movement_speed,Base:0}]}" to nbt of {_npc}
+		set display name of {_npc} to "&9&l%arg-1%"
+
+function Rainbow(Rainbow.Word: text, R: text) :: string:
+	if {_Rainbow.Word} is set:
+		set {_text::*} to {_Rainbow.Word} split at ""
+		if {_R} is "false":
+			set {_red} to 255
+			set {_green} to 0
+			set {_blue} to 0
+		else:
+			set {_red} to 255
+			set {_green} to 0
+			set {_blue} to 0
+			set {_RX} to random integer between 1 and 5
+		if {_RX} is not set:
+			set {_RX} to 5
+		set {_check1} to false
+		set {_check2} to false
+		set {_check3} to false
+		loop {_text::*}:
+			add 1 to {_test}
+			if {_red} is 255:
+				set {_check1} to true
+			if {_green} is 255:
+				set {_check2} to true
+			if {_blue} is 255:
+				set {_check3} to true
+			if {_check1} is true:
+				{_check2} is false
+				remove {_RX} from {_red}
+				add {_RX} to {_green}
+			if {_check2} is true:
+				{_check3} is false
+				remove {_RX} from {_green}
+				add {_RX} to {_blue}
+			if {_check3} is true:
+				remove {_RX} from {_blue}
+				add {_RX} to {_red}
+			if {_blue} and {_green} is 0:
+				{_red} is 255
+				set {_check1} to false
+				set {_check2} to false
+				set {_check3} to false
+			set {_save2} to "R %{_red}% G %{_green}% B %{_blue}%"
+			if {_save} is {_save2}:
+				set {_RX} to random integer between 1 and 5
+			set {_save} to {_save2}
+			if {_red} > 255:
+				set {_red} to 255
+			if {_red} < 0:
+				set {_red} to 0
+			if {_green} > 255:
+				set {_green} to 255
+			if {_green} < 0:
+				set {_green} to 0
+			if {_blue} > 255:
+				set {_blue} to 255
+			if {_blue} < 0:
+				set {_blue} to 0
+
+			set {_text::%{_test}%} to colored "%RGB({_red}, {_green}, {_blue})%%{_text::%{_test}%}%"
+			if {_msgtext} is set:
+				set {_msgtext} to colored "%{_msgtext}%%{_text::%{_test}%}%"
+			else:
+				set {_msgtext} to colored {_text::%{_test}%}
+		return colored {_msgtext}
+
+
+function speedStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_x} to ({_player}'s walk speed*10/3)^3.825
+	if {_x} > 100:
+		set {_x} to 100
+	return ({_x})
+
+
+
+on first join:
+	set {TimePlayed::%player's uuid%} to now
+
+on join:
+	wait 1 tick
+	add 1 to {totaljoins}
+	{TimePlayed::%player's uuid%} is not set
+	set {TimePlayed::%player's uuid%} to now
+
+
+
+command /Catalog [<integer>]:
+	trigger:
+		if {Catalog.Max.Items} > 1:
+			if arg-1 > {Catalog.Max.Items}:
+				message "&cPlease Pick A Number Between 1-%{Catalog.Max.Items}%"
+				stop
+			if arg-1 < 1:
+				message "&cPlease Pick A Number Between 1-%{Catalog.Max.Items}%"
+				stop
+		Catalog(player, arg-1)
+
+command /k:
+	trigger:
+		loop 20 times:
+			wait 1 tick
+			BlockFire(player, fire)
+
+
+on death:
+	DeathFake(player)
+	wait 10 ticks
+	execute player command "/effect give %player% minecraft:night_vision 999999 255 true"
+
+
+
+function DeathFake(player: player):
+	if {_player} is set:
+		summon falling stone brick wall at {_player}
+		add "{NoGravity:1b}" to nbt of last spawned entity
+		add "{CustomNameVisible:1b}" to nbt of last spawned entity
+		add "{DropItem:0b}" to nbt of last spawned entity
+		add "{Time:1}" to nbt of last spawned entity
+		set last spawned entity's display name to "&a%{_player}%&a's Grave"
+		set {_sizefalling} to last spawned entity
+		set {_time} to 30
+		while {_time} > -1:
+			set display name of {_sizefalling} to "&a%{_player}%&a's Grave &6[&e%{_time}%&6]"
+			add "{Time:1}" to nbt of {_sizefalling}
+			remove 1 from {_time}
+			wait 1 second
+		set display name of {_sizefalling} to "&a%{_player}%&a's Grave &6[&e0&6]"
+		wait 1 second
+		kill {_grave}
+		kill {_sizefalling}
+
+
+
+
+
+on right click holding magma block:
+	cancel event
+	set {_mana} to metadata tag "mana" of player
+	if {_mana} < 5:
+		message "&bYou Need 5 ♤ for this skill!" to player
+		stop
+	set metadata tag "mana" of player to (metadata tag "mana" of player)-5
+	loop 6 times:
+		BlockFire(player, soul fire)
+		wait 1 tick
+
+
+function BlockFire(player: player, Block: item):
+	if {_player} is set:
+		set {_x} to x-coordinate of {_player}
+		set {_y} to y-coordinate of {_player}
+		set {_z} to z-coordinate of {_player}
+		set {_loc} to location({_x}, {_y}-1, {_z}, world "spawn")
+		if {_block} is air:
+			set {_block} to grass block
+		set {_loc} to location({_x}, {_y}+1.1, {_z}, world "spawn")
+		set {_block} to "falling %{_block}%" parsed as entitytype
+		summon {_block} at location infront of (location above (location infront of {_player}))
+		set {_spawn} to last spawned entity
+		add "{Rotation:[%{_player}'s yaw%F,%{_player}'s pitch-5%F]}" to nbt of {_spawn}
+		add "{Time:1}" to nbt of {_spawn}
+		add "{NoGravity:1b}" to nbt of {_spawn}
+		add "{DropItem:0b}" to nbt of {_spawn}
+		push {_spawn} forwards at speed 1.5
+		wait 1 tick
+		while {_spawn} is alive: 
+			loop blocks in radius 1.1 of {_spawn}:
+				if loop-block != air:
+					exit 2 loops
+			loop players in radius 2.5 of {_spawn}:
+				loop-player is not {_player}
+				damage loop-player by 7
+
+			wait 1 tick
+			add 1 to {_timer}
+			push {_spawn} down with speed .05
+			if {_timer} is 100:
+				kill {_spawn}
+		create a fake explosion at location of {_spawn}
+		kill {_spawn}
+		loop all players in radius 3 of {_spawn}:
+			loop-player is not {_player}
+			damage loop-player by 5
+
+
+#on block physics:
+#	cancel event
+
+
+
+
+
+on inventory click:
+	if event-inventory = (metadata tag "CatalogGUI" of player):
+		CatalogGUIIndexSlot(player, index of event-slot, click type)
+	if event-inventory = (metadata tag "SellGUI" of player):
+		SellGUIIndexSlot(player, index of event-slot)
+		if event-slot is (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52 or 53):
+			cancel event
+	if event-inventory = (metadata tag "MusicGUI" of player):
+		MusicGUIIndexSlot(player, index of event-slot, click type)
+
+
+on inventory close:
+	delete {clicktype::%player%}
+
+
+on load:
+	set {_player} to {_player} parsed as player
+	UpdateCatalogItems({_player})
+
+
+function UpdateCatalogItems(player: player):
+	if {_player} is not set:
+		set {_perms} to true
+	if {_player} has permission "op":
+		set {_perms} to true
+	{_perms} is true
+	set {Catalog.Max.Items} to -1
+	delete {Catalog::*}
+#
+	message "Loading Catalog.." to {_player}
+
+	add enderman spawn egg named "&6[&eEndermen&6]" to {_CMounts::*}
+	add Sheep spawn egg named "&6[&eSheep&6]" to {_CMounts::*}
+	add Zombie spawn egg named "&6[&eZombie&6]" to {_CMounts::*}
+	add Cow spawn egg named "&6[&eCow&6]" to {_CMounts::*}
+	add Drowned spawn egg named "&6[&eDrowned&6]" to {_CMounts::*}
+	add Llama spawn egg named "&6[&eLlama&6]" to {_CMounts::*}
+	add Polar Bear spawn egg named "&6[&ePolar Bear&6]" to {_CMounts::*}
+	add Panda spawn egg named "&6[&ePanda&6]" to {_CMounts::*}
+	add Witch spawn egg named "&6[&eWitch&6]" to {_CMounts::*}
+	add silverfish spawn egg named "&6[&eRock&6]" to {_CMounts::*}
+#
+	add bee spawn egg named "&6[&eBee&6]" to {_RMounts::*}
+	add Blaze spawn egg named "&6[&eBlaze&6]" to {_RMounts::*}
+	add Horse spawn egg named "&6[&eHorse&6]" to {_RMounts::*}
+	add Skeleton Horse spawn egg named "&6[&eSkeleton Horse&6]" to {_RMounts::*}
+	add Mooshroom spawn egg named "&6[&eMooshroom&6]" to {_RMounts::*}
+#
+	add ghast spawn egg named "&6[&eIron Golem&6]" to {_XRMounts::*}
+	add sheep spawn egg named "&6[&eRainbow Sheep&6]" to {_XRMounts::*}
+	add sheep spawn egg named "&6[&eSheep Train&6]" to {_XRMounts::*}
+	add Zoglin spawn egg named "&6[&eZoglin&6]" to {_XRMounts::*}
+#
+#	set {_CMounts::*} to egg named "&6[&eEndermen&6]" egg named "&6[&eSheep&6]" and egg named "&6[&eZombie&6]" and egg named "&6[&eCow&6]" and egg named "&6[&eDrowned&6]" and egg named "&6[&ellama&6]" and egg named "&6[&ePolar Bear&6]" and egg named "&6[&ePanda&6]" and egg named "&6[&eWitch&6]"
+#	set {_RMounts::*} to egg named "&6[&eBee&6]" and egg named "&6[&eBlaze&6]" and egg named "&6[&eHorse&6]" and egg named "&6[&eSkeleton Horse&6]" and egg named "&6[&eEvoker&6]" and egg named "&6[&eMooshroom&6]"
+#	set {_XRMounts::*} to egg named "&6[&eIron Golem&6]" and egg named "&6[&eRainbow Sheep&6]" and egg named "&6[&eSheep Train&6]" and egg named "&6[&eRavager&6]"
+	add {_drops::*} to {Catalog::*}
+	add {_CMounts::*} to {Catalog::*}
+	add {_RMounts::*} to {Catalog::*}
+	add {_XRMounts::*} to {Catalog::*}
+	set {_item} to player head named "&5Mount Loot Crate"
+	add "{SkullOwner:{Id:[I;1049324767,745688397,-1636073904,-1503116338],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiY2E0YjY5ZWFmOGRjYjdhYzM3MjgyMjhkZThhNjQ0NDA3ODcwMTMzNDJkZGFhYmMxYjAwZWViOGVlYzFlMiJ9fX0=""}]}}}" to NBT of {_Item}
+	add {_Item} to {Catalog::*}
+	add jukebox named "&3[&bJukebox&3]" to {Catalog::*}
+	wait 1 tick
+	add purple glazed terracotta named "&dEnhancement&5 I" to {Catalog::*}
+	add purple glazed terracotta named "&dEnhancement&5 II" to {Catalog::*}
+	add purple glazed terracotta named "&dEnhancement&5 III" to {Catalog::*}
+	add purple glazed terracotta named "&dEnhancement&5 IV" to {Catalog::*}
+	add purple glazed terracotta named "&dEnhancement&5 V" to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Fractured Sword"), (1), (1), (""), (1), ("Almost in 2 Pieces"), (""), (8)) to {Catalog::*}
+	add itemGenerator(Bow, ("Flimsy Bow"), (1), (1), (""), (1), ("Crafted With Twine"), (""), (8)) to {Catalog::*}
+	add itemGenerator(Stick, ("Splintered Wand"), (1), (1), (""), (1), ("Don't poke yourself!"), (""), (8)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Cracked Axe"), (1), (1), (""), (1), ("It's not broken yet"), (""), (8)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Ripped Hood"), (1), (1), (""), (1), ("Just to be safe"), (""), (10)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Tattered Cloth"), (1), (1), (""), (1), ("Anything to cover up"), (""), (10)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Torn Leggings"), (1), (1), (""), (1), ("They look like jeans"), (""), (10)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Broken Sandals"), (1), (1), (""), (1), ("Just go barefoot"), (""), (10)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Blade Fragment"), (1), (1), (""), (1), ("Once a sword, always a sword"), (""), (12)) to {Catalog::*}
+	add itemGenerator(Bow, ("Worn Bow"), (1), (1), (""), (1), ("Ask your Granddad about the manufacturers "), (""), (12)) to {Catalog::*}
+	add itemGenerator(Stick, ("Broken Staff"), (1), (1), (""), (1), ("Basically just a wand"), (""), (12)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("DIY Hatchet"), (1), (1), (""), (1), ("It's automatically a broken tool"), (""), (12)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Twine Cap"), (1), (1), (""), (1), ("Adam and Eve's fine craftsmanship"), (""), (14)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Cloth Rags"), (1), (1), (""), (1), ("The raincoat of the old days"), (""), (14)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Snapped Splints"), (1), (1), (""), (1), ("Time to revisit the doctor"), (""), (14)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Brown Crocs"), (1), (1), (""), (1), ("Good luck walking across the barn"), (""), (14)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Dull Sword"), (1), (1), (""), (1), ("Almost child friendly"), (""), (16)) to {Catalog::*}
+	add itemGenerator(Bow, ("Used Bow"), (1), (1), (""), (1), ("Years of string pulling"), (""), (16)) to {Catalog::*}
+	add itemGenerator(Stick, ("Smooth Wand"), (1), (1), (""), (1), ("Sweaty hands"), (""), (16)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Blunt Axe"), (1), (1), (""), (1), ("It's still usable"), (""), (16)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Old Cap"), (1), (1), (""), (1), ("For the 90's kids"), (""), (18)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Faded Garment"), (1), (1), (""), (1), ("Next level peasantry"), (""), (18)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Gray Slacks"), (1), (1), (""), (1), ("Is the color right?"), (""), (18)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Old Boots"), (1), (1), (""), (1), ("It's humid in here"), (""), (18)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Battle-worn Sword"), (1), (1), (""), (1), ("Worn down through many wars"), (""), (20)) to {Catalog::*}
+	add itemGenerator(Bow, ("Old Piercer"), (1), (1), (""), (1), ("A common gangster name for it's day"), (""), (20)) to {Catalog::*}
+	add itemGenerator(Stick, ("Dead-Man's Staff"), (1), (1), (""), (1), ("They said it would be difficult to pry it away"), (""), (20)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Peasant's Hatchet"), (1), (1), (""), (1), ("Ol' reliable"), (""), (20)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Old Man's Beret"), (1), (1), (""), (1), ("My grandfather wore this"), (""), (22)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Leather Jerkin"), (1), (1), (""), (1), ("Fashionable for the elderly"), (""), (22)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Brown Trowsers"), (1), (1), (""), (1), ("Quite snazzy!"), (""), (22)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Leather Trekkers"), (1), (1), (""), (1), ("For the toughest travellers"), (""), (22)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Whiddled Cedar"), (1), (1), (""), (1), ("Outdoor wood!"), (""), (24)) to {Catalog::*}
+	add itemGenerator(Bow, ("Wooden Bow"), (1), (1), (""), (1), ("A proper bow"), (""), (24)) to {Catalog::*}
+	add itemGenerator(Stick, ("Oak Staff"), (1), (1), (""), (1), ("Put the stick back!"), (""), (24)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Wooden Club"), (1), (1), (""), (1), ("OOGA BOOGA"), (""), (24)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Wolf Scalp"), (1), (1), (""), (1), ("I smell something"), (""), (26)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Deer Pelt"), (1), (1), (""), (1), ("Haven't cleaned it"), (""), (26)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Hide Leggings"), (1), (1), (""), (1), ("I feel like a deer"), (""), (26)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Cloth Trackers"), (1), (1), (""), (1), ("Nice and comfy"), (""), (26)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Sharpened Dagger"), (1), (1), (""), (1), ("Small stabby stabby"), (""), (28)) to {Catalog::*}
+	wait 1 tick
+	add itemGenerator(Bow, ("Sideways Crossbow"), (1), (1), (""), (1), ("What?"), (""), (28)) to {Catalog::*}
+	add itemGenerator(Stick , ("Dark Oak Staff "), (1), (1), (""), (1), ("Slightly sturdier than the other one! "), (""), (28)) to {Catalog::*}
+	add itemGenerator(Stone Shovel , ("Big Rock on a Stick "), (1), (1), (""), (1), ("Uhh, it could work as a mace? "), (""), (28)) to {Catalog::*}
+	add itemGenerator(Leather Helmet , ("Cloth Hood "), (1), (1), (""), (1), ("A very basic hood "), (""), (32)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate , ("Cloth Cape"), (1), (1), (""), (1), ("No need for armor!"), (""), (32)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Toughened Legskins"), (1), (1), (""), (1), ("What did you kill?"), (""), (32)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Deer Hooves"), (1), (1), (""), (1), ("Run like a deer :D"), (""), (32)) to {Catalog::*}
+	add itemGenerator(Iron Sword, ("Scottish Claymore"), (1), (1), (""), (1), ("The classic sword"), (""), (34)) to {Catalog::*}
+	add itemGenerator(Bow, ("Long Bow"), (1), (1), (""), (1), ("How do I carry this?"), (""), (34)) to {Catalog::*}
+	add itemGenerator(Stick, ("Iron-Head Staff"), (1), (1), (""), (1), ("It's like a heavy club"), (""), (34)) to {Catalog::*}
+	add itemGenerator(Iron Shovel, ("Iron Mace"), (1), (1), (""), (1), ("This deals damage!"), (""), (34)) to {Catalog::*}
+	add itemGenerator(Iron Helmet, ("Iron Helmet"), (1), (1), (""), (1), ("It gets stuffy in here"), (""), (38)) to {Catalog::*}
+	add itemGenerator(Chainmail Chestplate, ("Chainmail"), (1), (1), (""), (1), ("All linked up"), (""), (38)) to {Catalog::*}
+	add itemGenerator(Iron Leggings, ("Steel Greeves"), (1), (1), (""), (1), ("No one can hurt me!"), (""), (38)) to {Catalog::*}
+	add itemGenerator(Iron Boots, ("Clunky Sabatons"), (1), (1), (""), (1), ("Clonk Clonk Clonk"), (""), (38)) to {Catalog::*}
+	add itemGenerator(Iron Sword , ("Long Sword "), (1), (1), (""), (1), ("That one the knights always use "), (""), (40)) to {Catalog::*}
+	add itemGenerator(Bow, ("Reinforced Bow"), (1), (1), (""), (1), ("Pierce through thick armor"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Stick, ("Ember Scepter"), (1), (1), (""), (1), ("The flames burn bright!"), (""), (40)) to {Catalog::*}
+	add itemGenerator(Iron Axe, ("Copper Axe"), (1), (1), (""), (1), ("Cut your enemies to pieces"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Iron Helmet, ("Panoply Topper"), (1), (1), (""), (1), ("Hard to get out"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Iron Chestplate, ("Panoply Plate"), (1), (1), (""), (1), ("Stronger then ever"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Iron Leggings, ("Panoply Stockings"), (1), (1), (""), (1), ("Knights protection"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Iron Boots, ("Panoply Boot"), (1), (1), (""), (1), ("Protect and serve!"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Poison Ivy Sword"), (1), (1), (""), (1), ("Painfull!"), (""), (46)) to {Catalog::*}
+	add itemGenerator(bow, ("Sap Bow"), (1), (1), (""), (1), ("Very Sticky"), (""), (46)) to {Catalog::*}
+	add itemGenerator(Stick, ("Earth Bender"), (1), (1), (""), (1), ("Dont get dirty"), (""), (46)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Twine Axe"), (1), (1), (""), (1), ("Dont get stuck in the Twine"), (""), (46)) to {Catalog::*}
+	add itemGenerator(Leather Cap, ("Thorn Helm"), (1), (1), (""), (1), ("Dont Poke Your Self"), (""), (48)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Thorn Chestplate"), (1), (1), (""), (1), ("Not to stong"), (""), (48)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Thorn Greaves"), (1), (1), (""), (1), ("Ow!"), (""), (48)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Thorn Boots"), (1), (1), (""), (1), ("My Feet Heart!"), (""), (48)) to {Catalog::*}
+	add itemGenerator(Wooden Sword , ("Thorn Sword "), (1), (1), (""), (1), ("Don't prick yourself! "), (""), (50)) to {Catalog::*}
+	add itemGenerator(Bow , ("Vine Bow "), (1), (1), (""), (1), ("Organic! "), (""), (50)) to {Catalog::*}
+	add itemGenerator(sunflower, ("Flower Staff "), (100), (1), (""), (1), ("Bee's like it! "), (""), (50)) to {Catalog::*}
+	wait 1 tick
+	add itemGenerator(Wooden Axe, ("Tree Killer"), (1), (1), (""), (1), ("Kills Poor Trees"), (""), (50)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Leaf hood "), (1), (1), (""), (1), ("Blend in with the forest "), (""), (53)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Leaf Cloak "), (1), (1), (""), (1), ("Shrouded by leaves! "), (""), (53)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Leafy Pants "), (1), (1), (""), (1), ("Probably not that comfortable "), (""), (53)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Leaf Shoes "), (1), (1), (""), (1), ("Leafs aren't very good for shoes... "), (""), (53)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Imbued Blade"), (1), (1), (""), (1), ("The last thing they'll see"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Bow, ("Transmute Longbow"), (1), (1), (""), (1), ("I crafted this bow with my own hands"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Stick, ("Grimwood Wand"), (1), (1), (""), (1), ("From the depths of the dark forests"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Axe, ("Blood Bone Axe"), (1), (1), (""), (1), ("Imbued with the blood of victims"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Axe, ("Blood Bone Axe"), (1), (1), (""), (1), ("Imbued with the blood of victims"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Exoskeleton"), (1), (1), (""), (1), ("I'm just big-boned"), (""), (58)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Mammoth Hollow Bones"), (1), (1), (""), (1), ("Manny was the last mammoth"), (""), (58)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Bone Clackers"), (1), (1), (""), (1), ("Protect your actual bones"), (""), (58)) to {Catalog::*}
+	add itemGenerator(Stone Sword, ("Charming Sword"), (1), (1), (""), (1), ("Created from pure magic"), (""), (61)) to {Catalog::*}
+	add itemGenerator(Bow, ("Warsong"), (1), (1), (""), (1), ("Do I hear a whistle? Oh, it's just me"), (""), (61)) to {Catalog::*}
+	add itemGenerator(Stick, ("Eye of the Warden"), (1), (1), (""), (1), ("I see all"), (""), (61)) to {Catalog::*}
+	add itemGenerator(Iron Axe, ("Hellfire Mace"), (1), (1), (""), (1), ("Glowing with power!"), (""), (61)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Wanderer's Sight"), (1), (1), (""), (1), ("Your spidey sense"), (""), (63)) to {Catalog::*}
+	add itemGenerator(Iron Chestplate, ("Plate of Absorption"), (1), (1), (""), (1), ("Hah! A blade? What is that"), (""), (63)) to {Catalog::*}
+	add itemGenerator(Iron Leggings, ("Enchanted Platelegs"), (1), (1), (""), (1), ("Deform a coming blade"), (""), (63)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Frozen Walkers"), (1), (1), (""), (1), ("Slow and steady wins the race"), (""), (63)) to {Catalog::*}
+	add itemGenerator(Gold Sword, ("Baptized Blade"), (1), (1), (""), (1), ("Cooled in Holy Water"), (""), (64)) to {Catalog::*}
+	add itemGenerator(Bow , ("Golden Bow "), (1), (1), (""), (1), ("Made out of the purest gold "), (""), (64)) to {Catalog::*}
+	add itemGenerator(Stick, ("Lightbringer"), (1), (1), (""), (1), ("A glorified sparkler, if you may"), (""), (64)) to {Catalog::*}
+	add itemGenerator(Golden Shovel, ("Steel Gold Hammer"), (1), (1), (""), (1), ("Who said gold is soft?"), (""), (64)) to {Catalog::*}
+	add itemGenerator(Gold Helmet, ("Angel Hair"), (1), (1), (""), (1), ("No, not the pasta"), (""), (66)) to {Catalog::*}
+	add itemGenerator(Gold Chestplate, ("Angel Wings"), (1), (1), (""), (1), ("Who said something about an airplane?"), (""), (66)) to {Catalog::*}
+	add itemGenerator(Gold Leggings, ("Battle Angel Leggings"), (1), (1), (""), (1), ("These pants are never coming off"), (""), (66)) to {Catalog::*}
+	add itemGenerator(Gold Boots, ("Angel Sandals"), (1), (1), (""), (1), ("The cleanest shoes on the market"), (""), (66)) to {Catalog::*}
+	add itemGenerator(iron sword, ("Charlemagne's Durandal"), (1), (1), (""), (1), ("Given to him by an Angel"), (""), (68)) to {Catalog::*}
+	add itemGenerator(Bow , ("Dawn"), (70), (1), (""), (1), ("Light follows where the arrow fires"), (""), (68)) to {Catalog::*}
+	add itemGenerator(Stick, ("Illuminate"), (90), (1), (""), (1), ("Chase away the shadows"), (""), (68)) to {Catalog::*}
+	add itemGenerator(Golden shovel, ("Yang"), (100), (1), (""), (1), ("The good of the universe"), (""), (68)) to {Catalog::*}
+	wait 1 tick
+	add itemGenerator(Gold Helmet, ("Deity's Visionaries"), (1), (1), (""), (1), ("The foresight of a god!"), (""), (72)) to {Catalog::*}
+	add itemGenerator(Gold Chestplate, ("Deity's Prescence"), (70), (1), (""), (1), ("Don't come too close, I'm hot"), (""), (72)) to {Catalog::*}
+	add itemGenerator(Gold Leggings, ("Deity's White Cloth"), (90), (1), (""), (1), ("The clean white cloth of greek gods"), (""), (72)) to {Catalog::*}
+	add itemGenerator(Gold Boots, ("Sunwalkers"), (100), (1), (""), (1), ("Feet burning? Unheard of!"), (""), (72)) to {Catalog::*}
+
+	add enchanted book named "&bBash" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Lunches You 10 Blocks And Stunnes" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBash" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Lunches You 10 Blocks And Stunnes" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBash" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Lunches You 10 Blocks And Stunnes" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bSlam" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Lunches You Into The Air Doing Area Damage" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSlam" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Lunches You Into The Air Doing Area Damage" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSlam" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Lunches You Into The Air Doing Area Damage" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bBerserker" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Increases You Speed" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBerserker" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Increases You Speed" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBerserker" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Increases You Speed" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bBlood Lust" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Create A Blood circle Damages/Heals" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBlood Lust" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Create A Blood circle Damages/Heals" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBlood Lust" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Create A Blood circle Damages/Heals" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bSatanic Taunt" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Pull Your Enemies Closer" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSatanic Taunt" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Pull Your Enemies Closer" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSatanic Taunt" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Pull Your Enemies Closer" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bSugar High" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Makes You Run Fasterrr" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSugar High" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Makes You Run Fasterrr" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSugar High" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Makes You Run Fasterrr" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bDash" with lore "&9Tier: I" and "&7Class: Archer" and "&6Pushes You Forward" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bDash" with lore "&9Tier: II" and "&7Class: Archer" and "&6Pushes You Forward" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bDash" with lore "&9Tier: III" and "&7Class: Archer" and "&6Pushes You Forward" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bSerpentine" with lore "&9Tier: I" and "&7Class: Archer" and "&6Tracking Arrow" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSerpentine" with lore "&9Tier: II" and "&7Class: Archer" and "&6Tracking Arrow" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSerpentine" with lore "&9Tier: III" and "&7Class: Archer" and "&6Tracking Arrow" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bBlack Hole" with lore "&9Tier: I" and "&7Class: Archer" and "&6Black Hole Arrow" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bBlack Hole" with lore "&9Tier: II" and "&7Class: Archer" and "&6Black Hole Arrow" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bBlack Hole" with lore "&9Tier: III" and "&7Class: Archer" and "&6Black Hole Arrow" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bSniper" with lore "&9Tier: I" and "&7Class: Archer" and "&6Arrow With No Gravity" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSniper" with lore "&9Tier: II" and "&7Class: Archer" and "&6Arrow With No Gravity" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSniper" with lore "&9Tier: III" and "&7Class: Archer" and "&6Arrow With No Gravity" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bPoison Arrows" with lore "&9Tier: I" and "&7Class: Archer" and "&6Poison Arrow" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bPoison Arrows" with lore "&9Tier: II" and "&7Class: Archer" and "&6Poison Arrow" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bPoison Arrows" with lore "&9Tier: III" and "&7Class: Archer" and "&6Poison Arrow" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bFlash" with lore "&9Tier: I" and "&7Class: Archer" and "&6Blind Bomb" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bFlash" with lore "&9Tier: II" and "&7Class: Archer" and "&6Blind Bomb" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bFlash" with lore "&9Tier: III" and "&7Class: Archer" and "&6Blind Bomb" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bJet Stream" with lore "&9Tier: I" and "&7Class: Mage" and "&6Shoot Fire" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bJet Stream" with lore "&9Tier: II" and "&7Class: Mage" and "&6Shoot Fire" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bJet Stream" with lore "&9Tier: III" and "&7Class: Mage" and "&6Shoot Fire" with nbt "{Class:Mage}" to {Catalog::*}
+
+	add enchanted book named "&bGust" with lore "&9Tier: I" and "&7Class: Mage" and "&6Launch Yourself" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bGust" with lore "&9Tier: II" and "&7Class: Mage" and "&6Launch Yourself" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bGust" with lore "&9Tier: III" and "&7Class: Mage" and "&6Launch Yourself" with nbt "{Class:Mage}" to {Catalog::*}
+
+	add enchanted book named "&bMeteor" with lore "&9Tier: I" and "&7Class: Mage" and "&6Sommon A Meteor" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bMeteor" with lore "&9Tier: II" and "&7Class: Mage" and "&6Sommon A Meteor" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bMeteor" with lore "&9Tier: III" and "&7Class: Mage" and "&6Sommon A Meteor" with nbt "{Class:Mage}" to {Catalog::*}
+	
+	add enchanted book named "&bPyro-Dancer" with lore "&9Tier: I" and "&7Class: Mage" and "&6Trail Of Fire" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bPyro-Dancer" with lore "&9Tier: II" and "&7Class: Mage" and "&6Trail Of Fire" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bPyro-Dancer" with lore "&9Tier: III" and "&7Class: Mage" and "&6Trail Of Fire" with nbt "{Class:Mage}" to {Catalog::*}
+	
+	add enchanted book named "&bHeat Stroke" with lore "&9Tier: I" and "&7Class: Mage" and "&6Magma Wall" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bHeat Stroke" with lore "&9Tier: II" and "&7Class: Mage" and "&6Magma Wall" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bHeat Stroke" with lore "&9Tier: III" and "&7Class: Mage" and "&6Magma Wall" with nbt "{Class:Mage}" to {Catalog::*}
+	
+	add enchanted book named "&bBrilliant Light" with lore "&9Tier: I" and "&7Class: Mage" and "&6Summon Lighting" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bBrilliant Light" with lore "&9Tier: II" and "&7Class: Mage" and "&6Summon Lighting" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bBrilliant Light" with lore "&9Tier: III" and "&7Class: Mage" and "&6Summon Lighting" with nbt "{Class:Mage}" to {Catalog::*}
+	
+	add enchanted book named "&bNecrosis" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Wither Skull" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecrosis" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Wither Skull" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecrosis" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Wither Skull" with nbt "{Class:Shaman}" to {Catalog::*}
+	
+	add enchanted book named "&bBubonic Plague" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Infect!" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bBubonic Plague" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Infect!" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bBubonic Plague" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Infect!" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	add enchanted book named "&bSummon" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Teleport To Teammates" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bSummon" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Teleport To Teammates" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bSummon" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Teleport To Teammates" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	add enchanted book named "&bRejuvenize" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Healing Circle" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bRejuvenize" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Healing Circle" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bRejuvenize" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Healing Circle" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	add enchanted book named "&bTotem of Undying" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Place A Healing Totem" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bTotem of Undying" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Place A Healing Totem" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bTotem of Undying" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Place A Healing Totem" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	add enchanted book named "&bNecromancy" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Summon The Undead" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecromancy" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Summon The Undead" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecromancy" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Summon The Undead" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	message "Loaded Catalog" to {_player}
+	
+	
+
+	
+	
+
+
+
+function Catalog(player: player, page: integer):
+	set {_Catalog.Max.Itemsz} to {Catalog.Max.Items}
+	set {_Catalog.Max.Items} to {Catalog.Max.Items}
+	if {Catalog.Max.Items} < 1:
+		set {_Catalog.Max.Items} to 999999999999999999
+		set {_Catalog.Max.Itemsz} to "INF"
+	if {_page} is not set:
+		set {_page} to 1
+	if {_page} < 1:
+		set {_page} to 1
+	if {_page} > 7:
+		set {_pagenumber} to {_page}
+	else:
+		set {_pagenumber} to 7
+	if {_page} > {_Catalog.Max.Items}:
+		set {_page} to {_Catalog.Max.Items}
+	set {_uuid} to {_player}'s uuid
+	if {clicktype::%{_player}%} contains "right":
+		if ({_page}+9) < {_Catalog.Max.Items}:
+			set metadata tag "CatalogGUI" of {_player} to chest inventory with 6 rows named "&8Item Catalog &0(&8%{_page}+9%&0/&8%{_Catalog.Max.Itemsz}%&0)"
+		else:
+			set metadata tag "CatalogGUI" of {_player} to chest inventory with 6 rows named "&8Item Catalog &0(&8%{_page}%&0/&8%{_Catalog.Max.Itemsz}%&0)"
+	else:
+		set metadata tag "CatalogGUI" of {_player} to chest inventory with 6 rows named "&8Item Catalog &0(&8%{_page}%&0/&8%{_Catalog.Max.Itemsz}%&0)"
+	set {_saveoldpagefortesting} to {_page}
+	if {clicktype::%{_player}%} contains "right":
+		add 9 to {_page}
+	set {_testingglasspan} to 9
+	loop 7 times:
+		add 1 to {_testingglasspan}
+		set {_sayslot} to ((({_page}-1)*3)*7)+loop-value
+		set slot {_testingglasspan} of metadata tag "CatalogGUI" of {_player} to light gray stained glass pane named "&a" with lore "&7Item: %{_sayslot}%"
+	set {_testingglasspan} to 18
+	loop 7 times:
+		add 1 to {_testingglasspan}
+		set {_sayslot} to (((({_page}-1)*3)*7)+loop-value)+7
+		set slot {_testingglasspan} of metadata tag "CatalogGUI" of {_player} to light gray stained glass pane named "&a" with lore "&7Item: %{_sayslot}%"
+	set {_testingglasspan} to 27
+	loop 7 times:
+		add 1 to {_testingglasspan}
+		set {_sayslot} to (((({_page}-1)*3)*7)+loop-value)+14
+		set slot {_testingglasspan} of metadata tag "CatalogGUI" of {_player} to light gray stained glass pane named "&a" with lore "&7Item: %{_sayslot}%"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "CatalogGUI" of {_player} to Carved Pumpkin named "&a"
+	#set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "CatalogGUI" of {_player} to yellow stained glass pane named "&a"
+	if {_player} has permission "op":
+		set slot 8 of metadata tag "CatalogGUI" of {_player} to barrier named "&cReload Items"
+	set {_loopvalue} to 36
+	set {_pagenumber} to {_pagenumber}-7
+	if {clicktype::%{_player}%} contains "right":
+		set {_extravalue} to 9
+		if {_page}+9 > {_Catalog.Max.Items}:
+			set {_extravalue} to 0
+		delete {clicktype::%{_player}%}
+	loop 7 times:
+		add 1 to {_loopvalue}
+		set slot {_loopvalue} of metadata tag "CatalogGUI" of {_player} to red wool named "&cPage %{_loopvalue}-36+{_pagenumber}+{_extravalue}%"
+		if loop-value is 7:
+			set {_savevalueidklelel} to "%{_loopvalue}-36+{_pagenumber}+{_extravalue}%"
+	if {_page} > 7:
+		set slot 7+36 of metadata tag "CatalogGUI" of {_player} to lime wool named "&aPage %{_savevalueidklelel}%"
+	else:
+		set slot {_page}+36 of metadata tag "CatalogGUI" of {_player} to lime wool named "&aPage %{_page}%"
+	delete {_drops::*}
+	set {_loop-number} to 0
+	add itemGenerator(dirt, ("&cNO"), 1, 1, ("Test"), 1, ("&aNO"), ("Smart"), 2) to {_drops::*}
+	set {_drops::*} to {Catalog::*}
+	set {_size} to size of {_drops::*}
+	set {_Oldslot} to -1
+	loop 21 times:
+		add 1 to {_loopnumber}
+		{_loopnumber} <= loop-value
+		if {_page} > 1:
+			set {_temp2} to {_page}-1
+			set {_temp2} to 21*{_temp2}
+			set {_getitem} to loop-value+{_temp2}
+		if {_page} > 1:
+			set {_temp3} to {_page}-1
+			set {_temp3} to 21*{_temp3}
+			set {_temp} to {_loopnumber}+{_temp2}
+			set {_item} to {_drops::%{_temp}%}
+		else:
+			set {_item} to {_drops::%{_loopnumber}%}
+			set {_getitem} to {_loopnumber}
+		{_getitem} <= {_size}
+		add "&7Item: %{_getitem}%" to {_item}'s lore
+		set {_item} to {_item} parsed as item
+		set {_itemslot} to {_loopnumber}+9
+		set {_valueloop} to 0
+		loop 6 times:
+			add 1 to {_valueloop}
+			if slot {_itemslot} of metadata tag "CatalogGUI" of {_player} is not light gray stained glass pane named "&a":
+				add 1 to {_itemslot}
+			else:
+				exit 1 loop
+		{_valueloop} is not 6
+		set slot {_itemslot} of metadata tag "CatalogGUI" of {_player} to {_item}
+		if slot {_itemslot} of metadata tag "CatalogGUI" of {_player} is air:
+			set {_item} to barrier named "&cError Unknown Item: ""%{_item}%"""
+			add "&7Item: %{_getitem}%" to {_item}'s lore
+			set slot {_itemslot} of metadata tag "CatalogGUI" of {_player} to {_item}
+		set {_Oldslot} to {_itemslot}
+	open (metadata tag "CatalogGUI" of {_player}) to {_player}
+	delete {clicktype::%{_player}%}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+function CatalogGUIIndexSlot(player: player, slot: object, clicktype: object):
+	set {_uuid} to {_player}'s uuid
+	set {_Catalog.Max.Items} to {Catalog.Max.Items}
+	if {Catalog.Max.Items} < 1:
+		set {_Catalog.Max.Items} to 999999999999999999
+	if {_slot} is between 37 and 43:
+		set {_PageSlot} to slot {_slot} of metadata tag "CatalogGUI" of {_player}
+		set {_name} to uncolored name of slot {_slot} of metadata tag "CatalogGUI" of {_player}
+		set {_name::*} to {_name} split at " "
+		set {_Pagez} to {_name::2}
+		if {_PageSlot} is lime wool:
+			set {clicktype::%{_player}%} to "%{_clicktype}%"
+		if {_slot} is 43:
+			if {_PageSlot} is lime wool:
+				set {_Pagez} to {_Pagez} parsed as number
+				{_Pagez} < {_Catalog.Max.Items}
+				set {_pagechange} to {_Pagez}-6
+				loop 7 times:
+					add 1 to {_loopvalue}
+					set {_itemslot} to {_loopvalue}+36
+					if {_loopvalue} is 6:
+						set slot {_itemslot} of metadata tag "CatalogGUI" of {_player} to lime wool named "&aPage %{_pagechange}+{_loopvalue}%"
+					else:
+						set slot {_itemslot} of metadata tag "CatalogGUI" of {_player} to red wool named "&cPage %{_pagechange}+{_loopvalue}%"
+				set {_newpage} to {_Pagez}+1
+				set {_playerz} to {_player} parsed as player
+				execute {_player} command "/Catalog %{_newpage}%"
+		{_PageSlot} is not lime wool
+		set {_playerz} to {_player} parsed as player
+		execute {_player} command "/Catalog %{_Pagez}%"
+	if slot {_slot} of metadata tag "CatalogGUI" of {_player} is not light gray stained glass pane named "&a" or barrier block or yellow stained glass pane or red wool or lime wool or carved pumpkin:
+		{_player} has permission "op"
+		set {_giveitem} to slot {_slot} of metadata tag "CatalogGUI" of {_player}
+		set {_lore::*} to uncolored lore of {_giveitem}
+		loop {_lore::*}:
+			add 1 to {_lorelines}
+		delete line {_lorelines} of lore of {_giveitem}
+		give {_player} {_giveitem}
+	if {_slot} is 8:
+		if {_player} has permission "op":
+			UpdateCatalogItems({_player})
+
+
+
+
+command /TestDmg:
+	trigger:
+		set {_tool} to player's tool
+		add "Attack" tag of nbt of player's tool to {_Attack::*}
+		broadcast "%{_attack::*}%"
+		add "{Attack:1}" to nbt of {_tool}
+		give player {_tool}
+
+
+
+command /Enhancments:
+	trigger:
+		message "%Enhancments(player's held item)%"
+
+command /Enhancmentsset [<number>]:
+	trigger:
+		set {_number} to arg-1
+		give player EnhancmentsSet(player's held item, {_number}, player)
+
+
+function Enhancments(item: item) :: number:
+	if {_item} is set:
+		set {_lorelines::*} to name of {_item} split at ""
+		set {_line} to size of {_lorelines::*}
+		loop {_line} times:
+			if {_lorelines::%loop-value%} is "⦿":
+				add 1 to {_Jems}
+		return {_Jems}
+
+function EnhancmentsSet(item: item,Enhancment: integer,player: Player) :: item:
+	if {_item} is set:
+		if item amount of {_item} > 1:
+			stop
+		set {_name::*} to name of {_item} split at ""
+		set {_size} to size of {_name::*}
+		set {_alllore::*} to {_item}'s lore
+		set {_loresize} to size of {_alllore::*}
+		set {_saveold} to Enhancments({_item})
+		if {_saveold} is not set:
+			set {_saveold} to 0
+		set {_diference} to (difference between {_saveold} and {_Enhancment})
+		loop {_size} times:
+			{_name::%loop-value%} is not "⦿"
+			if {_name} is not set:
+				set {_name} to "%{_name::%loop-value%}%"
+			else:
+				set {_name} to "%{_name}%%{_name::%loop-value%}%"
+		loop {_Enhancment} times:
+			if {_jem} is not set:
+				set {_jem} to "⦿"
+			else:
+				set {_jem} to "%{_jem}%⦿"
+		set name of {_item} to "%{_name}%&b%{_jem}%"
+		set {_lore::*} to line 2 of {_item}'s lore split at "+"
+		set {_ExtraValue} to Enhancments({_item})*5
+		set line 2 of {_item}'s lore to "%{_lore::1}%&6+(%{_ExtraValue}%&6)"
+		set {_lore::*} to line 3 of {_item}'s lore split at "+"
+		set line 3 of {_item}'s lore to "%{_lore::1}%&6+(%{_ExtraValue}%&6)"
+		set {_line1::*} to line 3 of {_item}'s lore split at " "
+		set {_line2::*} to line 2 of {_item}'s lore split at " "
+		set {_linexx1::*} to {_line1::4} split at " "
+		set {_linexx2::*} to {_line2::2} split at " "
+		set {_linexx1::1} to {_linexx1::1} parsed as number
+		set {_linexx2::1} to {_linexx2::1} parsed as number
+		set {_linez1::*} to {_line1::2} split at "%%"
+		set {_linez2::*} to {_line2::5} split at "%%"
+		set {_linez2::1} to {_linez2::1} parsed as number
+		set {_linez1::1} to {_linez1::1} parsed as number
+		set {_ExtraValue} to {_ExtraValue} parsed as number
+		set {_valuetoadd1} to ({_linexx2::1}+{_ExtraValue})
+		set {_valuetoadd2} to ({_linexx1::1}+{_ExtraValue})
+		add "{%{_line2::3}%:%{_valuetoadd1}%}" to {_item}'s nbt
+		add "{%{_line1::5}%:%{_valuetoadd2}%}" to {_item}'s nbt
+		loop {_diference} times:
+			set {_PickPrice} to "Price" tag of nbt of {_Item}
+			set {_PickPrice} to {_PickPrice}*(1+(1/10))
+			add "{Price:%{_PickPrice}%}" to {_item}'s nbt
+		set {_PickPrice} to "Price" tag of nbt of {_Item}
+		set line ({_loresize}-1) of {_item}'s lore to "&6⛃ &e %{_PickPrice}%"
+		if {_diference} > 0:
+			if {_diference} > 1:
+				message "&dSuccessfully Put &5%{_diference}%&d Enhancements on your item" to {_player}
+			else:
+				message "&dSuccessfully Put &5%{_diference}%&d Enhancement on your item" to {_player}
+		return {_item}
+
+	
+
+on inventory click:
+	cursor slot of player is Purple glazed terracotta
+	set {_i} to Enhancments(event-slot)
+	event-slot is not air
+	event-slot is armor or sword or bow or stick or sunflower or axe or shovel
+	name of event-slot is set
+	cancel event
+	if item amount of event-item > 1:
+		message "&cEnhancments Can Only Be Put On 1 Item!"
+		stop
+	if {_i} is more than 4:
+		set event-slot to EnhancmentsSet(event-item, 5, player)
+		stop
+	set {_add} to Enhancments(event-item)
+	if cursor slot of player is purple glazed terracotta named "&dEnhancement&5 I":
+		add 1 to {_add}
+	if cursor slot of player is purple glazed terracotta named "&dEnhancement&5 II":
+		add 2 to {_add}
+	if cursor slot of player is purple glazed terracotta named "&dEnhancement&5 III":
+		add 3 to {_add}
+	if cursor slot of player is purple glazed terracotta named "&dEnhancement&5 IV":
+		add 4 to {_add}
+	if cursor slot of player is purple glazed terracotta named "&dEnhancement&5 V":
+		add 5 to {_add}
+	if {_add} > 5:
+		set {_add} to 5
+	remove 1 of player's cursor slot from player's cursor slot
+	set event-slot to EnhancmentsSet(event-item, {_add}, player)
+
+function moneyComma(n: object) :: text:
+    if "%{_n}%" contains ".":
+        set {_s::*} to split "%{_n}%" at "."
+        set {_n} to "%a({_s::1})%.%last 2 characters of {_s::2}%"
+        return "%{_n}%"
+    else:
+        set {_n} to a("%{_n}%")
+        return "%{_n} ? 0%"
+function a(b: text) :: text:
+    if length of {_b} > 3:
+        return "%a(first length of {_b} - 3 characters of {_b})%,%last 3 characters of {_b}%"
+    return {_b}
+
+
+command /TESTD:
+	trigger:
+		summon bee
+		set {_mob} to last spawned entity
+		add "{NoGravity:1b}" to nbt of {_mob}
+		set {_disguise} to new disguise with type Squid with username "BEE"
+		set disguise of {_mob} to {_disguise}
+		while {_mob} is alive:
+			wait 1 tick
+			set display name of {_mob} to "&cMissile"
+			make {_mob} pathfind to player with speed 2
+			if distance between {_mob} and player < 3:
+				loop 5 times:
+					make {_mob} damage player by 15
+					create a fake explosion at location of player
+					drawRings particle "explosionhuge", center location of player, id "uuid of {_mob}", rainbowMode true, randomRotation true, animated true, radius 1, ringCount 1, ringDensity 3, visibleRange 32, pulseDelay 1
+					make {_mob} pathfind to player with speed 5
+					wait 10 ticks
+				stopEffect id uuid of {_mob}
+				kill {_mob}
+
+
+
+command /Ai:
+	trigger:
+		summon phantom at player
+		set {_z} to last spawned mob
+		add "{Attributes:[{Name:generic.movement_speed,Base:10}]}" to nbt of {_z}
+
+on right click with cobblestone:
+	cancel event
+	loop all mobs and players in radius 50 of player:
+		loop-entity is not player
+		set {_dist} to (distance between player and loop-entity *1000) + (random integer between 0 and 999)/1000
+		set {_list::%{_dist}%} to loop-entity
+	set {_set} to the first element of {_list::*}
+	if {_set} is arrow:
+		stop
+	if {_set} is set:
+		cancel event
+		summon arrow at block above player
+		set {_mob} to last spawned entity
+		set {_disguise} to new disguise with type area effect cloud with username "noob"
+		set disguise of {_mob} to {_disguise}
+		add "{NoGravity:1b}" to nbt of {_mob}
+		while {_set} is alive:
+			wait 5 ticks
+			make {_mob} home towards {_set} normally
+			if distance between {_mob} and {_set} < 6:
+				kill {_mob}
+				make player damage {_set} by 1
+				stop
+		kill {_mob}
+
+
+command /Sell:
+	trigger:
+		SellGui(player)
+
+on pickup:
+	if metadata tag "SellGUI" of player is set:
+		cancel event
+
+on inventory close:
+	if metadata tag "SellGUI" of player is set:
+		wait 5 ticks
+		loop 53 times:
+			set {_showslot} to slot loop-value of metadata tag "SellGUI" of player
+			{_showslot} is not yellow stained glass pane named "&a"
+			{_showslot} is not hopper
+			{_showslot} is not air
+			if player has enough space for {_showslot}:
+				give player {_showslot}
+			else:
+				drop {_showslot} at player
+		clear metadata tag "SellGUI" of player
+
+command /Testgui1:
+	trigger:
+		if metadata tag "SellGUI" of player is set:
+			broadcast "yes"
+		else:
+			broadcast "no"
+
+
+
+
+
+on right click with jukebox:
+	name of tool of player is "&3[&bJukebox&3]"
+	cancel event
+	MusicGui(player)
+
+
+function MusicGui(player: player):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set metadata tag "MusicGUI" of {_player} to chest inventory with 3 rows named "&aJukebox"
+	set slot ((integers between 0 and 9), 17 and (integers between 18 and 26)) of metadata tag "MusicGUI" of {_player} to stained glass pane named "&a"
+	set slot 22 of metadata tag "MusicGUI" of {_player} to Jukebox named "&aJukebox" with lore "&cClick To Stop Song"
+	set slot 10 of metadata tag "MusicGUI" of {_player} to music disc strad named "&cCredits" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 11 of metadata tag "MusicGUI" of {_player} to music disc far named "&cBasalt Delta" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 12 of metadata tag "MusicGUI" of {_player} to music disc 11 named "&cSoul Sand" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 13 of metadata tag "MusicGUI" of {_player} to music disc mellohi named "&cDragon" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 14 of metadata tag "MusicGUI" of {_player} to music disc cat named "&cMenu" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 15 of metadata tag "MusicGUI" of {_player} to music disc chirp named "&cCrimson Forest" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 16 of metadata tag "MusicGUI" of {_player} to music disc wait named "&cUnder Water" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	open (metadata tag "MusicGUI" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+function MusicGUIIndexSlot(player: player, slot: object, clicktype: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_clicktype} to "%{_clicktype}%"
+	if {_slot} is 22:
+		stop sound "music.credits" and "music.nether.basalt_deltas" and "music.nether.soul_sand_valley" and "music.dragon" and "music.menu" and "music.nether.nether_wastes" and "music.under_water" for {_player}
+	if {_slot} is 10:
+		if {_clicktype} contains "middle":
+			play sound "music.credits" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.credits" with volume 2 to {_player}
+	if {_slot} is 11:
+		if {_clicktype} contains "middle":
+			play sound "music.nether.basalt_deltas" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.nether.basalt_deltas" with volume 2 to {_player}
+	if {_slot} is 12:
+		if {_clicktype} contains "middle":
+			play sound "music.nether.soul_sand_valley" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.nether.soul_sand_valley" with volume 2 to {_player}
+	if {_slot} is 13:
+		if {_clicktype} contains "middle":
+			play sound "music.dragon" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.dragon" with volume 2 to {_player}
+	if {_slot} is 14:
+		if {_clicktype} contains "middle":
+			play sound "music.menu" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.menu" with volume 2 to {_player}
+	if {_slot} is 15:
+		if {_clicktype} contains "middle":
+			play sound "music.nether.nether_wastes" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.nether.nether_wastes" with volume 2 to {_player}
+	if {_slot} is 16:
+		if {_clicktype} contains "middle":
+			play sound "music.under_water" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.under_water" with volume 2 to {_player}
+
+
+
+
+
+
+
+function SellGui(player: player):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set metadata tag "SellGUI" of {_player} to chest inventory with 6 rows named "&eSell Items"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "SellGUI" of {_player} to yellow stained glass pane named "&a"
+	set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%{_itemValues} ? 0%" with lore "&aClick To Sell 0 Items!"
+	open (metadata tag "SellGUI" of {_player}) to {_player}
+	#set metadata tag "inventoryOpened" of {_player} to true
+	while metadata tag "SellGUI" of {_player} is set:
+		wait 20 ticks
+		delete {_NumberOfSells}
+		loop 53 times:
+			delete {_AddPrice}
+			set {_showslot} to slot loop-value of metadata tag "SellGUI" of {_player}
+			{_showslot} is not yellow stained glass pane named "&a"
+			{_showslot} is not hopper
+			{_showslot} is not air
+			add "Price" tag of nbt of {_showslot} to {_AddPrice}
+			if {_showslot} is enchanted book:
+				set {_tier} to "%uncolored 1st line of the lore of {_showslot}%"
+				if {_tier} is "Tier: I":
+					add 100 to {_AddPrice}
+				if {_tier} is "Tier: II":
+					add 300 to {_AddPrice}
+				if {_tier} is "Tier: III":
+					add 500 to {_AddPrice}
+			set {_AddPrice} to {_AddPrice}*item amount of {_showslot}
+			add item amount of {_showslot} to {_NumberOfSells}
+			add {_AddPrice} to {_itemValues}
+		if {_NumberOfSells} is not 1:
+			set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%moneyComma({_itemValues}) ? 0%" with lore "&aClick To Sell %moneyComma({_NumberOfSells}) ? 0% Items!"
+		else:
+			set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%moneyComma({_itemValues}) ? 0%" with lore "&aClick To Sell %moneyComma({_NumberOfSells}) ? 0% Item!"
+		delete {_itemValues}
+
+
+function SellGUIIndexSlot(player: player, slot: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	if {_slot} is (0, 1, 2, 3, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52 or 53):
+		stop
+	else:
+		wait 1 tick
+		delete {_NumberOfSells}
+		loop 53 times:
+			delete {_AddPrice}
+			set {_showslot} to slot loop-value of metadata tag "SellGUI" of {_player}
+			{_showslot} is not yellow stained glass pane named "&a"
+			{_showslot} is not hopper
+			{_showslot} is not air
+			add "Price" tag of nbt of {_showslot} to {_AddPrice}
+			if {_showslot} is enchanted book:
+				set {_tier} to "%uncolored 1st line of the lore of {_showslot}%"
+				if {_tier} is "Tier: I":
+					add 100 to {_AddPrice}
+				if {_tier} is "Tier: II":
+					add 300 to {_AddPrice}
+				if {_tier} is "Tier: III":
+					add 500 to {_AddPrice}
+
+			set {_AddPrice} to {_AddPrice}*item amount of {_showslot}
+			add item amount of {_showslot} to {_NumberOfSells}
+			add {_AddPrice} to {_itemValues}
+		wait 1 tick
+		set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%moneyComma({_itemValues}) ? 0%" with lore "&aClick To Sell %moneyComma({_NumberOfSells}) ? 0% Items!"
+		if {_slot} is 4:
+			if {_NumberOfSells} is not 1:
+				message "&eSold %moneyComma({_NumberOfSells}) ? 0%&e Items For $%moneyComma({_itemValues}) ? 0%&e!" to {_player}
+			else:
+				message "&eSold %moneyComma({_NumberOfSells}) ? 0%&e Item For $%moneyComma({_itemValues}) ? 0%&e!" to {_player}
+			set {Balance::%{_uuid}%::%{_profile}%} to {Balance::%{_uuid}%::%{_profile}%}+{_itemValues}
+			delete {_itemValues}
+			set slot (integers between 0 and 53) of metadata tag "SellGUI" of {_player} to air
+			set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "SellGUI" of {_player} to yellow stained glass pane named "&a"
+		set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%moneyComma({_itemValues}) ? 0%" with lore "&aClick To Sell %moneyComma({_NumberOfSells}) ? 0% Items!"
+
+
+
+on pickup:
+	set player's helmet to player's helmet

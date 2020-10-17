@@ -1,11 +1,22 @@
 function hotbarItems(player: player):
 	set {_uuid} to {_player}'s uuid
 	set {_profile} to metadata tag "profile" of {_player}
+	{_player}'s gamemode is not creative
 	loop 6 times:
 		if {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%} is set:
-			set slot loop-value of {_player}'s inventory to lime stained glass pane named "%{savedSkills::%{_uuid}%::%{_profile}%::%loop-value%}%" with nbt "{HideFlags:63}"
+			if slot loop-value of {_player}'s inventory is air:
+				set {_X} to true
+			else:
+				set {_X} to false
+			if slot loop-value of {_player}'s inventory is not yellow stained glass pane or red stained glass pane:
+				set slot loop-value of {_player}'s inventory to lime stained glass pane named "%name of {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%}%" with lore "%lore of {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%} ? ""&cUnknown""%"
+			{_X} is false
+			set {_name} to "%{savedSkills::%{_uuid}%::%{_profile}%::%loop-value%}%"
+			set {_item} to {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%}
+			set {_cool} to CoolDownGet({_item})
+			CoolDown({_player}, {_item}, {_cool}, "%loop-value%")
 		else:
-			set slot loop-value of {_player}'s inventory to green stained glass pane named "&aSkill %loop-value%" with nbt "{HideFlags:63}"
+			set slot loop-value of {_player}'s inventory to green stained glass pane named "&cLocked Skill" with nbt "{HideFlags:63}"
 	set slot 7 of {_player}'s inventory to potion of healing named "&cHealing Potion:&7 10" with lore "&c+50 HP &7when used" with nbt "{HideFlags:63}"
 	set slot 8 of {_player}'s inventory to potion of water breathing named "&bMana Potion:&7 10" with lore "&b+50 MP &7when used" with nbt "{HideFlags:63}"
 	
@@ -62,8 +73,8 @@ function armorGUI(player: player):
 	if slot 0 of {_player}'s inventory is air:
 		set slot 26 of metadata tag "characterInventory" of {_player} to red stained glass pane named "&cNo Tool"
 	set slot (5, 14, 23, 32, 41 and 50) of metadata tag "characterInventory" of {_player} to black stained glass pane named "&7"
-	set slot 47 of metadata tag "characterInventory" of {_player} to potion of healing named "&cHealing Potion" with lore "&7%{healthPotions::%{_uuid}%} ? 0% left", "" and "&c+50 HP &7when used" with nbt "{HideFlags:63}"
-	set slot 48 of metadata tag "characterInventory" of {_player} to potion of water breathing named "&bMana Potion" with lore "&7%{manaPotions::%{_uuid}%} ? 0% left", "" and "&b+50 MP &7when used" with nbt "{HideFlags:63}"
+	set slot 47 of metadata tag "characterInventory" of {_player} to slot 7 of {_player}'s inventory
+	set slot 48 of metadata tag "characterInventory" of {_player} to slot 8 of {_player}'s inventory
 	set slot 49 of metadata tag "characterInventory" of {_player} to {_player}'s helmet named "%{profiles::%{_uuid}%::%{_profile}%}%" with lore ("", "&6Click any armor" and "&6to equip it") with all flags hidden
 	open (metadata tag "characterInventory" of {_player}) to {_player}
 	set metadata tag "inventoryOpened" of {_player} to true
@@ -93,6 +104,7 @@ function profileInv(player: player, type: text):
 		delete {intelligenceStat::%{_uuid}%::%{_profile}%}
 		delete {wisdomStat::%{_uuid}%::%{_profile}%}
 		delete {staminaStat::%{_uuid}%::%{_profile}%}
+
 
 function strengthStat(player: player) :: number:
 	set {_uuid} to {_player}'s uuid
@@ -203,6 +215,19 @@ function blockStat(player: player) :: number:
 	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
 		add "Block" tag of nbt of {_player}'s tool to {_block}
 	return sum({_block} ? 0)
+
+
+function priceStat(player: player) :: number:
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	add "Price" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::1} to {_price}
+	add "Price" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_price}
+	add "Price" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_price}
+	add "Price" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_price}
+	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
+		add "Price" tag of nbt of {_player}'s tool to {_price}
+	return sum({_price} ? 0)
+
 	
 function criticalStat(player: player) :: number:
 	set {_uuid} to {_player}'s uuid
@@ -231,7 +256,7 @@ function attackStat(player: player) :: number:
 	else if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Archer":
 		return sum({_attack}, (dexterityStat({_player})*0.4))
 	else if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Shaman":
-		return sum({_attack}, (wisdomStat({_player})*0.4))
+		return sum({_attack}, (wisdomStat({_player})*0.4))+1
 	
 function cooldownSpeedStat(player: player) :: number:
 	set {_uuid} to {_player}'s uuid
@@ -240,8 +265,8 @@ function cooldownSpeedStat(player: player) :: number:
 	add "CooldownSpeed" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::2} to {_cooldownSpeed}
 	add "CooldownSpeed" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::3} to {_cooldownSpeed}
 	add "CooldownSpeed" tag of nbt of {armorPlayer::%{_uuid}%::%{_profile}%::4} to {_cooldownSpeed}
-	if {_player}'s tool is not a helmet, chestplate, leggings or boots:
-		add "CooldownSpeed" tag of nbt of {_player}'s tool to {_cooldownSpeed}
+	if slot 0 of {_player} is not a helmet, chestplate, leggings or boots:
+		add "CooldownSpeed" tag of nbt of slot 0 of {_player} to {_cooldownSpeed}
 	return sum({_cooldownSpeed} ? 0)
 
 function luckStat(player: player) :: number:

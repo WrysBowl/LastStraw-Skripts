@@ -14,7 +14,7 @@ on chat:
 				set {_endLore} to true
 		set {_item} to formatted "<tooltip:%{_itemLines}%>%name of player's tool%<reset>"
 		replace "<none>" in {_item} with "%player's tool%"
-		if length of {_item} <= 300:
+		if length of {_item} <= 500:
 			replace "[item]" in {_message} with "%{_item}%"
 		else:
 			send "%nl%&cThis item is too large to be displayed in chat!%nl%" to player

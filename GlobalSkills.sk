@@ -1,0 +1,1353 @@
+
+on right click holding Lime Stained Glass Pane:
+	player's gamemode is not creative
+	set {_player} to player
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_name2} to event-item
+	set {_name} to name of event-item
+	{_name} is set
+	set {_skill::*} to {_name} split at " ["
+	set {_skill2::*} to {_skill::2} split at "]"
+	if "%uncolored {_skill2::1}%" is "I":
+		set {_level} to 1
+	if "%uncolored {_skill2::1}%" is "II":
+		set {_level} to 2
+	if "%uncolored {_skill2::1}%" is "III":
+		set {_level} to 3
+	{_level} is set
+	set {_cooldownspeed} to cooldownSpeedStat(player)
+	set {_cooldownspeed} to {_cooldownspeed}/100
+	if {_cooldownspeed} is not set:
+		set {_cooldownspeed} to 0
+	if "%uncolored {_skill::1}%" is "Meteor":
+		if player's target block is set:
+			Meteor(player, {_level})
+			set {_cooldownspeed} to 45*{_cooldownspeed}
+			CoolDown(player, {_name2}, 45-{_cooldownspeed}, "false")
+		stop
+	if "%uncolored {_skill::1}%" is "Bash":
+		Bash(player, {_level})
+		set {_cooldownspeed} to 20*{_cooldownspeed}
+		CoolDown(player, {_name2}, 20-{_cooldownspeed}, "false")
+		stop
+	if "%uncolored {_skill::1}%" is "Slam":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
+		Slam(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Berserker":
+		set {_cooldownspeed} to 25*{_cooldownspeed}
+		CoolDown(player, {_name2}, 25-{_cooldownspeed}, "false")
+		Berserker(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Blood Lust":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
+		BloodLust(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Satanic Taunt":
+		set {_cooldownspeed} to 25*{_cooldownspeed}
+		CoolDown(player, {_name2}, 25-{_cooldownspeed}, "false")
+		SatanicTaunt(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Sugar High":
+		set {_cooldownspeed} to 15*{_cooldownspeed}
+		CoolDown(player, {_name2}, 15-{_cooldownspeed}, "false")
+		SugarHigh(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Dash":
+		set {_cooldownspeed} to 15*{_cooldownspeed}
+		CoolDown(player, {_name2}, 15-{_cooldownspeed}, "false")
+		Dash(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Serpentine":
+		set {_cooldownspeed} to 45*{_cooldownspeed}
+		CoolDown(player, {_name2}, 45-{_cooldownspeed}, "false")
+		Serpentine(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Black Hole":
+		set {_cooldownspeed} to 35*{_cooldownspeed}
+		CoolDown(player, {_name2}, 35-{_cooldownspeed}, "false")
+		BlackHole(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Sniper":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
+		Sniper(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Poison Arrows":
+		set {_cooldownspeed} to 25*{_cooldownspeed}
+		CoolDown(player, {_name2}, 25-{_cooldownspeed}, "false")
+		PoisonArrows(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Flash":
+		set {_cooldownspeed} to 35*{_cooldownspeed}
+		CoolDown(player, {_name2}, 35-{_cooldownspeed}, "false")
+		Flash(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Gust":
+		set {_cooldownspeed} to 15*{_cooldownspeed}
+		CoolDown(player, {_name2}, 15-{_cooldownspeed}, "false")
+		Gust(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Jet Stream":
+		set {_cooldownspeed} to 25*{_cooldownspeed}
+		CoolDown(player, {_name2}, 25-{_cooldownspeed}, "false")
+		Jetstream(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Pyro-Dancer":
+		set {_cooldownspeed} to 45*{_cooldownspeed}
+		CoolDown(player, {_name2}, 45-{_cooldownspeed}, "false")
+		PyroDancer(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Heat Stroke":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
+		HeatStroke(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Brilliant Light":
+		set {_cooldownspeed} to 35*{_cooldownspeed}
+		CoolDown(player, {_name2}, 35-{_cooldownspeed}, "false")
+		BrilliantLight(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Necrosis":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
+		Necrosis(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Bubonic Plague":
+		set {_cooldownspeed} to 200*{_cooldownspeed}
+		CoolDown(player, {_name2}, 200-{_cooldownspeed}, "false")
+		BubonicPlague(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Summon":
+		set {_cooldownspeed} to 320*{_cooldownspeed}
+		CoolDown(player, {_name2}, 320-{_cooldownspeed}, "false")
+		Summon(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Rejuvenize":
+		set {_cooldownspeed} to 50*{_cooldownspeed}
+		CoolDown(player, {_name2}, 50-{_cooldownspeed}, "false")
+		Rejuvenize(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Totem of Undying":
+		set {_cooldownspeed} to 70*{_cooldownspeed}
+		CoolDown(player, {_name2}, 70-{_cooldownspeed}, "false")
+		TotemofUndying(player, {_level})
+		stop
+	if "%uncolored {_skill::1}%" is "Necromancy":
+		set {_cooldownspeed} to 120*{_cooldownspeed}
+		CoolDown(player, {_name2}, 120-{_cooldownspeed}, "false")
+		Necromancy(player, {_level})
+		stop
+	message "&cUnknown Skill! !!Please Report This!!"
+
+
+function CoolDownGet(Item: Item) :: number:
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_name} to name of {_item}
+	{_name} is set
+	set {_skill::*} to {_name} split at " ["
+	set {_skill2::*} to {_skill::2} split at "]"
+	set {_cooldownspeed} to cooldownSpeedStat({_player})
+	set {_cooldownspeed} to {_cooldownspeed}/100
+	if {_cooldownspeed} is not set:
+		set {_cooldownspeed} to 0
+	if "%uncolored {_skill::1}%" is "Meteor":
+		set {_cooldownspeed} to 45*{_cooldownspeed}
+		set {_CoolDown} to 45-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Bash":
+		set {_cooldownspeed} to 20*{_cooldownspeed}
+		set {_CoolDown} to 20-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Slam":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		set {_CoolDown} to 30-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Berserker":
+		set {_cooldownspeed} to 25*{_cooldownspeed}
+		set {_CoolDown} to 25-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Blood Lust":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		set {_CoolDown} to 30-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Satanic Taunt":
+		set {_cooldownspeed} to 25*{_cooldownspeed}
+		set {_CoolDown} to 25-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Sugar High":
+		set {_cooldownspeed} to 15*{_cooldownspeed}
+		set {_CoolDown} to 15-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Dash":
+		set {_cooldownspeed} to 15*{_cooldownspeed}
+		set {_CoolDown} to 15-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Serpentine":
+		set {_cooldownspeed} to 45*{_cooldownspeed}
+		set {_CoolDown} to 45-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Black Hole":
+		set {_cooldownspeed} to 35*{_cooldownspeed}
+		set {_CoolDown} to 35-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Sniper":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		set {_CoolDown} to 30-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Poison Arrows":
+		set {_cooldownspeed} to 25*{_cooldownspeed}
+		set {_CoolDown} to 25-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Flash":
+		set {_cooldownspeed} to 35*{_cooldownspeed}
+		set {_CoolDown} to 35-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Gust":
+		set {_cooldownspeed} to 15*{_cooldownspeed}
+		set {_CoolDown} to 15-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Jet Stream":
+		set {_cooldownspeed} to 25*{_cooldownspeed}
+		set {_CoolDown} to 25-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Pyro-Dancer":
+		set {_cooldownspeed} to 45*{_cooldownspeed}
+		set {_CoolDown} to 45-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Heat Stroke":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		set {_CoolDown} to 30-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Brilliant Light":
+		set {_cooldownspeed} to 35*{_cooldownspeed}
+		set {_CoolDown} to 35-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Necrosis":
+		set {_cooldownspeed} to 30*{_cooldownspeed}
+		set {_CoolDown} to 30-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Bubonic Plague":
+		set {_cooldownspeed} to 200*{_cooldownspeed}
+		set {_CoolDown} to 200-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Summon":
+		set {_cooldownspeed} to 320*{_cooldownspeed}
+		set {_CoolDown} to 320-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Rejuvenize":
+		set {_cooldownspeed} to 50*{_cooldownspeed}
+		set {_CoolDown} to 50-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Totem of Undying":
+		set {_cooldownspeed} to 70*{_cooldownspeed}
+		set {_CoolDown} to 70-{_cooldownspeed}
+	if "%uncolored {_skill::1}%" is "Necromancy":
+		set {_cooldownspeed} to 120*{_cooldownspeed}
+		set {_CoolDown} to 120-{_cooldownspeed}
+	return ({_CoolDown})
+		
+
+
+
+function CoolDown(player: player, name: item, Cooldown: number, AllSlots: text):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_Save} to {_Cooldown}
+	set {_time} to Round ({_Cooldown}/2)
+	set {_CountTime} to {_time}
+	set {_time} to "%{_time}% seconds" parsed as a timespan
+	set {_lore::*} to lore of {_name}
+	set {_name} to name of {_name}
+	wait 1 tick
+	if {_AllSlots} is "false":
+		set {_slot} to {_player}'s selected hotbar slot
+		slot {_slot} of {_player} is Lime Stained Glass Pane named "%{_name}%"
+		loop {_CountTime} times:
+			set slot {_slot} of {_player} to Red Stained Glass Pane named "%{_name}% &2[&a%({_CountTime}*2)-loop-value%&2]" with lore "%{_lore::1}%"
+			wait 1 second
+			if slot {_slot} of {_player} is not Red Stained Glass Pane named "%{_name}% &2[&a%({_CountTime}*2)-loop-value%&2]" with lore "%{_lore::1}%":
+				stop
+		loop {_CountTime} times:
+			set slot {_slot} of {_player} to Yellow Stained Glass Pane named "%{_name}% &2[&a%{_CountTime}-loop-value%&2]" with lore "%{_lore::1}%"
+			wait 1 second
+			if slot {_slot} of {_player} is not Yellow Stained Glass Pane named "%{_name}% &2[&a%{_CountTime}-loop-value%&2]" with lore "%{_lore::1}%":
+				stop
+		set slot {_slot} of {_player} to Lime Stained Glass Pane named "%{_name}%" with lore "%{_lore::1}%"
+	else:
+		set {_slot} to {_AllSlots} parsed as number
+		#slot {_slot} of {_player} is Lime Stained Glass Pane named "%{_name}%"
+		loop {_CountTime} times:
+			set slot {_slot} of {_player} to Red Stained Glass Pane named "%{_name}% &2[&a%({_CountTime}*2)-loop-value%&2]" with lore "%{_lore::1}%"
+			wait 1 second
+			if slot {_slot} of {_player} is not Red Stained Glass Pane named "%{_name}% &2[&a%({_CountTime}*2)-loop-value%&2]" with lore "%{_lore::1}%":
+				stop
+		loop {_CountTime} times:
+			set slot {_slot} of {_player} to Yellow Stained Glass Pane named "%{_name}% &2[&a%{_CountTime}-loop-value%&2]" with lore "%{_lore::1}%"
+			wait 1 second
+			if slot {_slot} of {_player} is not Yellow Stained Glass Pane named "%{_name}% &2[&a%{_CountTime}-loop-value%&2]" with lore "%{_lore::1}%":
+				stop
+		set slot {_slot} of {_player} to Lime Stained Glass Pane named "%{_name}%" with lore "%{_lore::1}%"
+
+command /Skills:
+	trigger:
+		set {_skillslot1} to metadata tag "SkillSlot1" of player
+		set {_skillslot2} to metadata tag "SkillSlot2" of player
+		set {_player} to player
+		set {_uuid} to uuid of {_player}
+		set {_profile} to metadata tag "profile" of {_player}
+		SkillGui(player, {_skillslot1}, {_skillslot2})
+
+on right click with enchanted book:
+	set {_player} to player
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_item} to player's tool
+	set {_Class} to "Class" tag of nbt of {_item}
+	if "%{profiles::%{_uuid}%::%{_profile}%}%" does not contain {_Class}:
+		{_Class} is set
+		{_Class} is not "All"
+		player's gamemode is not creative
+		message "&cYou Are Not The Right Class For This Skill!"
+		Stop
+	set {_name} to uncolored name of {_item}
+	set {_Lore} to the 1st line of the lore of {_item}
+	{_Lore} is set
+	{_name} is set
+	set {_lore::*} to {_lore} split at " "
+	{_lore::2} is set
+	loop 6 times:
+		set {_nametest::*} to name of {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%} split at " ["
+		if "%uncolored {_name}%" is "%uncolored {_nametest::1}%":
+			if "%uncolored {_lore::2}%]" is not "%uncolored {_nametest::2}%":
+				if "%uncolored {_lore::2}%" is "I":
+					set {_clickTier} to 1
+				if "%uncolored {_lore::2}%" is "II":
+					set {_clickTier} to 2
+				if "%uncolored {_lore::2}%" is "III":
+					set {_clickTier} to 3
+				if "%uncolored {_nametest::2}%" is "I]":
+					set {_clickTier2} to 1
+				if "%uncolored {_nametest::2}%" is "II]":
+					set {_clickTier2} to 2
+				if "%uncolored {_nametest::2}%" is "III]":
+					set {_clickTier2} to 3
+				if {_clickTier} > {_clickTier2}:
+					remove 1 of held item from player
+					message "&6Claimed &a[%{_Lore}%&a]&6 &a%{_name}%&7!"
+					set {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%} to lime stained glass pane named "&a%{_name}% [&9%{_lore::2}%&a]" with lore "%3rd line of the lore of {_item} ? ""&cUnknown""%"
+					hotbarItems({_player})
+					stop
+				else:
+					message "&cYou Allready Have A Better Tier Of This Skill!"
+					stop
+			else:
+				message "&cYou Allready Have This Tier of The Skill!"
+				stop
+	if {savedSkills::%{_uuid}%::%{_profile}%::6} is set:
+		message "&cYou Are At Max Skills!"
+		stop
+	remove 1 of held item from player
+	message "&6Claimed &a[%{_Lore}%&a]&6 &a%{_name}%&7!"
+	add lime stained glass pane named "&a%{_name}% [&9%{_lore::2}%&a]" with lore "%3rd line of the lore of {_item}%" to {savedSkills::%{_uuid}%::%{_profile}%::*}
+	hotbarItems({_player})
+
+
+
+
+
+function SkillGui(player: player, ClickedSlot.1: integer, ClickedSlot.2: integer):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_skillslot1} to metadata tag "SkillSlot1" of {_player}
+	set {_skillslot2} to metadata tag "SkillSlot2" of {_player}
+	set metadata tag "SkillGUI" of {_player} to chest inventory with 1 row named "&8Skill's Menu"
+	set slot 0 of metadata tag "SkillGUI" of {_player} to barrier named "&cReset All Skills!" with nbt "{HideFlags:63}" with lore "&7Middle Click To Delete All You Skills" and " " and "&c-----------!!WARNING!!-----------" and "&cThis Cannot Be Undone!"
+	set slot 7 of metadata tag "SkillGUI" of {_player} to paper named "&7>>Left Click<<" with nbt "{HideFlags:63}" with lore "&7Use Left Click To Select The" and "&7First Skill You Want To Move"
+	set slot 8 of metadata tag "SkillGUI" of {_player} to paper named "&7>>Right Click<<" with nbt "{HideFlags:63}" with lore "&7Use Right Click To Select The" and "&7Second Skill You Want To Move"
+	loop 6 times:
+		if {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%} is set:
+			if {_skillslot1} or {_skillslot2} is loop-value:
+				set slot loop-value of metadata tag "SkillGUI" of {_player} to lime stained glass pane named "%name of {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%}%" with lore "&7[Selected]" with nbt "{HideFlags:63}"
+			else:
+				set slot loop-value of metadata tag "SkillGUI" of {_player} to lime stained glass pane named "%name of {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%}%" with nbt "{HideFlags:63}"
+		else:
+			if {_skillslot1} or {_skillslot2} is loop-value:
+				set slot loop-value of metadata tag "SkillGUI" of {_player} to green stained glass pane named "&cLocked" with lore "&7[Selected]" with nbt "{HideFlags:63}"
+			else:
+				set slot loop-value of metadata tag "SkillGUI" of {_player} to green stained glass pane named "&cLocked" with nbt "{HideFlags:63}"
+	open (metadata tag "SkillGUI" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+	hotbarItems({_player})
+
+function SkillGUIIndexSlot(player: player, slot: object, clicktype: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_skillslot1} to metadata tag "SkillSlot1" of {_player}
+	set {_skillslot2} to metadata tag "SkillSlot2" of {_player}
+	set {_clicktype} to "%{_clicktype}%"
+	if {_slot} is 0:
+		{_clicktype} contains "middle"
+		delete {savedSkills::%{_uuid}%::%{_profile}%::*}
+		delete {_skillslot2}
+		delete {_skillslot1}
+		delete metadata tag "SkillSlot1" of {_player}
+		delete metadata tag "SkillSlot2" of {_player}
+	if {_slot} is 1 or 2 or 3 or 4 or 5 or 6:
+		#slot {_slot} of metadata tag "SkillGUI" of {_player} is lime stained glass pane
+		if {_clicktype} contains "left":
+			set {_skillslot1} to {_slot}
+		else if {_clicktype} contains "right":
+			set {_skillslot2} to {_slot}
+	if {_skillslot1} and {_skillslot2} is set:
+		set {_swap1} to {savedSkills::%{_uuid}%::%{_profile}%::%{_skillslot1}%}
+		set {_slotx1} to {_skillslot1}+1
+		set {_swap2} to {savedSkills::%{_uuid}%::%{_profile}%::%{_skillslot2}%}
+		set {_slotx2} to {_skillslot2}+1
+		if {_swap2} is set:
+			set {savedSkills::%{_uuid}%::%{_profile}%::%{_skillslot1}%} to {_swap2}
+		else:
+			delete {savedSkills::%{_uuid}%::%{_profile}%::%{_skillslot1}%}
+		if {_swap1} is set:
+			set {savedSkills::%{_uuid}%::%{_profile}%::%{_skillslot2}%} to {_swap1}
+		else:
+			delete {savedSkills::%{_uuid}%::%{_profile}%::%{_skillslot2}%}
+		delete {_skillslot2}
+		delete {_skillslot1}
+		delete metadata tag "SkillSlot1" of {_player}
+		delete metadata tag "SkillSlot2" of {_player}
+	set metadata tag "SkillSlot1" of {_player} to {_skillslot1}
+	set metadata tag "SkillSlot2" of {_player} to {_skillslot2}
+	hotbarItems({_player})
+	SkillGui({_player}, {_skillslot1}, {_skillslot2})
+
+
+on inventory click:
+	if event-inventory = (metadata tag "SkillGUI" of player):
+		SkillGUIIndexSlot(player, index of event-slot, click type)
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+function NecromancyZombie(player: player,loc: location):
+	{_player} is online
+	summon zombie at {_loc}
+	set {_zombie} to last spawned zombie
+	add "{Invulnerable:1b}" to {_zombie}'s nbt
+	set {_zombie}'s walk speed to .39
+	set metadata value "OwnerZ" of {_zombie} to {_player}
+	wait 5 ticks
+	set {_zombie}'s max health to hpStat({_player})/10
+	set {_zombie}'s health to hpStat({_player})/10
+	set {_zombie}'s display name to "&3Undead Zombie &a[%GetTeam({_player}) ? ""&cUnknown""%&a]"
+	add "{Invulnerable:0b}" to {_zombie}'s nbt
+	while {_zombie} is alive:
+		wait 10 ticks
+		set {_item1} to leather Helmet
+		set {_item2} to leather Chestplate
+		set {_item3} to leather Leggings
+		set {_item4} to leather Boots
+		add "{Unbreakable:1b}" to nbt of {_item1}
+		add "{Unbreakable:1b}" to nbt of {_item2}
+		add "{Unbreakable:1b}" to nbt of {_item3}
+		add "{Unbreakable:1b}" to nbt of {_item4}
+		if uncolored GetTeam({_player}) contains "Red":
+			dye {_item1} red
+			dye {_item2} red
+			dye {_item3} red
+			dye {_item4} red
+		else if uncolored GetTeam({_player}) contains "Blue":
+			dye {_item1} blue
+			dye {_item2} blue
+			dye {_item3} blue
+			dye {_item4} blue
+		else:
+			dye {_item1} black
+			dye {_item2} black
+			dye {_item3} black
+			dye {_item4} black
+			set {_zombie}'s display name to "&3Undead Zombie &a[%GetTeam({_player}) ? ""&cUnknown""%&a]"
+		set {_zombie}'s helmet to {_item1}
+		set {_zombie}'s chestplate to {_item2}
+		set {_zombie}'s leggings to {_item3}
+		set {_zombie}'s boots to {_item4}
+		chance of 10%:
+			damage {_zombie} by hpStat({_player})/100
+		loop all mobs and players in radius 2.5 of {_zombie}:
+			{_player} is online
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			metadata value "OwnerZ" of {_zombie} is not metadata value "OwnerZ" of loop-entity
+			make {_zombie} damage loop-entity by attackStat({_player})/5
+		loop all mobs and players in radius 15 of {_zombie}:
+			{_player} is online
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			metadata value "OwnerZ" of {_zombie} is not metadata value "OwnerZ" of loop-entity
+			metadata tag "name" of loop-entity is not ""
+			if nbt of loop-entity contains "{Invulnerable:1b}":
+			else:
+				make {_zombie} pathfind to loop-entity with speed 1.3
+	kill {_zombie}
+
+on target:
+	set {_owner} to metadata value "OwnerZ" of event-entity
+	set {_ownerx} to metadata value "OwnerZ" of target
+	set {_owner} to {_owner} parsed as player
+	if "%GetTeam({_owner})%" is "%GetTeam(target)%":
+		cancel event
+	if {_ownerx} is set:
+		cancel event
+
+function Necromancy(player: player,level: number):
+	if "%id names%" contains "Necromancy%{_player}%":
+		stop
+	set {_lasts} to {_level}+10
+	set {_lasts} to "%{_lasts}% seconds" parsed as a timespan
+	set {_startime} to now
+	set {_loc} to location at {_player}
+	set {_hol} to location at {_player}
+	set y-coordinate of {_hol} to (y-coordinate of {_loc})
+	wait 1 tick
+	drawWarpRings style 2, particle "redstone", RGB 0, 150, 0, center {_hol}, id "Necromancy%{_player}%", rainbowMode false, scan false, height 0, radius 4, ringCount 1, ringDensity 35, visibleRange 100
+	while difference between {_startime} and now is less than {_lasts}:
+		NecromancyZombie({_player}, {_hol})
+		wait 1 second
+	stopEffect id "Necromancy%{_player}%"
+
+
+
+function TotemofUndying(player: player,level: number):
+	if "%id names%" contains "TotemofUndying%{_player}%":
+		stop
+	set {_loc} to location at {_player}
+	set {_hol} to location at {_player}
+	set y-coordinate of {_hol} to (y-coordinate of {_loc})
+	wait 1 tick
+	drawWarpRings style 2, particle "redstone", RGB 255, 255, 100, center {_hol}, id "TotemofUndying%{_player}%", rainbowMode false, scan false, height 0, radius 4, ringCount 1, ringDensity 35, visibleRange 150
+	summon armor stand at location of {_hol}
+	set {_armor} to last spawned armor stand
+	add "{Small:1b}" to nbt of {_armor}
+	add "{CustomNameVisible:1b}" to nbt of {_armor}
+	add "{NoGravity:1b}" to nbt of {_armor}
+	add "{NoBasePlate:1b}" to nbt of {_armor}
+	add "{ShowArms:1b}" to nbt of {_armor}
+	add "{Invulnerable:1b}" to nbt of {_armor}
+	set {_armor}'s helmet to beacon
+	set {_item} to leather chestplate
+	dye {_item} yellow
+	set {_armor}'s chestplate to {_item}
+	set {_item} to leather leggings
+	dye {_item} yellow
+	set {_armor}'s leggings to {_item}
+	set {_item} to leather boots
+	dye {_item} yellow
+	set {_armor}'s boots to {_item}
+	set {_armor}'s tool to 25 totem of undying
+	set {_hp} to item amount of {_armor}'s tool
+	set {_armor}'s display name to "&eTotem of Undying"
+	summon armor stand at location above {_armor}
+	set {_armor2} to last spawned armor stand
+	add "{CustomNameVisible:1b}" to nbt of {_armor2}
+	add "{NoGravity:1b}" to nbt of {_armor2}
+	add "{Invulnerable:1b}" to nbt of {_armor2}
+	add "{Invisible:1b}" to nbt of {_armor2}
+	add "{Marker:0b}" to nbt of {_armor2}
+	add "{Small:1b}" to nbt of {_armor2}
+	add "{DisabledSlots:4144959}" to nbt of {_armor2}
+	set {_armor2}'s display name to "&bRight Click To Damage Totem"
+	while {_armor} is alive:
+		if {_player} is not online:
+			kill {_armor}
+		set {_hp} to item amount of {_armor}'s tool
+		set {_armor}'s display name to "&eTotem of Undying &4[&c%{_hp}%&4/&c25&4]"
+		loop all mobs and players in radius 4 of {_loc}:
+			if "%GetTeam({_player})%" is "%GetTeam(loop-entity)%":
+				set metadata tag "health" of loop-entity to (metadata tag "health" of loop-entity)+25+{_level}
+				if metadata tag "health" of loop-entity > hpStat(loop-entity):
+					set metadata tag "health" of loop-entity to hpStat(loop-entity)
+			else:
+				metadata value "OwnerZ" of loop-entity is set
+				set {_owner} to metadata value "OwnerZ" of loop-entity
+				set {_owner} to {_owner} parsed as player
+				{_owner} is set
+				metadata tag "health" of loop-entity is set
+				if "%GetTeam({_player})%" is "%GetTeam({_owner})%":
+					set metadata tag "currentDamaged" of loop-entity to (metadata tag "currentDamaged" of loop-entity)-(25+{_level})
+					if metadata tag "currentDamaged" of loop-entity < 0:
+						set metadata tag "currentDamaged" of loop-entity to 0
+					set {_mobHealth} to ((metadata tag "health" of loop-entity)-(metadata tag "currentDamaged" of loop-entity))
+					set loop-entity's health to {_mobHealth}
+					set display name of loop-entity to "&c%metadata tag ""name"" of loop-entity% %{_mobHealth}% / %metadata tag ""health"" of loop-entity% &c❤"
+		wait 1 second
+	stopEffect id "TotemofUndying%{_player}%"
+	kill {_armor2}
+
+
+on click on armor stand:
+	event-entity's helmet is beacon
+	player's gamemode is not creative
+	cancel event
+	set {_hp} to item amount of event-entity's tool
+	if {_hp}-1 is 0:
+		kill event-entity
+		stop
+	remove 1 of event-entity's tool from event-entity's tool
+	set event-entity's display name to "&eTotem of Undying &4[&c%{_hp}%&4/&c25&4]"
+
+on death of armor stand:
+	clear drops
+
+
+
+function Rejuvenize(player: player,level: number):
+	if "%id names%" contains "Rejuvenize%{_player}%":
+		stop
+	set {_lasts} to {_level}+10
+	set {_lasts} to "%{_lasts}% seconds" parsed as a timespan
+	set {_startime} to now
+	set {_loc} to location at {_player}
+	set {_hol} to location at {_player}
+	set y-coordinate of {_hol} to (y-coordinate of {_loc})
+	wait 1 tick
+	drawWarpRings style 2, particle "redstone", RGB 255, 0, 100, center {_hol}, id "Rejuvenize%{_player}%", rainbowMode false, scan false, height 0, radius 4, ringCount 1, ringDensity 35, visibleRange 100
+	while difference between {_startime} and now is less than {_lasts}:
+		loop all players in radius 4 of {_loc}:
+			if "%GetTeam({_player})%" is "%GetTeam(loop-player)%":
+				set metadata tag "health" of loop-player to (metadata tag "health" of loop-player)+20
+				if metadata tag "health" of loop-player > hpStat(loop-player):
+					set metadata tag "health" of loop-entity to hpStat(loop-player)
+				set metadata tag "mana" of loop-player to (metadata tag "mana" of loop-player)+20
+				if metadata tag "mana" of loop-player > mpStat(loop-player):
+					set metadata tag "mana" of loop-entity to mpStat(loop-player)
+		wait 1 second
+	stopEffect id "Rejuvenize%{_player}%"
+
+
+
+function SummonMeta(player: player,level: number, msgplayer: player):
+	set metadata value "Tele%{_player}%" of {_msgplayer} to {_level}
+	wait 30 seconds
+	clear metadata value "Tele%{_player}%" of {_msgplayer}
+
+function Summon(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	loop all players:
+		if "%GetTeam({_player})%" is "%GetTeam(loop-player)%":
+			if {_player} is loop-player:
+				message "&aSent Teleportation Request To All Teammates" to loop-player
+			else:
+				SummonMeta({_player}, {_level}, loop-player)
+				send formatted "&aWould you like to teleport to %{_player}%&a?  <tooltip:&a&lYes><cmd:/sommontp %{_player}%>&a&l[Yes]  <tooltip:&c&lNo><cmd:>&c&l[No]" to loop-player
+
+command /sommontp [<player>]:
+	trigger:
+		set {_accept} to metadata value "Tele%arg-1%" of player
+		if {_accept} is set:
+			clear metadata value "Tele%arg-1%" of player
+			set {_loop} to 18-({_accept}*3)
+			loop {_loop} times:
+				message "&aTeleporting... (&2%1+{_loop}-loop-value%&a)"
+				wait 1 second
+			teleport player to arg-1
+		else:
+			message "&cThis Player has not sent a teleport request to you!"
+
+
+
+function BubonicPlague(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	loop 5 times:
+		summon silverfish at {_player}
+		set {_silver} to last spawned mob
+		set metadata value "Rat" of {_silver} to true
+		set metadata value "Owner" of {_silver} to "%{_player}%"
+		set metadata tag "MobLevel" of {_silver} to 95
+		wait 3 ticks
+		set {_silver}'s display name to "&4Bubonic Plague Rat &4[%GetTeam({_player})%&4]"
+		drawDot count 1, particle "redstone", RGB 1, 0, 0, center {_silver}, rainbowMode false, visibleRange 64, pulseDelay 0, keepFor 1 second
+
+function BubonicPlagueEffect(player: player, Owner: text):
+	set {_PlayerOwner} to {_Owner} parsed as player
+	{_PlayerOwner} is set
+	set {_uuid} to uuid of {_player}
+	metadata value "Infected" of {_player} is not true
+	set metadata value "Infected" of {_player} to true
+	apply potion of Wither of tier 1 to {_player} for 50 seconds
+	message "&7You were infected by the &cBubonic Plague&8! (%{_PlayerOwner}%&8)" to {_player}
+	loop 200 times:
+		if metadata value "Infected" of {_player} is not true:
+			exit 1 loop
+		wait 5 ticks
+		drawDot count 1, particle "redstone", RGB 1, 0, 0, center {_player}, rainbowMode false, visibleRange 64, pulseDelay 0, keepFor 6 ticks
+		set {_dmg} to attackStat({_PlayerOwner})
+		set {_dmg} to {_dmg}/20
+		damage {_player} by {_dmg}
+		loop all players in radius 3 of {_player}:
+			set {_Check} to metadata value "Infected" of loop-player
+			{_Check} is not true
+			"%GetTeam({_player})%" is not "%GetTeam(loop-player)%"
+			"%loop-player%" is not "%{_Owner}%"
+			chance of 10%
+			BubonicPlagueEffect(loop-player, "%{_Owner}%")
+	clear metadata value "Infected" of {_player}
+
+on death of player:
+	clear metadata value "Infected" of player
+
+
+
+function BrilliantLight(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	loop all mobs and players in radius 10 of {_player}:
+		loop-entity is not {_player}
+		add loop-entity to {_mobs::*}
+	set {_loop} to 5+{_level}
+	loop {_loop} times:
+		set {_mob} to random element of {_mobs::*}
+		strike lightning effect at {_mob}
+		if "%GetTeam({_player})%" is not "%GetTeam({_mob})%":
+			make {_player} damage {_mob} by 1
+		else:
+			set metadata tag "health" of {_mob} to metadata tag "health" of {_mob}+attackStat({_player})
+			if metadata tag "health" of {_mob} > hpStat({_mob}):
+				set metadata tag "health" of {_mob} to hpStat({_mob})
+		wait 1 tick
+
+on target:
+	if metadata value "Owner" of event-entity is "%target%":
+		cancel event
+	if metadata value "Rat" of event-entity is true:
+		set {_owner} to metadata value "Owner" of event-entity
+		set {_owner} to {_owner} parsed as player
+		if metadata value "Infected" of target is true:
+			cancel event
+		if "%GetTeam({_owner})%" is "%GetTeam(target)%":
+			cancel event
+
+function Necrosis(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_loc} to location of {_player}
+	set {_pos2} to location of {_loc}
+	set {_pos2}'s yaw to {_player}'s yaw
+	set {_pos2}'s pitch to 0
+	summon falling water at {_pos2}
+	add "{NoGravity:1b}" to nbt of last spawned entity
+	set {_Magma2} to last spawned entity
+	teleport last spawned entity to {_pos2}
+	summon armor stand at {_player}
+	make last spawned entity ride {_Magma2}
+	set {_armor} to last spawned entity
+	add "{Invisible:1b}" to nbt of {_armor}
+	set last spawned entity's helmet to wither skeleton skull
+	loop 50 times:
+		push {_Magma2} forward at speed .1
+		wait 2 ticks
+		loop all mobs and players in radius 1.5 of {_Magma2}:
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			damage loop-entity by attackStat({_player})
+	kill {_Magma2}
+	kill {_armor}
+
+
+
+function HeatStroke(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_loc} to location of {_player}
+	set {_pos1} to {_loc}
+	set {_pos2} to location above {_pos1}
+	set {_pos3} to location 1 right {_pos2}
+	set {_pos4} to location below {_pos3}
+	set {_pos5} to location 1 right of {_pos3}
+	set {_pos6} to location below {_pos5}
+	set {_pos1}'s yaw to {_player}'s yaw
+	set {_pos2}'s yaw to {_player}'s yaw
+	set {_pos3}'s yaw to {_player}'s yaw
+	set {_pos4}'s yaw to {_player}'s yaw
+	set {_pos5}'s yaw to {_player}'s yaw
+	set {_pos6}'s yaw to {_player}'s yaw
+	set {_pos1}'s pitch to 0
+	set {_pos2}'s pitch to 0
+	set {_pos3}'s pitch to 0
+	set {_pos4}'s pitch to 0
+	set {_pos5}'s pitch to 0
+	set {_pos6}'s pitch to 0
+	summon falling magma at {_pos1}
+	add "{NoGravity:1b}" to nbt of last spawned entity
+	set {_Magma1} to last spawned entity
+	teleport last spawned entity to {_pos1}
+	summon falling magma at {_pos2}
+	add "{NoGravity:1b}" to nbt of last spawned entity
+	set {_Magma2} to last spawned entity
+	teleport last spawned entity to {_pos2}
+	summon falling magma at {_pos3}
+	add "{NoGravity:1b}" to nbt of last spawned entity
+	set {_Magma3} to last spawned entity
+	teleport last spawned entity to {_pos3}
+	summon falling magma at {_pos4}
+	add "{NoGravity:1b}" to nbt of last spawned entity
+	set {_Magma4} to last spawned entity
+	teleport last spawned entity to {_pos4}
+	summon falling magma at {_pos5}
+	add "{NoGravity:1b}" to nbt of last spawned entity
+	set {_Magma5} to last spawned entity
+	teleport last spawned entity to {_pos5}
+	summon falling magma at {_pos6}
+	add "{NoGravity:1b}" to nbt of last spawned entity
+	set {_Magma6} to last spawned entity
+	teleport last spawned entity to {_pos6}
+	push {_Magma1} forward at speed 1
+	push {_Magma2} forward at speed 1
+	push {_Magma3} forward at speed 1
+	push {_Magma4} forward at speed 1
+	push {_Magma5} forward at speed 1
+	push {_Magma6} forward at speed 1
+	loop 200 times:
+		wait 2 ticks
+		loop all mobs and players in radius 3 of {_Magma4}:
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			damage loop-entity by attackStat({_player})
+			
+	kill {_Magma1}
+	kill {_Magma2}
+	kill {_Magma3}
+	kill {_Magma4}
+	kill {_Magma5}
+	kill {_Magma6}
+
+on block physics:
+    block is fire
+    cancel event
+
+
+function PlaceTempFire(loc: location, player: player):
+	drawSpiral particle "redstone", RGB 255, 150, 0, center {_player}, id "Fire%{_loc}%", rainbowMode false, clockwise true, scan true, radius 1.5, density 5, height 20, effectMod 100, start 1, visibleRange 10
+	loop 4 times:
+		wait 10 ticks
+		loop all mobs and players in radius 1.5 of {_loc}:
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			ignite loop-entity
+			damage loop-entity by 5
+	stopEffect id "Fire%{_loc}%"
+
+
+function PyroDancer(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_player}'s walk speed to .4
+	set {_loop} to 200+({_level}*30)
+	apply potion of Fire Resistance of tier 1 without particles to {_player} for 330 ticks
+	loop {_loop} times:
+		wait 1 tick
+		PlaceTempFire(location of {_player}, {_player})
+	set {_player}'s walk speed to .3
+
+
+function Bash(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_loc} to location infront of {_player}
+	set {_loc}'s y-coordinate to ({_player}'s y-coordinate+.05)
+	push {_Player} (direction from {_Player} to {_loc}) at speed 5
+	set {_time} to ({_level}*.5)+.5
+	set {_time} to "%{_time}% seconds" parsed as a timespan
+	wait 10 ticks
+	while block below {_player} is air:
+		wait 2 ticks
+	loop all mobs and players in radius 4 of {_player}:
+		loop-entity is not {_player}
+		make {_player} damage loop-entity by 1
+		set {_savespeed} to loop-entity's walk speed
+		set loop-entity's walk speed to 0
+		message "&bYou Were Stuned for %{_time}%" to loop-entity 
+		wait {_time}
+		set loop-entity's walk speed to .3
+
+
+function Slam(player: player,level: number):
+	block below {_player} is not air
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	push {_player} up at speed 5
+	wait 10 ticks
+	while block below {_player} is air:
+		wait 2 ticks
+	loop all mobs and players in radius 5 of {_player}:
+		loop-entity is not {_player}
+		loop {_level} times:
+			wait 10 tick
+			make {_player} damage loop-entity by 1
+
+
+function Berserker(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_player}'s walk speed to .5
+	set {_wait} to 5+{_level}
+	loop {_wait} times:
+		wait 1 second
+		drawSpiral particle "redstone", RGB 0, 255, 150, center {_player}, id "Berserker%{_player}%", rainbowMode false, clockwise true, scan true, radius 1.5, density 3, height 20, effectMod 100, start 1, visibleRange 10
+	set {_player}'s walk speed to .3
+	stopEffect id "Berserker%{_player}%"
+	
+function BloodLust(player: player,level: number):
+	if "%id names%" contains "BloodLust%{_player}%":
+		stop
+	set {_lasts} to {_level}+10
+	set {_lasts} to "%{_lasts}% seconds" parsed as a timespan
+	set {_startime} to now
+	set {_loc} to location at {_player}
+	set {_hol} to location at {_player}
+	set y-coordinate of {_hol} to (y-coordinate of {_loc})
+	wait 1 tick
+	drawWarpRings style 2, particle "redstone", RGB 140, 0, 0, center {_hol}, id "BloodLust%{_player}%", rainbowMode false, scan false, height 0, radius 4, ringCount 1, ringDensity 35, visibleRange 100
+	while difference between {_startime} and now is less than {_lasts}:
+		loop all mobs and players in radius 4 of {_loc}:
+			set {_uuid} to uuid of {_player}
+			set {_profile} to metadata tag "profile" of {_player}
+			set {_team1::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+			set {_profile} to metadata tag "profile" of loop-entity
+			set {_uuid} to uuid of loop-entity
+			set {_team2::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+			set {_profile} to metadata tag "profile" of {_player}
+			if loop-entity is not mob:
+				if {_team1::1} is {_team2::1}:
+					set metadata tag "health" of loop-entity to (metadata tag "health" of loop-entity)+(attackStat({_player})/2)
+					if metadata tag "health" of loop-entity > hpStat(loop-entity):
+						set metadata tag "health" of loop-entity to hpStat(loop-entity)
+				else:    
+					damage loop-entity by attackStat({_player})
+			else:
+				damage loop-entity by attackStat({_player})
+		wait 0.5 seconds
+	stopEffect id "BloodLust%{_player}%"
+	
+function SatanicTaunt(player: player,level: number):
+	set {_lasts} to {_level}+3
+	set {_lasts} to "%{_lasts}% seconds" parsed as a timespan
+	set {_startime} to now
+	set {_count} to 0
+	#drawWings style 6, particle1 "redstone", RGB 0, 204, 102, particle2 "redstone", RGB2 2, 204, 0, particle3 "redstone", RGB3 51, 255, 0, center {_player}, id "SatanicTaunt%{_player}%", angle 110, height 0, space 0.2, visibleRange 30, tps 0, second 3
+	drawSpiral particle "redstone", RGB 175, 50, 180, center {_player}, id "SatanicTaunt%{_player}%", rainbowMode false, clockwise true, scan true, radius 4, density 20, height 3, effectMod 0, start 1, visibleRange 20
+	drawSpiral particle "redstone", RGB 175, 50, 180, center {_player}, id "SatanicTaunt2%{_player}%", rainbowMode false, clockwise false, scan true, radius 4, density 20, height 3, effectMod 0, start 1, visibleRange 20
+	drawWarpRings style 2, particle "redstone", RGB 175, 0, 180, center {_player}, id "SatanicTaunt3%{_player}%", rainbowMode false, scan false, height 0, radius 0.3, ringCount 1, ringDensity 3, visibleRange 80
+	while difference between {_startime} and now is less than {_lasts}:
+		loop all mobs and players in radius 4 of location at {_player}:
+			set {_profile} to metadata tag "profile" of {_player}
+			set {_uuid} to uuid of {_player}
+			set {_team1::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+			set {_profile} to metadata tag "profile" of loop-entity
+			set {_uuid} to uuid of loop-entity
+			set {_team2::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+			if {_team1::1} is not {_team2::1}:
+				push loop-entity (direction from loop-entity to {_player}) at speed 0.2
+				if {_count} is equal to 4:
+					make {_player} damage loop-entity by 1
+			delete {_team2::*}
+			delete {_team1::*}
+		wait 5 ticks
+		add 1 to {_count}
+		if {_count} is equal to 5:		
+			set {_Count} to 0
+	stopEffect id "SatanicTaunt%{_player}%"
+	stopEffect id "SatanicTaunt2%{_player}%"
+	stopEffect id "SatanicTaunt3%{_player}%"
+
+
+function SugarHigh(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_player}'s walk speed to .5
+	set {_wait} to 6+{_level}
+	loop {_wait} times:
+		wait 1 second
+	set {_player}'s walk speed to .3
+
+#--------------------------------------------------------------------------------------------------------
+
+function Dash(player: player,level: number):
+	if "%id names%" contains "Dash%{_player}%":
+		stop
+	drawSpiral particle "redstone", RGB 3, 71, 142, center {_player}, id "Dash1%{_player}%", rainbowMode false, clockwise true, scan true, radius 1.5, density 10, height 10, effectMod 100, start 1, visibleRange 100
+	drawSpiral particle "fireworkspark", RGB 0, 0, 0, center {_player}, id "Dash%{_player}%", rainbowMode false, clockwise true, scan true, radius 1, density 10, height 10, effectMod 100, start 1, visibleRange 100
+	drawSpiral particle "fireworkspark", RGB 0, 0, 0, center {_player}, id "Dash2%{_player}%", rainbowMode false, clockwise true, scan true, radius 0.75, density 10, height 10, effectMod 100, start 1, visibleRange 100
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_speed} to {_player}'s walk speed
+	set {_player}'s walk speed to (0.3 + {_level}*0.05)
+	wait 5 seconds
+	set {_player}'s walk speed to {_speed}
+	stopEffect id "Dash%{_player}%"
+	stopEffect id "Dash1%{_player}%"
+	stopEffect id "Dash2%{_player}%"
+
+
+function Serpentine(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	shoot arrow from {_player} at speed 0
+	set {_arrow} to the shot projectile
+	add {_arrow} to {_arrow::*}
+	teleport {_arrow} infront of (location above {_player})
+	set metadata tag "NoDamage" of {_arrow} to "True"
+	set metadata tag "NoDamageX" of {_arrow} to "True"
+	set metadata tag "Shooter" of {_arrow} to "%{_player}%"
+	add "{NoGravity:1b}" to nbt of {_arrow}
+	set {_v} to new vector 0, 0, 0
+	set velocity of {_arrow} to {_v}
+	set {_loc} to location infront of {_player}
+	set {_loc} to location infront of {_loc}
+	set {_loc} to location above {_loc}
+	push {_arrow} (direction from {_arrow} to {_loc}) at speed 1.5
+	set {_value} to "0"
+	while {_value} is "0":
+		add 1 to {_timealive}
+		if {_true} is true:
+			if {_timealive} > 10:
+				kill {_Arrow}
+				exit 1 loop
+		else:
+			if {_timealive} > 25:
+				kill {_Arrow}
+				exit 1 loop
+		set {_nbt::*} to nbt of {_arrow} split at ","
+		loop {_nbt::*}:
+			set {_test} to loop-value
+		set {_test::*} to {_test} split at ":"
+		set {_test2::*} to {_test::2} split at "b"
+		set {_value} to {_test2::1}
+		wait 3 tick
+		set {_loc} to location at {_arrow}
+		drawDot count 2, particle "redstone", RGB 255, 255, 0, center {_loc}, rainbowMode false, visibleRange 150, pulseDelay 0, keepFor 2 ticks
+		delete {_targets::*}
+		loop all mobs and players in radius (10+{_level}) of {_loc}:
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			add loop-entity to {_targets::*}
+		set {_target} to random element of {_targets::*}
+		if {_target} is set:
+			remove {_target} from {_targets::*}
+			{_target} is alive
+			set {_true} to true
+			teleport {_arrow} to {_arrow}
+			push {_arrow} (direction from {_arrow} to {_target}) at speed 1.5
+			if {_targets::*} is not set:
+				exit 1 loop
+			else:
+				shoot arrow from {_player} at speed 0
+				set {_arrow} to the shot projectile
+				add {_arrow} to {_arrow::*}
+				teleport {_arrow} to location above (location above {_target})
+				set metadata tag "NoDamage" of {_arrow} to "True"
+				set metadata tag "NoDamageX" of {_arrow} to "True"
+				set metadata tag "Shooter" of {_arrow} to "%{_player}%"
+				set velocity of {_arrow} to {_v}
+				set {_target} to random element of {_targets::*}
+			kill {_arrow::1}
+		else:
+			{_true} is true
+			exit 1 loop
+	wait 5 ticks
+	set {_loc} to location at {_arrow}
+	clear metadata value "NoDamage" of {_arrow}
+	kill {_arrow}
+	kill {_arrow::*}
+
+on projectile hit:
+	if projectile is an arrow:
+		wait 1 tick
+		kill projectile
+
+
+function GetTeam(player: player) :: text:
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_team} to {profiles::%{_uuid}%::%{_profile}%}
+	set {_team::*} to {_team} split at " "
+	set {_team} to {_team::1}
+	if {_player} is not set:
+		set {_team} to "mob"
+	return ({_team})
+
+function BlackHole(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	summon an arrow infront of (location above {_player})
+	set {_arrow} to spawned entity
+	set metadata tag "NoDamage" of {_arrow} to "True"
+	set metadata tag "Shooter" of {_arrow} to "%{_player}%"
+	set {_v} to new vector 0, 0, 0
+	set velocity of {_arrow} to {_v}
+	set {_loc} to location infront of {_player}
+	set {_loc} to location infront of {_loc}
+	set {_loc} to location above {_loc}
+	push {_arrow} (direction from {_arrow} to {_loc}) at speed 2
+	set {_value} to "0"
+	while {_value} is "0":
+		if {_arrow} is not alive:
+			exit 1 loop
+		set {_nbt::*} to nbt of {_arrow} split at ","
+		loop {_nbt::*}:
+			set {_test} to loop-value
+		set {_test::*} to {_test} split at ":"
+		set {_test2::*} to {_test::2} split at "b"
+		set {_value} to {_test2::1}
+		drawDot count 1, particle "redstone", RGB 175, (({_level}-3)*-30), 180, center {_arrow}, rainbowMode false, visibleRange 150, pulseDelay 0, keepFor 5 ticks
+		wait 5 ticks
+	set {_loc} to location at {_arrow}
+	set {_locz} to location above {_loc}
+	set {_locz} to location above {_locz}
+	set {_locz} to location above {_locz}
+	#drawSpiral particle "redstone", RGB 175, (({_level}-3)*-30), 180, center {_arrow}, id "BlackHole%{_player}%%{_loc}%", rainbowMode false, clockwise true, scan true, radius 1.5, density 10, height 0, effectMod 100, start 2, visibleRange 100
+	drawSphere style 1, particle "redstone", RGB 175, (({_level}-3)*-30), 180, center {_loc}, id "BlackHole1%{_player}%%{_loc}%", rainbowMode false, radius 5, density 40, visibleRange 100, pulseDelay 3
+	drawSphere style 1, particle "redstone", RGB 175, (({_level}-3)*-30)+40, 180, center {_loc}, id "BlackHole2%{_player}%%{_loc}%", rainbowMode false, radius 4, density 30, visibleRange 10, pulseDelay 3
+	drawSphere style 1, particle "redstone", RGB 175, (({_level}-3)*-30)+60, 180, center {_loc}, id "BlackHole3%{_player}%%{_loc}%", rainbowMode false, radius 3, density 20, visibleRange 10, pulseDelay 3
+	drawSphere style 1, particle "redstone", RGB 175, (({_level}-3)*-30)+90, 180, center {_loc}, id "BlackHole4%{_player}%%{_loc}%", rainbowMode false, radius 2, density 10, visibleRange 10, pulseDelay 3
+	drawSphere style 1, particle "redstone", RGB 175, (({_level}-3)*-30)+110, 180, center {_loc}, id "BlackHole5%{_player}%%{_loc}%", rainbowMode false, radius 1, density 5, visibleRange 10, pulseDelay 3
+	clear metadata value "NoDamage" of {_arrow}
+	kill {_arrow}
+	loop (5+{_level}) times:
+		loop all mobs and players in radius 5 of {_loc}:
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			push loop-entity (direction from loop-entity to {_loc}) at speed 2
+			damage loop-entity by attackStat({_player})
+		wait 10 ticks
+	stopEffect id "BlackHole1%{_player}%%{_loc}%"
+	stopEffect id "BlackHole2%{_player}%%{_loc}%"
+	stopEffect id "BlackHole3%{_player}%%{_loc}%"
+	stopEffect id "BlackHole4%{_player}%%{_loc}%"
+	stopEffect id "BlackHole5%{_player}%%{_loc}%"
+
+
+
+function Sniper(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	shoot arrow from {_player} at speed 0
+	set {_arrow} to the shot projectile
+	teleport {_arrow} infront of (location above {_player})
+	set metadata tag "Shooter" of {_arrow} to "%{_player}%"
+	add "{NoGravity:1b}" to nbt of {_arrow}
+	set {_v} to new vector 0, 0, 0
+	set velocity of {_arrow} to {_v}
+	set {_loc} to location infront of {_player}
+	set {_loc} to location infront of {_loc}
+	set {_loc} to location above {_loc}
+	push {_arrow} (direction from {_arrow} to {_loc}) at speed 6
+	set {_value} to "0"
+	while {_value} is "0":
+		add 1 to {_timealive}
+		if {_timealive} > 30:
+			kill {_Arrow}
+		if {_arrow} is not alive:
+			exit 1 loop
+		set {_nbt::*} to nbt of {_arrow} split at ","
+		loop {_nbt::*}:
+			set {_test} to loop-value
+		set {_test::*} to {_test} split at ":"
+		set {_test2::*} to {_test::2} split at "b"
+		set {_value} to {_test2::1}
+		wait 1 tick
+		set {_loc} to location at {_arrow}
+		drawDot count 2, particle "redstone", RGB 255, 0, 0, center {_loc}, rainbowMode false, visibleRange 150, pulseDelay 0, keepFor 20 ticks
+		loop all mobs and players in radius 2 of {_loc}:
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			loop (2+{_level}) times:
+				damage loop-entity by attackStat({_player})
+	set {_loc} to location at {_arrow}
+	drawDot count 1, particle "redstone", RGB 255, 0, 0, center {_loc}, rainbowMode false, visibleRange 32, pulseDelay 0, keepFor 40 ticks
+	clear metadata value "NoDamage" of {_arrow}
+	kill {_arrow}
+
+on shoot:
+	shooter is a player
+	set metadata tag "Shooter" of event-projectile to "%Shooter%"
+
+
+
+#--------------------------------------------------------------------------------------------------------
+
+
+function PoisonArrows(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	summon an arrow infront of (location above {_player})
+	set {_arrow} to spawned entity
+	set metadata tag "NoDamage" of {_arrow} to "True"
+	set {_v} to new vector 0, 0, 0
+	set velocity of {_arrow} to {_v}
+	set {_loc} to location infront of {_player}
+	set {_loc} to location infront of {_loc}
+	set {_loc} to location above {_loc}
+	push {_arrow} (direction from {_arrow} to {_loc}) at speed 2
+	set {_value} to "0"
+	while {_value} is "0":
+		if {_arrow} is not alive:
+			exit 1 loop
+		set {_nbt::*} to nbt of {_arrow} split at ","
+		loop {_nbt::*}:
+			set {_test} to loop-value
+		set {_test::*} to {_test} split at ":"
+		set {_test2::*} to {_test::2} split at "b"
+		set {_value} to {_test2::1}
+		wait 5 ticks
+	set {_loc} to location at {_arrow}
+	drawSpiral particle "redstone", RGB 100, 150, 50, center {_arrow}, id "PosionArrows1%{_player}%%{_loc}%", rainbowMode false, clockwise true, scan true, radius 4, density 40, height 0, effectMod 100, start 0, visibleRange 20
+	drawSpiral particle "redstone", RGB 100, 150, 50, center {_arrow}, id "PosionArrows2%{_player}%%{_loc}%", rainbowMode false, clockwise true, scan true, radius 3, density 40, height 0, effectMod 100, start 0, visibleRange 20
+	drawSpiral particle "redstone", RGB 100, 150, 50, center {_arrow}, id "PosionArrows3%{_player}%%{_loc}%", rainbowMode false, clockwise true, scan true, radius 2, density 40, height 0, effectMod 100, start 0, visibleRange 20
+	drawSpiral particle "redstone", RGB 100, 150, 50, center {_arrow}, id "PosionArrows4%{_player}%%{_loc}%", rainbowMode false, clockwise true, scan true, radius 1, density 40, height 0, effectMod 100, start 0, visibleRange 20
+	drawWarpRings style 2, particle "redstone", RGB 100, 150, 50, center {_arrow}, id "PosionArrows5%{_player}%%{_loc}%", rainbowMode false, scan false, height 0, radius 4, ringCount 1, ringDensity 10, visibleRange 80
+	clear metadata value "NoDamage" of {_arrow}
+	kill {_arrow}
+	loop (20+({_level}*5)) times:
+		loop all mobs and players in radius 4 of {_loc}:
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			damage loop-entity by (attackStat({_player})/20)
+			apply potion of blindness of tier 1 to loop-entity for 7 ticks
+		wait 3 ticks
+	stopEffect id "PosionArrows1%{_player}%%{_loc}%"
+	stopEffect id "PosionArrows2%{_player}%%{_loc}%"
+	stopEffect id "PosionArrows3%{_player}%%{_loc}%"
+	stopEffect id "PosionArrows4%{_player}%%{_loc}%"
+	stopEffect id "PosionArrows5%{_player}%%{_loc}%"
+
+
+function Flash(player: player,level: number):
+	if "%id names%" contains "Flash%{_player}%":
+		stop
+	set {_lasts} to {_level}+5
+	set {_lasts} to "%{_lasts}% seconds" parsed as a timespan
+	set {_startime} to now
+	set {_loc} to location at {_player}
+	set {_hol} to location at {_player}
+	set y-coordinate of {_hol} to (y-coordinate of {_loc})
+	wait 1 tick
+	drawSphere style 1, particle "redstone", center {_hol}, id "Flash%{_player}%", rainbowMode true, radius 4, density 100, visibleRange 35, pulseDelay 1
+	while difference between {_startime} and now is less than {_lasts}:
+		loop all mobs and players in radius 4 of {_loc}:
+			set {_uuid} to uuid of {_player}
+			set {_profile} to metadata tag "profile" of {_player}
+			set {_team1::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+			set {_profile} to metadata tag "profile" of loop-entity
+			set {_uuid} to uuid of loop-entity
+			set {_team2::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+			set {_profile} to metadata tag "profile" of {_player}
+			if loop-entity is not mob:
+				if {_team1::1} is {_team2::1}:
+					set metadata tag "health" of loop-entity to (metadata tag "health" of loop-entity)+12.5
+					if metadata tag "health" of loop-entity > hpStat(loop-entity):
+						set metadata tag "health" of loop-entity to hpStat(loop-entity)
+				else:    
+					apply potion of blindness of tier 1 to loop-entity for 20 ticks
+			else:
+				damage loop-entity by attackStat({_player})
+		wait 10 ticks
+	stopEffect id "Flash%{_player}%"
+
+
+
+function Meteor(player: player,level: number):
+	{_player}'s target block is set
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_earth::*} to "stone" and "magma block" and "cobblestone" and "stone"
+	chance of 5%:
+		remove "stone" from {_earth::*}
+		add "Netherrack" to {_earth::*}
+		remove "stone" from {_earth::*}
+		add "Netherrack" to {_earth::*}
+	chance of 1%:
+		add "Ancient Debris" to {_earth::*}
+	chance of 5%:
+		add "Diamond Ore" to {_earth::*}
+	chance of 5%:
+		add "Gravel" to {_earth::*}
+	chance of 10%:
+		add "Gold Ore" to {_earth::*}
+	chance of 20%:
+		add "Coal Ore" to {_earth::*}
+	chance of 15%:
+		add "Iron Ore" to {_earth::*}
+	chance of 1%:
+		add "Diamond Block" to {_earth::*}
+	chance of 30%:
+		add "Obsidian" to {_earth::*}
+	loop blocks in radius 2 of {_player}:
+		set {_earth} to random element of {_earth::*}
+		set {_earth} to "falling %{_earth}%" parsed as entitytype
+		spawn {_earth} at block 30 meters above loop-block
+		set {_s} to last spawned falling block
+		add "{NoGravity:0b}" to {_s}'s nbt
+		add "{DropItem:0b}" to {_s}'s nbt
+		add {_s} to {_s::*}
+	push {_s::*} (direction from {_s} to location above {_player}'s target block) at speed 2
+	while {_s} is alive:
+		set {_loc} to location of {_s}
+		wait 1 tick
+		add 1 to {_x}
+		set {_pick} to random element of {_s::*}
+		drawDot count 1, particle "redstone", RGB 255, 0, 0, center {_pick}, rainbowMode false, visibleRange 50, pulseDelay 0, keepFor 5 ticks
+	create a fake explosion at location of {_loc}
+	drawWarpRings style 2, particle "redstone", RGB 255, 150, 0, center {_s}, id "Meteor1%{_player}%%{_loc}%", rainbowMode false, scan false, height 0, radius 3, ringCount 1, ringDensity 10, visibleRange 50
+	drawWarpRings style 2, particle "redstone", RGB 255, 100, 0, center {_s}, id "Meteor2%{_player}%%{_loc}%", rainbowMode false, scan false, height 0, radius 2, ringCount 1, ringDensity 5, visibleRange 20
+	drawWarpRings style 2, particle "redstone", RGB 255, 50, 0, center {_s}, id "Meteor3%{_player}%%{_loc}%", rainbowMode false, scan false, height 0, radius 1, ringCount 1, ringDensity 3, visibleRange 20
+	loop all mobs and players in radius 3 of {_loc}:
+		"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+		damage loop-entity by attackStat({_player})*2
+		ignite loop-entity
+	#SpawnHole({_loc}, 4)
+	loop 25 times:
+		wait 4 tick
+		loop all mobs and players in radius 3 of {_loc}:
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			set {_attackdmg} to {_level}/2
+			set {_attackdmg} to 5-{_attackdmg}
+			damage loop-entity by attackStat({_player})/{_attackdmg}
+			ignite loop-entity
+	stopEffect id "Meteor1%{_player}%%{_loc}%"
+	stopEffect id "Meteor2%{_player}%%{_loc}%"
+	stopEffect id "Meteor3%{_player}%%{_loc}%"
+
+#--------------------------------------------------------------------------------------------------------
+
+
+function Gust(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_push} to ({_level}/2)+1
+	push {_player} forwards with speed {_push}*2
+	push {_player} up with speed {_push}/2
+	wait 10 ticks
+	drawDot count 1, particle "redstone", RGB 0, 0, 0, center {_player}, rainbowMode true, visibleRange 60, pulseDelay 0, keepFor 30 ticks
+
+
+function Jetstream(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	loop 30 times:
+		wait 2 ticks
+		JetstreamPart({_player}, {_level})
+
+
+
+function JetstreamPart(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	if {_player} is set:
+		set {_x} to x-coordinate of {_player}
+		set {_y} to y-coordinate of {_player}
+		set {_z} to z-coordinate of {_player}
+		set {_loc} to location({_x}, {_y}-1, {_z}, world "spawn")
+		if {_block} is air:
+			set {_block} to grass block
+		set {_loc} to location({_x}, {_y}+1.1, {_z}, world "spawn")
+		set {_block} to "falling fire" parsed as entitytype
+		summon {_block} at location infront of (location above (location infront of {_player}))
+		set {_spawn} to last spawned entity
+		add "{Rotation:[%{_player}'s yaw%F,%{_player}'s pitch-5%F]}" to nbt of {_spawn}
+		add "{Time:1}" to nbt of {_spawn}
+		add "{NoGravity:1b}" to nbt of {_spawn}
+		add "{DropItem:0b}" to nbt of {_spawn}
+		push {_spawn} forwards at speed 1.5
+		wait 1 tick
+		while {_spawn} is alive: 
+			loop players in radius 2.5 of {_spawn}:
+				"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+				set {_dmgV} to 15-{_level}
+				set {_dmgV} to attackStat({_player})/{_dmgV}
+				damage loop-entity by {_dmgV}
+			wait 1 tick
+			add 1 to {_timer}
+			push {_spawn} down with speed .05
+			if {_timer} is 100:
+				kill {_spawn}
+		create a fake explosion at location of {_spawn}
+		kill {_spawn}
+		loop all players and mobs in radius 3 of {_spawn}:
+			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
+			set {_dmgV} to 15-{_level}
+			set {_dmgV} to attackStat({_player})/{_dmgV}
+			damage loop-entity by {_dmgV}

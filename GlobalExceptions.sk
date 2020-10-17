@@ -7,8 +7,6 @@ on inventory click:
 		if event-inventory is player's inventory:
 			if (integers between 1 and 8) contains index of event-slot:
 				cancel event
-		else if "%event-slot%" contains "crafting slot":
-			cancel event
             
 on player drop:
     if player's gamemode is not creative:
@@ -18,6 +16,9 @@ on player drop:
 on swap item:
     if player's gamemode is not creative:
         cancel event
+
+on craft:
+	cancel event
     
 on exp spawn:
     cancel event

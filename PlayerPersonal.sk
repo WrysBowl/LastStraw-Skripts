@@ -4,6 +4,7 @@ on consume of potion:
 	set {_amount::3} to uncolored "%{_amount::3}%" parsed as an integer
 	if "%event-item%" contains "Healing Potion":
 		if {_amount::3} >= 1:
+			metadata "health" of player < hpStat(player)
 			set metadata tag "health" of player to (metadata tag "health" of player) + 50
 			set name of player's tool to "%{_amount::1}% %{_amount::2}% %{_amount::3}-1%"
 			set player's health to (metadata tag "health" of player)/10
@@ -11,6 +12,7 @@ on consume of potion:
 				set metadata tag "health" of player to hpStat(player)
 	else if "%event-item%" contains "Mana Potion":
 		if {_amount::3} >= 1:
+			metadata "mana" of player < mpStat(player)
 			set metadata tag "mana" of player to (metadata tag "mana" of player) + 50
 			set name of player's tool to "%{_amount::1}% %{_amount::2}% %{_amount::3}-1%"
 			if metadata "mana" of player > mpStat(player):
@@ -26,11 +28,12 @@ on gamemode change:
 on inventory click:
 	if player's gamemode is survival:
 		set {_item} to event-slot
+		"%event-inventory%" contains "%player%"
 		if event-slot is (player's helmet, player's chestplate, player's leggings or player's boots):
 			set event-slot to air
 			wait 3 ticks
 			set event-slot to {_item}
-	if "%event-slot%" contains "helmet":
+	if clicked slot is 39:
 		if "%click type%" contains "RIGHT":
 			armorGUI(player)
 	if event-inventory = (metadata tag "characterInventory" of player):

@@ -1,0 +1,33 @@
+command /earth:
+	trigger:
+		loop blocks in radius 3 of player where [(input != air)]:
+			spawn falling block of loop-block at block 4 meters above loop-block where [input = air]
+			set {_s} to last spawned falling block
+			add "{DropItem:0b}" to {_s}'s nbt
+			push {_s} in direction of player at speed 2
+			
+		
+on block land:
+	cancel event
+	kill event-entity
+	
+command /slimeMobs:
+	trigger:
+		loop 3 times:
+			if loop-value is 1:
+				spawn slime with nbt "{Size:3}"
+			else:
+				spawn slime (loop-value) meters behind {_slime::1} with nbt "{Size:2,Invulnerable:1,Paper.canWander:0b,Bukkit.Aware:0b}"
+			set {_slime::%loop-value%} to last spawned slime
+		while {_slime::1} is alive:
+			loop 3 times:
+				add "{Rotation:[%{_slime::1}'s yaw%f, 0.0f]}" to {_slime::%loop-value + 1%}'s nbt
+				push {_slime::%loop-value%} in direction of {_slime::1} at speed 0.3
+				if (distance between {_slime::%loop-value%} and {_slime::%loop-value + 1%}) > 1:
+					teleport {_slime::%loop-value + 1%} 1.5 meters behind {_slime::%loop-value%}
+				if block below {_slime::1} is not air:
+					push {_slime::1} upwards at speed 0.05
+			wait 5 ticks
+		kill {_slime::*}
+
+

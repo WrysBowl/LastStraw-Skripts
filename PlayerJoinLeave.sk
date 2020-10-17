@@ -3,15 +3,17 @@ script options:
 
 
 on join:
-	clear player's inventory
+	set player's walk speed to 0.3
 	joinGUI(player)
-	set player's gamemode to adventure
 	if player has not played before:
 		set player's level to 1
 	wait 1 tick
 	set {_player} to player
 	if {_player} has permission "staff":
 		set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
+	wait 2 ticks
+	clear player's inventory
+	set player's gamemode to adventure
 
 		
 on quit:
@@ -107,13 +109,18 @@ function profileGUIIndexSlot(player: player, slot: object):
 			replace " " in {_perm} with ""
 			if {_player} has permission "staff":
 				set {_perm} to "%{_perm}%.Staff"
-			execute console command "lp user %{_player}% permission set %{_perm}% true"
+				execute console command "lp user %{_player}% permission set %{_perm}% true"
+				set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
+			else:
+				execute console command "lp user %{_player}% permission set %{_perm}% true"
 			profileInv({_player}, "load")
 			wait 1 tick
 			armor({_player}, {_profile})
+			hotbarItems({_player})
 			set metadata tag "health" of {_player} to (hpStat({_player}))
 		if {_player} has permission "staff":
 			set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
+		levelIncrease(0, {_player})
 
 
 			
@@ -172,6 +179,7 @@ function profileGUI3IndexSlot(player: player, slot: object):
 	else if {_slot} is 31:
 		joinGUI2({_player}, {_profile})
 	if {_slot} is 21 or 23:
+		delete {savedSkills::%{_uuid}%::%{_profile}%::*}
 		send title "&aSelected %{profiles::%{_uuid}%::%{_profile}%}%!" to {_player} for 5 seconds with fadein 1 second and fade out 1 second
 		set {_perm} to uncolored {profiles::%{_uuid}%::%{_profile}%}
 		set {_perm} to "nte.%{_perm}%"
@@ -186,3 +194,4 @@ function profileGUI3IndexSlot(player: player, slot: object):
 		wait 1 tick
 		if {_player} has permission "staff":
 			set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
+		levelIncrease(0, {_player})

@@ -1,14 +1,67 @@
 on damage of player:
+	if "%GetTeam(victim)%" is "%GetTeam(attacker)%":
+		cancel event
+		stop
+	if attacker is victim:
+		set damage to 0
+		cancel event
+	if metadata value "NoDamage" of event-projectile is true:
+		set damage to 0
+		cancel event
+	if metadata value "NoDamageX" of event-projectile is true:
+		set damage to 0
+		cancel event
+		stop
+	if metadata tag "NoDmgSpawning" of attacker is true:
+		cancel event
+		stop
+	if metadata value "Rat" of attacker is true:
+		if metadata value "Owner" of attacker is "%victim%":
+			set damage to 0
+			cancel event
+			stop
+		else:
+			if metadata value "Infected" of victim is true:
+				set damage to 0
+				cancel event
+				stop
+			else:
+				set {_owner} to metadata value "Owner" of attacker
+				BubonicPlagueEffect(victim, "%{_owner}%")
+				kill attacker
+				set damage to 0
+				cancel event
+				stop
+	set {_shooter} to "%metadata tag ""Shooter"" of event-projectile%"
+	set {_shooter} to {_shooter} parsed as player
+	if GetTeam({_shooter}) is GetTeam(victim):
+		set damage to 0
+		cancel event
+		stop
 	if victim's vehicle is not attacker:
 		if metadata tag "party" of victim is "false":
 			if metadata tag "party" of attacker is "false":
 				set {_check} to 1
 		if (metadata tag "party" of victim) != (metadata tag "party" of attacker):
 			set {_check} to 1
+		if ("LevelReq" tag of nbt of attacker's tool) > attacker's level:
+			send "&cYou are not a high enough level to use this!" to attacker
+			cancel event
+			stop
+		if ("ClassReq" tag of nbt of attacker's tool) is set:
+			if "%{profiles::%{_uuid}%::%{_profile}%}%" does not contain ("ClassReq" tag of nbt of attacker's tool):
+				"ClassReq" tag of nbt of attacker's tool is set
+				send "&cYou are not of the required class to use this!" to attacker
+				cancel event
 		if {_check} is 1:
 			if attacker is a player:
 				if blockStat(victim) > random number between 0 and 100:
 					stop
+				else if attacker's tool is green stained glass pane:
+					if criticalStat(attacker) > random number between 0 and 100:
+						set metadata tag "health" of victim to metadata tag "health" of victim - (final damage*2)*(1-(defenseStat(victim)/100))
+					else:
+						set metadata tag "health" of victim to metadata tag "health" of victim - (final damage)*(1-(defenseStat(victim)/100))
 				else:
 					if criticalStat(attacker) > random number between 0 and 100:
 						set metadata tag "health" of victim to metadata tag "health" of victim - ((attackStat(attacker))*2)*(1-(defenseStat(victim)/100))
@@ -17,15 +70,35 @@ on damage of player:
 			else:
 				set metadata tag "health" of victim to (metadata tag "health" of victim) - damage
 			set damage to 0
+			set victim's health to ((10*(metadata tag "health" of victim))/hpStat(victim))
 			if metadata tag "health" of victim <= 0:
 				set damage to victim's health
 		else:
 			cancel event
 			message "&6You can not attack your own party members!" to attacker
+			stop
 	else:
 		cancel event
 
+on spawn of a mob:
+	set metadata tag "NoDmgSpawning" of mob to true
+	wait 11 ticks
+	clear metadata tag "NoDmgSpawning" of mob
+
 on damage of a mob:
+	if metadata tag "name" of victim is not set:
+		if name of victim is not set:
+			cancel event
+			stop
+	if metadata tag "NoDmgSpawning" of victim is true:
+		cancel event
+		stop
+	if name of victim is "Mount" or "Sheep Train":
+		cancel event
+		stop
+	if metadata tag "name" of victim is "":
+		cancel event
+		stop
 	if the attacker is a player:
 		if nbt of victim contains "{Invulnerable:1b}":
 			cancel event
@@ -38,6 +111,7 @@ on damage of a mob:
 			cancel event
 		else if ("ClassReq" tag of nbt of attacker's tool) is set:
 			if "%{profiles::%{_uuid}%::%{_profile}%}%" does not contain ("ClassReq" tag of nbt of attacker's tool):
+				"ClassReq" tag of nbt of attacker's tool is set
 				send "&cYou are not of the required class to use this!" to attacker
 				cancel event
 		else:
@@ -46,13 +120,20 @@ on damage of a mob:
 			else:
 				set metadata tag "currentDamaged" of victim to (attackStat(attacker) + metadata tag "currentDamaged" of victim)
 	else:
-		set metadata tag "currentDamaged" of victim to ((metadata tag "currentDamaged" of victim) + final damage)
+		if damage cause is projectile:
+			set metadata tag "currentDamaged" of victim to ((metadata tag "currentDamaged" of victim) + 0)
+		else:
+			set metadata tag "currentDamaged" of victim to ((metadata tag "currentDamaged" of victim) + final damage)
 	set {_mobHealth} to ((metadata tag "health" of victim)-(metadata tag "currentDamaged" of victim))
 	set victim's health to {_mobHealth}
 	set the damage to 0
 	set display name of victim to "&c%metadata tag ""name"" of victim% %{_mobHealth}% / %metadata tag ""health"" of victim% &c❤"
+	set {_mobHealth} to {_mobHealth} parsed as number
 	if {_mobHealth} <= 0: #fail safe code to kill mob 
 		set victim's health to 0
+		set {_Level} to metadata tag "MobLevel" of victim
+		GenMobLoot(attacker, location of victim, "%{_Level}%", "%name of victim%")
+
 
 on death of player:
 	if attacker is player:

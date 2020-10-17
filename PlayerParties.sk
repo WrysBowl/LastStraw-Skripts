@@ -113,7 +113,7 @@ function scrollPartyScore(player: player, scroll: object):
 		set line 13 of {_player}'s scoreboard to " &7➤ Level: &5%{level::%{_uuid}%::%{_profile}%} ? 0% &5(&d0&d%%&5)"
 	else:
 		set line 13 of {_player}'s scoreboard to " &7➤ Level: &5%{level::%{_uuid}%::%{_profile}%} ? 0% &5(&d%({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})*100%&d%%&5)"
-	set line 12 of {_player}'s scoreboard to " &7➤ Balance: &a%{balance::%{_uuid}%::%{_profile}%} ? 0%"
+	set line 12 of {_player}'s scoreboard to " &7➤ Balance: &a%moneyComma({balance::%{_uuid}%::%{_profile}%}) ? 0%"
 	set line 11 of {_player}'s scoreboard to "&6Party: &7%size of {_partyMembers::*}% %metadata tag ""party"" of {_player} ? ""&6&nInvites""%"
 	if metadata tag "party" of {_player} is set:
 		loop size of {_partyMembers::*} times:

@@ -41,6 +41,16 @@ on inventory click:
 	if event-inventory = (metadata tag "MountGUI" of player):
 		MountGUIIndexSlot(player, index of event-slot, click type)
 
+command /SlimeBlock:
+	trigger:
+		summon armor stand at player
+		set {_Armor1} to last spawned entity
+		summon armor stand at player
+		set {_Armor2} to last spawned entity
+		summon slime at player
+		set {_Slime} to last spawned entity
+		make {_Slime} ride {_Armor1}
+		make {_Armor2} ride {_Slime}
 
 
 
@@ -100,6 +110,13 @@ function MountGui(player: player):
 
 function MountGUIIndexSlot(player: player, slot: object, clicktype: object):
 	set {_uuid} to {_player}'s uuid
+
+
+on inventory click:
+	event-item is saddle
+	if "%event-inventory%" contains "horse":
+		cancel event
+
 
 
 
@@ -250,6 +267,8 @@ on right click holding spawn egg:
 On Target:
 	if event-entity's name is "Mount":
 		cancel event
+	if event-entity's name is "&aBird":
+		cancel event
 
 command /mounts [<text>]:
 	trigger:
@@ -266,6 +285,22 @@ on right click on sheep:
 			message "&cYou can not use this well on another mount!" to player
 			stop
 		make player ride event-entity
+
+
+
+on drop:
+	event-item is spawn egg
+	set {_mountplayer} to player's vehicle
+	if {_mountplayer} is set:
+		set {_item} to "%{_mountplayer}% spawn egg" parsed as item
+		if event-item is {_item}:
+			message "&cYou can not drop this whilst on a mount!" to player
+			cancel event
+		else if "%{_mountplayer}%" is "falling block":
+			message "&cYou can not drop this whilst on a mount!" to player
+			cancel event
+			
+
 
 
 function mountmob(player: player,mount: text):
@@ -310,7 +345,7 @@ function mountmob(player: player,mount: text):
 		make {_player} ride {_RockMob}
 	else:
 		make {_player} ride {_entity}
-	wait 2 ticks
+	wait 10 ticks
 	set {_entity}'s name to "Mount"
 	if {_train} is true:
 		set {_entity}'s name to "Sheep Train"
@@ -321,7 +356,7 @@ function mountmob(player: player,mount: text):
 			summon sheep at {_player}
 			add "{Invulnerable:1b}" to nbt of last spawned mob
 			set {_sheepClone.%loop-value%} to last spawned mob
-			wait 2 ticks
+			wait 10 ticks
 			set name of {_sheepClone.%loop-value%} to "Sheep Train"
 			loop all mobs in radius 1 of {_sheepClone.%loop-value%}:
 				name of loop-entity is "Sheep Train"
@@ -370,13 +405,16 @@ function mountmob(player: player,mount: text):
 	wait 1 tick
 	set {_loc} to location of {_entity}
 	teleport {_entity} to location(0, -10, 0, world "spawn")
+	if distance between {_entity} and {_player} > 2:
+		set {_tptrue} to true
 	kill {_entity}
 	kill {_RockMob}
 	if {_train} is true:
 		loop 5 times:
 			teleport {_sheepClone.%loop-value%} to location(0, -10, 0, world "spawn")
 			kill {_sheepClone.%loop-value%}
-	teleport {_player} to {_loc}
+	if {_tptrue} is true:
+		teleport {_player} to {_loc}
 
 
 

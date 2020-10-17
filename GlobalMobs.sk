@@ -1,9 +1,13 @@
 on spawn of a mob:
-	wait 1 tick
-	set metadata tag "health" of mob to health of mob
-	set metadata tag "name" of mob to display name of mob
-	if display name of mob is not set:
-		set metadata tag "name" of mob to mob
+	wait 10 tick
+	if metadata tag "health" of mob is not set:
+		set metadata tag "health" of mob to health of mob
+	if metadata tag "name" of mob is not set:
+		if display name of mob is set:
+			set metadata tag "name" of mob to display name of mob
+		else:
+			set {_mob} to "%mob%"
+			set metadata tag "name" of mob to {_mob} in strict proper case
 	set display name of mob to "&c%metadata tag ""name"" of mob% %metadata tag ""health"" of mob% / %metadata tag ""health"" of mob% &c❤"
 
 on death of mob:
@@ -24,3 +28,196 @@ on death:
 	drop {_item} at victim
 	loop players in radius 5 around victim:
 		message "&dA Rare Drop Has Spawned Near You! &5[Mount Loot Crate]" to loop-player
+
+
+command /bird:
+	permission: staff
+	trigger:
+		summon phantom at player
+		set {_item} to leather helmet
+		set {_bird} to last spawned mob
+		set {_bird}'s display name to "&aBird"
+		add "{Fire:-20000}" to {_bird}'s nbt
+		apply potion of fire resistance of tier 255 without any particles to {_bird} for 999 days
+		set {_d} to new disguise with type "PARROT"
+		set disguise of {_bird} to {_d}
+		wait 2 ticks
+		set {_bird}'s display name to "&aBird"
+		while {_bird} is alive:
+			add "{Fire:-20000}" to {_bird}'s nbt
+			wait 1 tick
+
+
+
+
+command /zombie:
+	permission: staff
+	trigger:
+		summon zombie at player
+		set {_item} to netherite helmet
+		set {_bird} to last spawned mob
+		set {_bird}'s display name to "&aZOMBIE"
+		add "{Fire:-20000}" to {_bird}'s nbt
+		apply potion of fire resistance of tier 255 without any particles to {_bird} for 999 days
+		set {_d} to new disguise with type "GIANT"
+		set disguise of {_bird} to {_d}
+		summon slime at {_bird}
+		set {_slime} to last spawned mob
+		add "{Size:15}" to {_slime}'s nbt
+		make {_slime} ride {_bird}
+		wait 2 ticks
+		set {_bird}'s tool to Stick
+		set {_bird}'s display name to "&aZOMBIE"
+		set {_bird}'s helmet to {_item}
+		
+command /thing:
+	trigger:
+		spawn armor stand with nbt "{NoBasePlate:1, Invisible:1, ShowArms:1, DisabledSlots:4144959}"
+		set {_stand} to last spawned armor stand
+		spawn slime with nbt "{Size:0}"
+		set {_slime} to last spawned slime
+		set metadata tag "name" of {_slime} to "&6[25] Grub Lord &c"
+		set metadata tag "health" of {_slime} to 10000
+		
+		make {_slime} ride {_stand}
+		equip {_stand} with (lime stained glass, leather chestplate, leather leggings and leather boots)
+		set {_stand}'s tool to gold hoe
+		set {_stand}'s off hand tool to gold hoe
+		while {_slime} is alive:
+			wait 5 ticks
+			if {_victim} is alive:
+				set {_vec} to vector from {_stand} to {_victim}
+				set {_yaw} to vector yaw of {_vec}
+				set {_pitch} to vector pitch of {_vec}
+				add "{Rotation:[%{_yaw}%f, %{_pitch}%f]}" to {_stand}'s nbt
+				add "{Rotation:[%{_yaw}%f, %{_pitch}%f]}" to {_slime}'s nbt
+				add "{Pose:{Head:[0f, 0f, 0f],Body:[0f, 0f, 0f],LeftArm:[310f, 75f, 90f],RightArm:[310f, 285f, 270f],LeftLeg:[185f, 0f, 30f],RightLeg:[185f, 0f, 330f]}}" to {_stand}'s nbt
+				add "{Motion:[0.0,0.0,0.0]}" to {_stand}'s nbt
+				push {_stand} in direction of {_stand} at speed 0.6
+			else:
+				loop mobs and players in radius 10 of {_stand}:
+					set {_victim} to loop-entity
+					exit loop
+		kill {_slime}
+		kill {_stand}
+		
+command /nautilus:
+	trigger:
+		spawn squid
+		set {_squid} to last spawned squid
+		apply invisibility without particles to {_squid} for 20 days
+		loop 4 times:
+			spawn armor stand with nbt "{NoBasePlate:1, Small:1, Invisible:1, ShowArms:1, DisabledSlots:4144959}"
+			set {_stand} to last spawned armor stand
+			add "{Rotation:[%90*loop-value%.0f, 0.0f]}" to {_stand}'s nbt
+			add "{Pose:{Head:[10f, 0f, 0f],Body:[0f, 0f, 0f],LeftArm:[60f, 50f, 0f],RightArm:[60f, 310f, 0f],LeftLeg:[0f, 0f, 0f],RightLeg:[0f, 0f, 0f]}}" to {_stand}'s nbt
+			equip {_stand} with light blue terracotta
+			add {_stand} to {_stands::*}
+		set {_stands::*}'s tool to light blue terracotta
+		set {_stands::*}'s off hand tool to light blue terracotta
+		wait 5 ticks
+		while {_squid} is alive:
+			if {_up} = true:
+				if {_counter} < 20:
+					add 1 to {_counter}
+				else:
+					set {_up} to false
+			else:
+				if {_counter} > 0:
+					remove 1 from {_counter}
+				else:
+					set {_up} to true
+					set {_counter} to 0
+			wait 1 tick
+			loop size of {_stands::*} times:
+				teleport {_stands::%loop-value%} to {_squid}
+				set {_rot} to "Rotation" tag of nbt of {_squid}
+				set {_rot} to {_rot}+(90*loop-value)
+				if {_rot} >= 360:
+					set {_rot} to {_rot}-360
+				add "{Rotation:[%{_rot}%f, 0.0f]}" to {_stands::%loop-value%}'s nbt
+				add "{Pose:{Head:[10f, 0f, 0f],Body:[0f, 0f, 0f],LeftArm:[%60-{_counter}%f, 45f, 0f],RightArm:[%60-{_counter}%f, 315f, 0f],LeftLeg:[0f, 0f, 0f],RightLeg:[0f, 0f, 0f]}}" to {_stands::%loop-value%}'s nbt
+		kill {_stands::*}
+
+command /wraith:
+	trigger:
+		spawn phantom 20 meters above player with nbt "{Size:20, Attributes:[{Name:""generic.follow_range"", Base:300.0}]}"
+		set {_wraith} to last spawned phantom
+		while {_wraith} is alive:
+			wait 5 ticks
+			if {_player} is set:
+				teleport {_player} to block 3 meters below {_wraith}
+				chance of 20%:
+					delete {_player}
+			else:
+				loop players in radius 5 of {_wraith}:
+					set {_player} to loop-player
+					exit loop
+			
+
+command /hungryCaterpillar:
+	trigger:
+		loop 6 times:
+			if loop-value is 1:
+				spawn slime with nbt "{Size:4}"
+				set metadata tag "health" of last spawned slime to 10000
+				set metadata tag "name" of last spawned slime to "&6[25] Hungry Caterpillar &c"
+			else:
+				spawn slime (loop-value) meters behind {_slime::1} with nbt "{Size:3,Invulnerable:1,Paper.canWander:0b,Bukkit.Aware:0b}"
+				set metadata tag "name" of last spawned slime to ""
+			set {_slime::%loop-value%} to last spawned slime
+		while {_slime::*} is alive:
+			wait 5 ticks
+			set {_rot} to "Rotation" tag of nbt of {_slime::1}
+			add "{Rotation:[%random integer between ({_rot} - 10) and ({_rot} + 10)%.0f, 0.0f]}" to {_slime::1}'s nbt
+			loop (size of {_slime::*}) times:
+				add "{Rotation:[%{_slime::1}'s yaw%f, 0.0f]}" to {_slime::%loop-value + 1%}'s nbt
+				teleport {_slime::%loop-value + 1%} 1.5 meters behind {_slime::%loop-value%}
+			if block 10 meters infront of {_slime::1} is not air:
+				chance of 20%:
+					push {_slime::1} backwards at speed 10
+			if {_spit} is true:
+				add "{NoAI:0}" to {_slime::1}'s nbt
+				delete {_entities::*}
+				delete {_randEntity}
+				delete {_spit}
+				delete {_counter}
+			else:
+				if {_randEntity} is not set:
+					loop mobs and players in radius 6 of {_slime::1} where [{_slime::*} does not contain input]:
+						add loop-entity to {_entities::*}
+					if size of {_entities::*} > 0:
+						set {_randEntity} to random element out of {_entities::*}
+						set {_vec} to vector from {_slime::1} to {_randEntity}
+						set {_yaw} to vector yaw of {_vec}
+						set {_pitch} to vector pitch of {_vec}
+						add "{Rotation:[%{_yaw}%f, %{_pitch}%f]}" to {_slime::1}'s nbt
+						add "{NoAI:1}" to {_slime::1}'s nbt
+				else:
+					if {_randEntity} is alive:
+						add 1 to {_counter}
+						if {_counter} <= (size of {_slime::*}):
+							make {_slime::1} damage {_randEntity} by 20*(size of {_slime::*})
+							teleport {_randEntity} to {_slime::%{_counter}%}
+						else:
+							set {_spit} to true
+							teleport {_randEntity} to {_slime::1}
+							set {_size} to size of {_slime::*}
+							push {_randEntity} upwards at speed 2
+							push {_randEntity} forwards at speed 4
+					else:
+						set {_spit} to true
+						loop (size of {_slime::*}) times:
+							set {_size} to "Size" tag of nbt of {_slime::%loop-value%}					
+							if loop-value is 1:
+								if {_size} <= 8:
+									add "{Size:%{_size}+1%}" to {_slime::%loop-value%}'s nbt
+							else:
+								if {_size} <= 7:
+									add "{Size:%{_size}+1%}" to {_slime::%loop-value%}'s nbt
+						if (size of {_slime::*}) <= 12:
+							spawn slime at {_slime::1} with nbt "{Size:3,Invulnerable:1,Paper.canWander:0b,Bukkit.Aware:0b}"
+							add last spawned slime to {_slime::*}
+					loop (size of {_slime::*}) times:
+						reset {_slime::%loop-value + 1%}'s display name
+		set {_slime::*}'s health to 0

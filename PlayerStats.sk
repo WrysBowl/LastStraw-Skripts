@@ -1,4 +1,5 @@
 
+
 on inventory click:
 	if event-inventory = (metadata tag "StatsGUI" of player):
 		StatsGUIIndexSlot(player, index of event-slot, click type)
@@ -43,7 +44,7 @@ function StatsGUI(player: player):
 	set slot 24  of metadata tag "StatsGUI" of {_player} to experience bottle named "&bIntelligence &3(&b%{intelligenceStat::%{_uuid}%::%{_profile}%} ? 0%&3)" with lore "&3+ &b1 MP" and "&3+&b 0.03 Critical" and " " and "&3Mage Bonus:" and "&3+&b 0.4 Damage" with nbt "{HideFlags:63}"
 	set slot 30  of metadata tag "StatsGUI" of {_player} to totem of undying named "&dWisdom &5(&d%{wisdomStat::%{_uuid}%::%{_profile}%} ? 0%&5)" with lore "&5+ &d1 MP" and "&5+&d 0.05 MP/5 Sec" and " " and "&5Shaman Bonus:" and "&5+&d 0.4 Damage" with nbt "{HideFlags:63}"
 	set slot 32  of metadata tag "StatsGUI" of {_player} to Golden Apple named "&eStamina &6(&e%{staminaStat::%{_uuid}%::%{_profile}%} ? 0%&6)" with lore "&6+&e 4 Hp" and "&6+&e 1 Defense" with nbt "{HideFlags:63}"
-	set slot 31  of metadata tag "StatsGUI" of {_player} to {_player}'s head named "&bStats &3(&b%{statPoints::%{_uuid}%::%{_profile}%} ? 0%&3)" with lore "&2•&a Defense: %defenseStat({_player}) ? ""NaN""%" and "&2•&a Luck: %luckStat({_player}) ? ""NaN""%" and "&2•&a Cooldown Speed: %cooldownSpeedStat({_player}) ? ""NaN""%" and "&2•&a Attack: %attackStat({_player}) ? ""NaN""%" and "&2•&a Critical: %criticalStat({_player}) ? ""NaN""%" and "&2•&a Block: %blockStat({_player}) ? ""NaN""%" and "&2•&a MP Regen: %MPRegenStat({_player}) ? ""NaN""%" and "&2•&a Hp: %hpStat({_player}) ? ""NaN""%"
+	set slot 31  of metadata tag "StatsGUI" of {_player} to {_player}'s head named "&bStats &3(&b%{statPoints::%{_uuid}%::%{_profile}%} ? 0%&3)" with lore "&2•&a Defense: %defenseStat({_player}) ? ""NaN""%" and "&2•&a Luck: %luckStat({_player}) ? ""NaN""%" and "&2•&a Cooldown Speed: %cooldownSpeedStat({_player}) ? ""NaN""%" and "&2•&a Attack: %attackStat({_player}) ? ""NaN""%" and "&2•&a Critical: %criticalStat({_player}) ? ""NaN""%" and "&2•&a Block: %blockStat({_player}) ? ""NaN""%" and "&2•&a Speed: %speedStat({_player}) ? ""NaN""%" and "&2•&a MP: %mpStat({_player}) ? ""NaN""%" and "&2•&a MP Regen: %MPRegenStat({_player}) ? ""NaN""%" and "&2•&a Hp: %hpStat({_player}) ? ""NaN""%" and "&2•&a Hp Regen: %HPRegenStat({_player}) ? ""NaN""%" and "&2•&a Value: %priceStat({_player}) ? ""NaN""%"
 	set {_price} to ({strengthStat::%{_uuid}%::%{_profile}%}+{dexterityStat::%{_uuid}%::%{_profile}%}+{intelligenceStat::%{_uuid}%::%{_profile}%}+{wisdomStat::%{_uuid}%::%{_profile}%}+{staminaStat::%{_uuid}%::%{_profile}%})*150
 	set slot 8  of metadata tag "StatsGUI" of {_player} to Barrier named "&cReset All Stats!" with lore "&eCosts: &6%{_price}%"
 	open (metadata tag "StatsGUI" of {_player}) to {_player}
