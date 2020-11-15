@@ -1,0 +1,515 @@
+command /Catalog [<integer>]:
+	permission: op
+	trigger:
+		if {Catalog.Max.Items} > 1:
+			if arg-1 > {Catalog.Max.Items}:
+				message "&cPlease pick a number between 1-%{Catalog.Max.Items}%"
+				stop
+			if arg-1 < 1:
+				message "&cPlease pick a number between 1-%{Catalog.Max.Items}%"
+				stop
+		Catalog(player, arg-1)
+
+
+on inventory click:
+	if event-inventory = (metadata tag "CatalogGUI" of player):
+		CatalogGUIIndexSlot(player, index of event-slot, click type)
+
+
+
+on inventory close:
+	delete {clicktype::%player%}
+
+
+on load:
+	set {_player} to {_player} parsed as player
+	UpdateCatalogItems({_player})
+
+
+function UpdateCatalogItems(player: player):
+	if {_player} is not set:
+		set {_perms} to true
+	if {_player} has permission "op":
+		set {_perms} to true
+	{_perms} is true
+	set {Catalog.Max.Items} to -1
+	delete {Catalog::*}
+#
+	message "Loading catalog.." to {_player}
+
+	add enderman spawn egg named "&6[&eEndermen&6]" to {_CMounts::*}
+	add Sheep spawn egg named "&6[&eSheep&6]" to {_CMounts::*}
+	add Zombie spawn egg named "&6[&eZombie&6]" to {_CMounts::*}
+	add Cow spawn egg named "&6[&eCow&6]" to {_CMounts::*}
+	add Drowned spawn egg named "&6[&eDrowned&6]" to {_CMounts::*}
+	add Llama spawn egg named "&6[&eLlama&6]" to {_CMounts::*}
+	add Polar Bear spawn egg named "&6[&ePolar Bear&6]" to {_CMounts::*}
+	add Panda spawn egg named "&6[&ePanda&6]" to {_CMounts::*}
+	add Witch spawn egg named "&6[&eWitch&6]" to {_CMounts::*}
+	add silverfish spawn egg named "&6[&eRock&6]" to {_CMounts::*}
+#
+	add bee spawn egg named "&6[&eBee&6]" to {_RMounts::*}
+	add Blaze spawn egg named "&6[&eBlaze&6]" to {_RMounts::*}
+	add Horse spawn egg named "&6[&eHorse&6]" to {_RMounts::*}
+	add Skeleton Horse spawn egg named "&6[&eSkeleton Horse&6]" to {_RMounts::*}
+	add Mooshroom spawn egg named "&6[&eMooshroom&6]" to {_RMounts::*}
+#
+	add ghast spawn egg named "&6[&eIron Golem&6]" to {_XRMounts::*}
+	add sheep spawn egg named "&6[&eRainbow Sheep&6]" to {_XRMounts::*}
+	add sheep spawn egg named "&6[&eSheep Train&6]" to {_XRMounts::*}
+	add Zoglin spawn egg named "&6[&eZoglin&6]" to {_XRMounts::*}
+#
+#	set {_CMounts::*} to egg named "&6[&eEndermen&6]" egg named "&6[&eSheep&6]" and egg named "&6[&eZombie&6]" and egg named "&6[&eCow&6]" and egg named "&6[&eDrowned&6]" and egg named "&6[&ellama&6]" and egg named "&6[&ePolar Bear&6]" and egg named "&6[&ePanda&6]" and egg named "&6[&eWitch&6]"
+#	set {_RMounts::*} to egg named "&6[&eBee&6]" and egg named "&6[&eBlaze&6]" and egg named "&6[&eHorse&6]" and egg named "&6[&eSkeleton Horse&6]" and egg named "&6[&eEvoker&6]" and egg named "&6[&eMooshroom&6]"
+#	set {_XRMounts::*} to egg named "&6[&eIron Golem&6]" and egg named "&6[&eRainbow Sheep&6]" and egg named "&6[&eSheep Train&6]" and egg named "&6[&eRavager&6]"
+	add {_drops::*} to {Catalog::*}
+	add {_CMounts::*} to {Catalog::*}
+	add {_RMounts::*} to {Catalog::*}
+	add {_XRMounts::*} to {Catalog::*}
+	set {_item} to player head named "&5Mount Loot Crate"
+	add "{SkullOwner:{Id:[I;1049324767,745688397,-1636073904,-1503116338],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiY2E0YjY5ZWFmOGRjYjdhYzM3MjgyMjhkZThhNjQ0NDA3ODcwMTMzNDJkZGFhYmMxYjAwZWViOGVlYzFlMiJ9fX0=""}]}}}" to NBT of {_Item}
+	add {_Item} to {Catalog::*}
+	add jukebox named "&3[&bJukebox&3]" to {Catalog::*}
+	add ender chest named "&6Personal Bank" to {Catalog::*}
+	add wooden sword named "&aArmor Stand Editor" with lore "&7Click:&8 Select" and "&7Shift Click:&8 Edit Parts" and "&7Drop:&8 Rotation" and "&7Shift Drop:&8 Spawn Armor Stand" to {Catalog::*}
+	wait 1 tick
+	add purple glazed terracotta named "&dEnhancement&5 I" to {Catalog::*}
+	add purple glazed terracotta named "&dEnhancement&5 II" to {Catalog::*}
+	add purple glazed terracotta named "&dEnhancement&5 III" to {Catalog::*}
+	add purple glazed terracotta named "&dEnhancement&5 IV" to {Catalog::*}
+	add purple glazed terracotta named "&dEnhancement&5 V" to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Fractured Sword"), (1), (1), (""), (1), ("Almost in 2 Pieces"), (""), (8)) to {Catalog::*}
+	add itemGenerator(Bow, ("Flimsy Bow"), (1), (1), (""), (1), ("Crafted With Twine"), (""), (8)) to {Catalog::*}
+	add itemGenerator(Stick, ("Splintered Wand"), (1), (1), (""), (1), ("Don't poke yourself!"), (""), (8)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Cracked Axe"), (1), (1), (""), (1), ("It's not broken yet"), (""), (8)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Ripped Hood"), (1), (1), (""), (1), ("Just to be safe"), (""), (10)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Tattered Cloth"), (1), (1), (""), (1), ("Anything to cover up"), (""), (10)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Torn Leggings"), (1), (1), (""), (1), ("They look like jeans"), (""), (10)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Broken Sandals"), (1), (1), (""), (1), ("Just go barefoot"), (""), (10)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Blade Fragment"), (1), (1), (""), (1), ("Once a sword, always a sword"), (""), (12)) to {Catalog::*}
+	add itemGenerator(Bow, ("Worn Bow"), (1), (1), (""), (1), ("Ask your Granddad about the manufacturers "), (""), (12)) to {Catalog::*}
+	add itemGenerator(Stick, ("Broken Staff"), (1), (1), (""), (1), ("Basically just a wand"), (""), (12)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("DIY Hatchet"), (1), (1), (""), (1), ("It's automatically a broken tool"), (""), (12)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Twine Cap"), (1), (1), (""), (1), ("Adam and Eve's fine craftsmanship"), (""), (14)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Cloth Rags"), (1), (1), (""), (1), ("The raincoat of the old days"), (""), (14)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Snapped Splints"), (1), (1), (""), (1), ("Time to revisit the doctor"), (""), (14)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Brown Crocs"), (1), (1), (""), (1), ("Good luck walking across the barn"), (""), (14)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Dull Sword"), (1), (1), (""), (1), ("Almost child friendly"), (""), (16)) to {Catalog::*}
+	add itemGenerator(Bow, ("Used Bow"), (1), (1), (""), (1), ("Years of string pulling"), (""), (16)) to {Catalog::*}
+	add itemGenerator(Stick, ("Smooth Wand"), (1), (1), (""), (1), ("Sweaty hands"), (""), (16)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Blunt Axe"), (1), (1), (""), (1), ("It's still usable"), (""), (16)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Old Cap"), (1), (1), (""), (1), ("For the 90's kids"), (""), (18)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Faded Garment"), (1), (1), (""), (1), ("Next level peasantry"), (""), (18)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Gray Slacks"), (1), (1), (""), (1), ("Is the color right?"), (""), (18)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Old Boots"), (1), (1), (""), (1), ("It's humid in here"), (""), (18)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Battle-worn Sword"), (1), (1), (""), (1), ("Worn down through many wars"), (""), (20)) to {Catalog::*}
+	add itemGenerator(Bow, ("Old Piercer"), (1), (1), (""), (1), ("A common gangster name for it's day"), (""), (20)) to {Catalog::*}
+	add itemGenerator(Stick, ("Dead-Man's Staff"), (1), (1), (""), (1), ("They said it would be difficult to pry it away"), (""), (20)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Peasant's Hatchet"), (1), (1), (""), (1), ("Ol' reliable"), (""), (20)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Old Man's Beret"), (1), (1), (""), (1), ("My grandfather wore this"), (""), (22)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Leather Jerkin"), (1), (1), (""), (1), ("Fashionable for the elderly"), (""), (22)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Brown Trowsers"), (1), (1), (""), (1), ("Quite snazzy!"), (""), (22)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Leather Trekkers"), (1), (1), (""), (1), ("For the toughest travellers"), (""), (22)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Whiddled Cedar"), (1), (1), (""), (1), ("Outdoor wood!"), (""), (24)) to {Catalog::*}
+	add itemGenerator(Bow, ("Wooden Bow"), (1), (1), (""), (1), ("A proper bow"), (""), (24)) to {Catalog::*}
+	add itemGenerator(Stick, ("Oak Staff"), (1), (1), (""), (1), ("Put the stick back!"), (""), (24)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Wooden Club"), (1), (1), (""), (1), ("OOGA BOOGA"), (""), (24)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Wolf Scalp"), (1), (1), (""), (1), ("I smell something"), (""), (26)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Deer Pelt"), (1), (1), (""), (1), ("Haven't cleaned it"), (""), (26)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Hide Leggings"), (1), (1), (""), (1), ("I feel like a deer"), (""), (26)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Cloth Trackers"), (1), (1), (""), (1), ("Nice and comfy"), (""), (26)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Sharpened Dagger"), (1), (1), (""), (1), ("Small stabby stabby"), (""), (28)) to {Catalog::*}
+	wait 1 tick
+	add itemGenerator(Bow, ("Sideways Crossbow"), (1), (1), (""), (1), ("What?"), (""), (28)) to {Catalog::*}
+	add itemGenerator(Stick , ("Dark Oak Staff "), (1), (1), (""), (1), ("Slightly sturdier than the other one! "), (""), (28)) to {Catalog::*}
+	add itemGenerator(Stone Shovel , ("Big Rock on a Stick "), (1), (1), (""), (1), ("Uhh, it could work as a mace? "), (""), (28)) to {Catalog::*}
+	add itemGenerator(Leather Helmet , ("Cloth Hood "), (1), (1), (""), (1), ("A very basic hood "), (""), (32)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate , ("Cloth Cape"), (1), (1), (""), (1), ("No need for armor!"), (""), (32)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Toughened Legskins"), (1), (1), (""), (1), ("What did you kill?"), (""), (32)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Deer Hooves"), (1), (1), (""), (1), ("Run like a deer :D"), (""), (32)) to {Catalog::*}
+	add itemGenerator(Iron Sword, ("Scottish Claymore"), (1), (1), (""), (1), ("The classic sword"), (""), (34)) to {Catalog::*}
+	add itemGenerator(Bow, ("Long Bow"), (1), (1), (""), (1), ("How do I carry this?"), (""), (34)) to {Catalog::*}
+	add itemGenerator(Stick, ("Iron-Head Staff"), (1), (1), (""), (1), ("It's like a heavy club"), (""), (34)) to {Catalog::*}
+	add itemGenerator(Iron Shovel, ("Iron Mace"), (1), (1), (""), (1), ("This deals damage!"), (""), (34)) to {Catalog::*}
+	add itemGenerator(Iron Helmet, ("Iron Helmet"), (1), (1), (""), (1), ("It gets stuffy in here"), (""), (38)) to {Catalog::*}
+	add itemGenerator(Chainmail Chestplate, ("Chainmail"), (1), (1), (""), (1), ("All linked up"), (""), (38)) to {Catalog::*}
+	add itemGenerator(Iron Leggings, ("Steel Greeves"), (1), (1), (""), (1), ("No one can hurt me!"), (""), (38)) to {Catalog::*}
+	add itemGenerator(Iron Boots, ("Clunky Sabatons"), (1), (1), (""), (1), ("Clonk Clonk Clonk"), (""), (38)) to {Catalog::*}
+	add itemGenerator(Iron Sword , ("Long Sword "), (1), (1), (""), (1), ("That one the knights always use "), (""), (40)) to {Catalog::*}
+	add itemGenerator(Bow, ("Reinforced Bow"), (1), (1), (""), (1), ("Pierce through thick armor"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Stick, ("Ember Scepter"), (1), (1), (""), (1), ("The flames burn bright!"), (""), (40)) to {Catalog::*}
+	add itemGenerator(Iron Axe, ("Copper Axe"), (1), (1), (""), (1), ("Cut your enemies to pieces"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Iron Helmet, ("Panoply Topper"), (1), (1), (""), (1), ("Hard to get out"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Iron Chestplate, ("Panoply Plate"), (1), (1), (""), (1), ("Stronger then ever"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Iron Leggings, ("Panoply Stockings"), (1), (1), (""), (1), ("Knights protection"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Iron Boots, ("Panoply Boot"), (1), (1), (""), (1), ("Protect and serve!"), (""), (41)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Poison Ivy Sword"), (1), (1), (""), (1), ("Painfull!"), (""), (46)) to {Catalog::*}
+	add itemGenerator(bow, ("Sap Bow"), (1), (1), (""), (1), ("Very Sticky"), (""), (46)) to {Catalog::*}
+	add itemGenerator(Stick, ("Earth Bender"), (1), (1), (""), (1), ("Dont get dirty"), (""), (46)) to {Catalog::*}
+	add itemGenerator(Wooden Axe, ("Twine Axe"), (1), (1), (""), (1), ("Dont get stuck in the Twine"), (""), (46)) to {Catalog::*}
+	add itemGenerator(Leather Cap, ("Thorn Helm"), (1), (1), (""), (1), ("Dont Poke Your Self"), (""), (48)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Thorn Chestplate"), (1), (1), (""), (1), ("Not to stong"), (""), (48)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Thorn Greaves"), (1), (1), (""), (1), ("Ow!"), (""), (48)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Thorn Boots"), (1), (1), (""), (1), ("My Feet Heart!"), (""), (48)) to {Catalog::*}
+	add itemGenerator(Wooden Sword , ("Thorn Sword "), (1), (1), (""), (1), ("Don't prick yourself! "), (""), (50)) to {Catalog::*}
+	add itemGenerator(Bow , ("Vine Bow "), (1), (1), (""), (1), ("Organic! "), (""), (50)) to {Catalog::*}
+	add itemGenerator(sunflower, ("Flower Staff "), (100), (1), (""), (1), ("Bee's like it! "), (""), (50)) to {Catalog::*}
+	wait 1 tick
+	add itemGenerator(Wooden Axe, ("Tree Killer"), (1), (1), (""), (1), ("Kills Poor Trees"), (""), (50)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Leaf hood "), (1), (1), (""), (1), ("Blend in with the forest "), (""), (53)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Leaf Cloak "), (1), (1), (""), (1), ("Shrouded by leaves! "), (""), (53)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Leafy Pants "), (1), (1), (""), (1), ("Probably not that comfortable "), (""), (53)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Leaf Shoes "), (1), (1), (""), (1), ("Leafs aren't very good for shoes... "), (""), (53)) to {Catalog::*}
+	add itemGenerator(Wooden Sword, ("Imbued Blade"), (1), (1), (""), (1), ("The last thing they'll see"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Bow, ("Transmute Longbow"), (1), (1), (""), (1), ("I crafted this bow with my own hands"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Stick, ("Grimwood Wand"), (1), (1), (""), (1), ("From the depths of the dark forests"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Axe, ("Blood Bone Axe"), (1), (1), (""), (1), ("Imbued with the blood of victims"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Axe, ("Blood Bone Axe"), (1), (1), (""), (1), ("Imbued with the blood of victims"), (""), (55)) to {Catalog::*}
+	add itemGenerator(Leather Chestplate, ("Exoskeleton"), (1), (1), (""), (1), ("I'm just big-boned"), (""), (58)) to {Catalog::*}
+	add itemGenerator(Leather Leggings, ("Mammoth Hollow Bones"), (1), (1), (""), (1), ("Manny was the last mammoth"), (""), (58)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Bone Clackers"), (1), (1), (""), (1), ("Protect your actual bones"), (""), (58)) to {Catalog::*}
+	add itemGenerator(Stone Sword, ("Charming Sword"), (1), (1), (""), (1), ("Created from pure magic"), (""), (61)) to {Catalog::*}
+	add itemGenerator(Bow, ("Warsong"), (1), (1), (""), (1), ("Do I hear a whistle? Oh, it's just me"), (""), (61)) to {Catalog::*}
+	add itemGenerator(Stick, ("Eye of the Warden"), (1), (1), (""), (1), ("I see all"), (""), (61)) to {Catalog::*}
+	add itemGenerator(Iron Axe, ("Hellfire Mace"), (1), (1), (""), (1), ("Glowing with power!"), (""), (61)) to {Catalog::*}
+	add itemGenerator(Leather Helmet, ("Wanderer's Sight"), (1), (1), (""), (1), ("Your spidey sense"), (""), (63)) to {Catalog::*}
+	add itemGenerator(Iron Chestplate, ("Plate of Absorption"), (1), (1), (""), (1), ("Hah! A blade? What is that"), (""), (63)) to {Catalog::*}
+	add itemGenerator(Iron Leggings, ("Enchanted Platelegs"), (1), (1), (""), (1), ("Deform a coming blade"), (""), (63)) to {Catalog::*}
+	add itemGenerator(Leather Boots, ("Frozen Walkers"), (1), (1), (""), (1), ("Slow and steady wins the race"), (""), (63)) to {Catalog::*}
+	add itemGenerator(Gold Sword, ("Baptized Blade"), (1), (1), (""), (1), ("Cooled in Holy Water"), (""), (64)) to {Catalog::*}
+	add itemGenerator(Bow , ("Golden Bow "), (1), (1), (""), (1), ("Made out of the purest gold "), (""), (64)) to {Catalog::*}
+	add itemGenerator(Stick, ("Lightbringer"), (1), (1), (""), (1), ("A glorified sparkler, if you may"), (""), (64)) to {Catalog::*}
+	add itemGenerator(Golden Shovel, ("Steel Gold Hammer"), (1), (1), (""), (1), ("Who said gold is soft?"), (""), (64)) to {Catalog::*}
+	add itemGenerator(Gold Helmet, ("Angel Hair"), (1), (1), (""), (1), ("No, not the pasta"), (""), (66)) to {Catalog::*}
+	add itemGenerator(Gold Chestplate, ("Angel Wings"), (1), (1), (""), (1), ("Who said something about an airplane?"), (""), (66)) to {Catalog::*}
+	add itemGenerator(Gold Leggings, ("Battle Angel Leggings"), (1), (1), (""), (1), ("These pants are never coming off"), (""), (66)) to {Catalog::*}
+	add itemGenerator(Gold Boots, ("Angel Sandals"), (1), (1), (""), (1), ("The cleanest shoes on the market"), (""), (66)) to {Catalog::*}
+	add itemGenerator(iron sword, ("Charlemagne's Durandal"), (1), (1), (""), (1), ("Given to him by an Angel"), (""), (68)) to {Catalog::*}
+	add itemGenerator(Bow , ("Dawn"), (70), (1), (""), (1), ("Light follows where the arrow fires"), (""), (68)) to {Catalog::*}
+	add itemGenerator(Stick, ("Illuminate"), (90), (1), (""), (1), ("Chase away the shadows"), (""), (68)) to {Catalog::*}
+	add itemGenerator(Golden shovel, ("Yang"), (100), (1), (""), (1), ("The good of the universe"), (""), (68)) to {Catalog::*}
+	wait 1 tick
+	add itemGenerator(Gold Helmet, ("Deity's Visionaries"), (100), (1), (""), (1), ("The foresight of a god!"), (""), (72)) to {Catalog::*}
+	add itemGenerator(Gold Chestplate, ("Deity's Prescence"), (100), (1), (""), (1), ("Don't come too close, I'm hot"), (""), (72)) to {Catalog::*}
+	add itemGenerator(Gold Leggings, ("Deity's White Cloth"), (100), (1), (""), (1), ("The clean white cloth of greek gods"), (""), (72)) to {Catalog::*}
+	add itemGenerator(Gold Boots, ("Sunwalkers"), (100), (1), (""), (1), ("Feet burning? Unheard of!"), (""), (72)) to {Catalog::*}
+	add itemGenerator(turtle helmet, ("God Helmet"), (100), (10000000), (""), (1), ("Gody"), (""), (100)) to {Catalog::*}
+
+	add enchanted book named "&bBash" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Launches you 10 blocks and stuns" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBash" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Launches you 10 blocks and stuns" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBash" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Launches you 10 blocks and stuns" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBash" with lore "&9Tier: IV" and "&7Class: Warrior" and "&6Launches you 10 blocks and stuns" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBash" with lore "&9Tier: V" and "&7Class: Warrior" and "&6Launches you 10 blocks and stuns" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bSlam" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Launches you into the air doing area damage" and "&bMana: 40 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSlam" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Launches you into the air doing area damage" and "&bMana: 40 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSlam" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Launches you into the air doing area damage" and "&bMana: 40 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSlam" with lore "&9Tier: IV" and "&7Class: Warrior" and "&6Launches you into the air doing area damage" and "&bMana: 40 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSlam" with lore "&9Tier: V" and "&7Class: Warrior" and "&6Launches you into the air doing area damage" and "&bMana: 40 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bBerserker" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Increases your speed" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBerserker" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Increases your speed" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBerserker" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Increases your speed" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBerserker" with lore "&9Tier: IV" and "&7Class: Warrior" and "&6Increases your speed" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBerserker" with lore "&9Tier: V" and "&7Class: Warrior" and "&6Increases your speed" and "&bMana: 30 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bBlood Lust" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Create a blood circle damages/heals" and "&bMana: 45 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBlood Lust" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Create a blood circle damages/heals" and "&bMana: 45 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBlood Lust" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Create a blood circle damages/heals" and "&bMana: 45 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBlood Lust" with lore "&9Tier: IV" and "&7Class: Warrior" and "&6Create a blood circle damages/heals" and "&bMana: 45 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bBlood Lust" with lore "&9Tier: V" and "&7Class: Warrior" and "&6Create a blood circle damages/heals" and "&bMana: 45 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bSatanic Taunt" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Pull your enemies closer" and "&bMana: 35 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSatanic Taunt" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Pull your enemies closer" and "&bMana: 35 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSatanic Taunt" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Pull your enemies closer" and "&bMana: 35 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSatanic Taunt" with lore "&9Tier: IV" and "&7Class: Warrior" and "&6Pull your enemies closer" and "&bMana: 35 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSatanic Taunt" with lore "&9Tier: V" and "&7Class: Warrior" and "&6Pull your enemies closer" and "&bMana: 35 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bSugar High" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Makes you run faster" and "&bMana: 25 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSugar High" with lore "&9Tier: II" and "&7Class: Warrior" and "&6Makes you run faster" and "&bMana: 25 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSugar High" with lore "&9Tier: III" and "&7Class: Warrior" and "&6Makes you run faster" and "&bMana: 25 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSugar High" with lore "&9Tier: IV" and "&7Class: Warrior" and "&6Makes you run faster" and "&bMana: 25 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+	add enchanted book named "&bSugar High" with lore "&9Tier: V" and "&7Class: Warrior" and "&6Makes you run faster" and "&bMana: 25 ♤" with nbt "{Class:Warrior}" to {Catalog::*}
+
+	add enchanted book named "&bDash" with lore "&9Tier: I" and "&7Class: Archer" and "&6Pushes you forward" and "&bMana: 25 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bDash" with lore "&9Tier: II" and "&7Class: Archer" and "&6Pushes you forward" and "&bMana: 25 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bDash" with lore "&9Tier: III" and "&7Class: Archer" and "&6Pushes you forward" and "&bMana: 25 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bDash" with lore "&9Tier: IV" and "&7Class: Archer" and "&6Pushes you forward" and "&bMana: 25 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bDash" with lore "&9Tier: V" and "&7Class: Archer" and "&6Pushes you forward" and "&bMana: 25 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bSerpentine" with lore "&9Tier: I" and "&7Class: Archer" and "&6Tracking arrow" and "&bMana: 50 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSerpentine" with lore "&9Tier: II" and "&7Class: Archer" and "&6Tracking arrow" and "&bMana: 50 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSerpentine" with lore "&9Tier: III" and "&7Class: Archer" and "&6Tracking arrow" and "&bMana: 50 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSerpentine" with lore "&9Tier: IV" and "&7Class: Archer" and "&6Tracking arrow" and "&bMana: 50 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSerpentine" with lore "&9Tier: V" and "&7Class: Archer" and "&6Tracking arrow" and "&bMana: 50 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bBlack Hole" with lore "&9Tier: I" and "&7Class: Archer" and "&6Black hole arrow" and "&bMana: 60 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bBlack Hole" with lore "&9Tier: II" and "&7Class: Archer" and "&6Black hole arrow" and "&bMana: 60 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bBlack Hole" with lore "&9Tier: III" and "&7Class: Archer" and "&6Black hole arrow" and "&bMana: 60 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bBlack Hole" with lore "&9Tier: IV" and "&7Class: Archer" and "&6Black hole arrow" and "&bMana: 60 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bBlack Hole" with lore "&9Tier: V" and "&7Class: Archer" and "&6Black hole arrow" and "&bMana: 60 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bSniper" with lore "&9Tier: I" and "&7Class: Archer" and "&6Arrow with no gravity" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSniper" with lore "&9Tier: II" and "&7Class: Archer" and "&6Arrow with no gravity" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSniper" with lore "&9Tier: III" and "&7Class: Archer" and "&6Arrow with no gravity" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSniper" with lore "&9Tier: IV" and "&7Class: Archer" and "&6Arrow with no gravity" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bSniper" with lore "&9Tier: V" and "&7Class: Archer" and "&6Arrow with no gravity" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bPoison Arrows" with lore "&9Tier: I" and "&7Class: Archer" and "&6Poison arrow" and "&bMana: 30 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bPoison Arrows" with lore "&9Tier: II" and "&7Class: Archer" and "&6Poison arrow" and "&bMana: 30 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bPoison Arrows" with lore "&9Tier: III" and "&7Class: Archer" and "&6Poison arrow" and "&bMana: 30 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bPoison Arrows" with lore "&9Tier: IV" and "&7Class: Archer" and "&6Poison arrow" and "&bMana: 30 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bPoison Arrows" with lore "&9Tier: V" and "&7Class: Archer" and "&6Poison arrow" and "&bMana: 30 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bFlash" with lore "&9Tier: I" and "&7Class: Archer" and "&6Blind bomb" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bFlash" with lore "&9Tier: II" and "&7Class: Archer" and "&6Blind bomb" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bFlash" with lore "&9Tier: III" and "&7Class: Archer" and "&6Blind bomb" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bFlash" with lore "&9Tier: IV" and "&7Class: Archer" and "&6Blind bomb" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+	add enchanted book named "&bFlash" with lore "&9Tier: V" and "&7Class: Archer" and "&6Blind bomb" and "&bMana: 40 ♤" with nbt "{Class:Archer}" to {Catalog::*}
+
+	add enchanted book named "&bJet Stream" with lore "&9Tier: I" and "&7Class: Mage" and "&6Shoot fire" and "&bMana: 35 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bJet Stream" with lore "&9Tier: II" and "&7Class: Mage" and "&6Shoot fire" and "&bMana: 35 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bJet Stream" with lore "&9Tier: III" and "&7Class: Mage" and "&6Shoot fire" and "&bMana: 35 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bJet Stream" with lore "&9Tier: IV" and "&7Class: Mage" and "&6Shoot fire" and "&bMana: 35 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bJet Stream" with lore "&9Tier: V" and "&7Class: Mage" and "&6Shoot fire" and "&bMana: 35 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+
+	add enchanted book named "&bGust" with lore "&9Tier: I" and "&7Class: Mage" and "&6Launch yourself" and "&bMana: 25 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bGust" with lore "&9Tier: II" and "&7Class: Mage" and "&6Launch yourself" and "&bMana: 25 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bGust" with lore "&9Tier: III" and "&7Class: Mage" and "&6Launch yourself" and "&bMana: 25 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bGust" with lore "&9Tier: IV" and "&7Class: Mage" and "&6Launch yourself" and "&bMana: 25 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bGust" with lore "&9Tier: V" and "&7Class: Mage" and "&6Launch yourself" and "&bMana: 25 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+
+	add enchanted book named "&bMeteor" with lore "&9Tier: I" and "&7Class: Mage" and "&6Summon a meteor" and "&bMana: 60 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bMeteor" with lore "&9Tier: II" and "&7Class: Mage" and "&6Summon a meteor" and "&bMana: 60 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bMeteor" with lore "&9Tier: III" and "&7Class: Mage" and "&6Summon a meteor" and "&bMana: 60 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bMeteor" with lore "&9Tier: IV" and "&7Class: Mage" and "&6Summon a meteor" and "&bMana: 60 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bMeteor" with lore "&9Tier: V" and "&7Class: Mage" and "&6Summon a meteor" and "&bMana: 60 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	
+	add enchanted book named "&bPyro-Dancer" with lore "&9Tier: I" and "&7Class: Mage" and "&6Trail of fire" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bPyro-Dancer" with lore "&9Tier: II" and "&7Class: Mage" and "&6Trail of fire" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bPyro-Dancer" with lore "&9Tier: III" and "&7Class: Mage" and "&6Trail of fire" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bPyro-Dancer" with lore "&9Tier: IV" and "&7Class: Mage" and "&6Trail of fire" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bPyro-Dancer" with lore "&9Tier: V" and "&7Class: Mage" and "&6Trail of fire" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	
+	add enchanted book named "&bHeat Stroke" with lore "&9Tier: I" and "&7Class: Mage" and "&6Magma wall" and "&bMana: 50 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bHeat Stroke" with lore "&9Tier: II" and "&7Class: Mage" and "&6Magma wall" and "&bMana: 50 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bHeat Stroke" with lore "&9Tier: III" and "&7Class: Mage" and "&6Magma wall" and "&bMana: 50 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bHeat Stroke" with lore "&9Tier: IV" and "&7Class: Mage" and "&6Magma wall" and "&bMana: 50 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bHeat Stroke" with lore "&9Tier: V" and "&7Class: Mage" and "&6Magma wall" and "&bMana: 50 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	
+	add enchanted book named "&bBrilliant Light" with lore "&9Tier: I" and "&7Class: Mage" and "&6Summon lighting" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bBrilliant Light" with lore "&9Tier: II" and "&7Class: Mage" and "&6Summon lighting" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bBrilliant Light" with lore "&9Tier: III" and "&7Class: Mage" and "&6Summon lighting" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bBrilliant Light" with lore "&9Tier: IV" and "&7Class: Mage" and "&6Summon lighting" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	add enchanted book named "&bBrilliant Light" with lore "&9Tier: V" and "&7Class: Mage" and "&6Summon lighting" and "&bMana: 40 ♤" with nbt "{Class:Mage}" to {Catalog::*}
+	
+	add enchanted book named "&bNecrosis" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Wither skull" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecrosis" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Wither skull" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecrosis" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Wither skull" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecrosis" with lore "&9Tier: IV" and "&7Class: Shaman" and "&6Wither skull" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecrosis" with lore "&9Tier: V" and "&7Class: Shaman" and "&6Wither skull" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	
+	add enchanted book named "&bBubonic Plague" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Infect!" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bBubonic Plague" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Infect!" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bBubonic Plague" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Infect!" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bBubonic Plague" with lore "&9Tier: IV" and "&7Class: Shaman" and "&6Infect!" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bBubonic Plague" with lore "&9Tier: V" and "&7Class: Shaman" and "&6Infect!" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	add enchanted book named "&bSummon" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Teleport to teammates" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bSummon" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Teleport to teammates" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bSummon" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Teleport to teammates" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bSummon" with lore "&9Tier: IV" and "&7Class: Shaman" and "&6Teleport to teammates" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bSummon" with lore "&9Tier: V" and "&7Class: Shaman" and "&6Teleport to teammates" and "&bMana: 100 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	add enchanted book named "&bRejuvenize" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Healing circle" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bRejuvenize" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Healing circle" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bRejuvenize" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Healing circle" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bRejuvenize" with lore "&9Tier: IV" and "&7Class: Shaman" and "&6Healing circle" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bRejuvenize" with lore "&9Tier: V" and "&7Class: Shaman" and "&6Healing circle" and "&bMana: 30 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	add enchanted book named "&bTotem of Undying" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Place a healing totem" and "&bMana: 80 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bTotem of Undying" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Place a healing totem" and "&bMana: 80 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bTotem of Undying" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Place a healing totem" and "&bMana: 80 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bTotem of Undying" with lore "&9Tier: IV" and "&7Class: Shaman" and "&6Place a healing totem" and "&bMana: 80 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bTotem of Undying" with lore "&9Tier: V" and "&7Class: Shaman" and "&6Place a healing totem" and "&bMana: 80 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	add enchanted book named "&bNecromancy" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Summon the undead" and "&bMana: 150 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecromancy" with lore "&9Tier: II" and "&7Class: Shaman" and "&6Summon the undead" and "&bMana: 150 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecromancy" with lore "&9Tier: III" and "&7Class: Shaman" and "&6Summon the undead" and "&bMana: 150 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecromancy" with lore "&9Tier: IV" and "&7Class: Shaman" and "&6Summon the undead" and "&bMana: 150 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+	add enchanted book named "&bNecromancy" with lore "&9Tier: V" and "&7Class: Shaman" and "&6Summon the undead" and "&bMana: 150 ♤" with nbt "{Class:Shaman}" to {Catalog::*}
+
+	add slime spawn egg named "&aHungry Caterpillar" with lore "&2Click to Spawn" and "&2Unleash the hungry beast!" to {Catalog::*}
+	add cod named "&eCod" with lore "&c+10 HP&7 when eaten" to {Catalog::*}
+	add melon slice named "&eMelon" with lore "&c+10 HP&7 when eaten" to {Catalog::*}
+	add apple named "&eApple" with lore "&c+20 HP&7 when eaten" to {Catalog::*}
+	add bread named "&eBread" with lore "&c+30 HP&7 when eaten" to {Catalog::*}
+	add steak named "&eSteak" with lore "&c+40 HP&7 when eaten" to {Catalog::*}
+	add golden carrot named "&eGolden Carrot" with lore "&c+50 HP&7 when eaten" to {Catalog::*}
+	add golden apple named "&eGolden Apple" with lore "&c+70 HP&7 when eaten" to {Catalog::*}
+	add enchanted golden apple named "&eEnchanted Golden Apple" with lore "&c+100 HP&7 when eaten" to {Catalog::*}
+	add enchanted golden apple named "&eNotch Apple" with lore "&c+200 HP&7 when eaten" to {Catalog::*}
+	add potato named "&ePotato" with lore "&c+∞ HP&7 when eaten" to {Catalog::*}
+	set {_item} to Fishing Rod named "&bFishing Rod"
+	add "{Unbreakable:1b}" to nbt of {_item}
+	add "{HideFlags:63}" to nbt of {_item}
+	add {_item} to {Catalog::*}
+	set {_item} to shiny Fishing Rod named "&bGrappling Hook"
+	add "{Unbreakable:1b}" to nbt of {_item}
+	add "{HideFlags:63}" to nbt of {_item}
+	add {_item} to {Catalog::*}
+	message "Loaded Catalog" to {_player}
+	
+	
+
+	
+	
+
+
+
+function Catalog(player: player, page: integer):
+	set {_Catalog.Max.Itemsz} to {Catalog.Max.Items}
+	set {_Catalog.Max.Items} to {Catalog.Max.Items}
+	if {Catalog.Max.Items} < 1:
+		set {_Catalog.Max.Items} to 999999999999999999
+		set {_Catalog.Max.Itemsz} to "INF"
+	if {_page} is not set:
+		set {_page} to 1
+	if {_page} < 1:
+		set {_page} to 1
+	if {_page} > 7:
+		set {_pagenumber} to {_page}
+	else:
+		set {_pagenumber} to 7
+	if {_page} > {_Catalog.Max.Items}:
+		set {_page} to {_Catalog.Max.Items}
+	set {_uuid} to {_player}'s uuid
+	if {clicktype::%{_player}%} contains "right":
+		if ({_page}+9) < {_Catalog.Max.Items}:
+			set metadata tag "CatalogGUI" of {_player} to chest inventory with 6 rows named "&8Item Catalog &0(&8%{_page}+9%&0/&8%{_Catalog.Max.Itemsz}%&0)"
+		else:
+			set metadata tag "CatalogGUI" of {_player} to chest inventory with 6 rows named "&8Item Catalog &0(&8%{_page}%&0/&8%{_Catalog.Max.Itemsz}%&0)"
+	else:
+		set metadata tag "CatalogGUI" of {_player} to chest inventory with 6 rows named "&8Item Catalog &0(&8%{_page}%&0/&8%{_Catalog.Max.Itemsz}%&0)"
+	set {_saveoldpagefortesting} to {_page}
+	if {clicktype::%{_player}%} contains "right":
+		add 9 to {_page}
+	set {_testingglasspan} to 9
+	loop 7 times:
+		add 1 to {_testingglasspan}
+		set {_sayslot} to ((({_page}-1)*3)*7)+loop-value
+		set slot {_testingglasspan} of metadata tag "CatalogGUI" of {_player} to light gray stained glass pane named "&a" with lore "&7Item: %{_sayslot}%"
+	set {_testingglasspan} to 18
+	loop 7 times:
+		add 1 to {_testingglasspan}
+		set {_sayslot} to (((({_page}-1)*3)*7)+loop-value)+7
+		set slot {_testingglasspan} of metadata tag "CatalogGUI" of {_player} to light gray stained glass pane named "&a" with lore "&7Item: %{_sayslot}%"
+	set {_testingglasspan} to 27
+	loop 7 times:
+		add 1 to {_testingglasspan}
+		set {_sayslot} to (((({_page}-1)*3)*7)+loop-value)+14
+		set slot {_testingglasspan} of metadata tag "CatalogGUI" of {_player} to light gray stained glass pane named "&a" with lore "&7Item: %{_sayslot}%"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "CatalogGUI" of {_player} to Carved Pumpkin named "&a"
+	#set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "CatalogGUI" of {_player} to yellow stained glass pane named "&a"
+	if {_player} has permission "op":
+		set slot 8 of metadata tag "CatalogGUI" of {_player} to barrier named "&cReload Items"
+	set {_loopvalue} to 36
+	set {_pagenumber} to {_pagenumber}-7
+	if {clicktype::%{_player}%} contains "right":
+		set {_extravalue} to 9
+		if {_page}+9 > {_Catalog.Max.Items}:
+			set {_extravalue} to 0
+		delete {clicktype::%{_player}%}
+	loop 7 times:
+		add 1 to {_loopvalue}
+		set slot {_loopvalue} of metadata tag "CatalogGUI" of {_player} to red wool named "&cPage %{_loopvalue}-36+{_pagenumber}+{_extravalue}%"
+		if loop-value is 7:
+			set {_savevalueidklelel} to "%{_loopvalue}-36+{_pagenumber}+{_extravalue}%"
+	if {_page} > 7:
+		set slot 7+36 of metadata tag "CatalogGUI" of {_player} to lime wool named "&aPage %{_savevalueidklelel}%"
+	else:
+		set slot {_page}+36 of metadata tag "CatalogGUI" of {_player} to lime wool named "&aPage %{_page}%"
+	delete {_drops::*}
+	set {_loop-number} to 0
+	add itemGenerator(dirt, ("&cNO"), 1, 1, ("Test"), 1, ("&aNO"), ("Smart"), 2) to {_drops::*}
+	set {_drops::*} to {Catalog::*}
+	set {_size} to size of {_drops::*}
+	set {_Oldslot} to -1
+	loop 21 times:
+		add 1 to {_loopnumber}
+		{_loopnumber} <= loop-value
+		if {_page} > 1:
+			set {_temp2} to {_page}-1
+			set {_temp2} to 21*{_temp2}
+			set {_getitem} to loop-value+{_temp2}
+		if {_page} > 1:
+			set {_temp3} to {_page}-1
+			set {_temp3} to 21*{_temp3}
+			set {_temp} to {_loopnumber}+{_temp2}
+			set {_item} to {_drops::%{_temp}%}
+		else:
+			set {_item} to {_drops::%{_loopnumber}%}
+			set {_getitem} to {_loopnumber}
+		{_getitem} <= {_size}
+		add "&7Item: %{_getitem}%" to {_item}'s lore
+		set {_item} to {_item} parsed as item
+		set {_itemslot} to {_loopnumber}+9
+		set {_valueloop} to 0
+		loop 6 times:
+			add 1 to {_valueloop}
+			if slot {_itemslot} of metadata tag "CatalogGUI" of {_player} is not light gray stained glass pane named "&a":
+				add 1 to {_itemslot}
+			else:
+				exit 1 loop
+		{_valueloop} is not 6
+		set slot {_itemslot} of metadata tag "CatalogGUI" of {_player} to {_item}
+		if slot {_itemslot} of metadata tag "CatalogGUI" of {_player} is air:
+			set {_item} to barrier named "&cError unknown item: ""%{_item}%"""
+			add "&7Item: %{_getitem}%" to {_item}'s lore
+			set slot {_itemslot} of metadata tag "CatalogGUI" of {_player} to {_item}
+		set {_Oldslot} to {_itemslot}
+	open (metadata tag "CatalogGUI" of {_player}) to {_player}
+	delete {clicktype::%{_player}%}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+function CatalogGUIIndexSlot(player: player, slot: object, clicktype: object):
+	set {_uuid} to {_player}'s uuid
+	set {_Catalog.Max.Items} to {Catalog.Max.Items}
+	if {Catalog.Max.Items} < 1:
+		set {_Catalog.Max.Items} to 999999999999999999
+	if {_slot} is between 37 and 43:
+		set {_PageSlot} to slot {_slot} of metadata tag "CatalogGUI" of {_player}
+		set {_name} to uncolored name of slot {_slot} of metadata tag "CatalogGUI" of {_player}
+		set {_name::*} to {_name} split at " "
+		set {_Pagez} to {_name::2}
+		if {_PageSlot} is lime wool:
+			set {clicktype::%{_player}%} to "%{_clicktype}%"
+		if {_slot} is 43:
+			if {_PageSlot} is lime wool:
+				set {_Pagez} to {_Pagez} parsed as number
+				{_Pagez} < {_Catalog.Max.Items}
+				set {_pagechange} to {_Pagez}-6
+				loop 7 times:
+					add 1 to {_loopvalue}
+					set {_itemslot} to {_loopvalue}+36
+					if {_loopvalue} is 6:
+						set slot {_itemslot} of metadata tag "CatalogGUI" of {_player} to lime wool named "&aPage %{_pagechange}+{_loopvalue}%"
+					else:
+						set slot {_itemslot} of metadata tag "CatalogGUI" of {_player} to red wool named "&cPage %{_pagechange}+{_loopvalue}%"
+				set {_newpage} to {_Pagez}+1
+				set {_playerz} to {_player} parsed as player
+				execute {_player} command "/Catalog %{_newpage}%"
+		{_PageSlot} is not lime wool
+		set {_playerz} to {_player} parsed as player
+		execute {_player} command "/Catalog %{_Pagez}%"
+	if slot {_slot} of metadata tag "CatalogGUI" of {_player} is not light gray stained glass pane named "&a" or barrier block or yellow stained glass pane or red wool or lime wool or carved pumpkin:
+		{_player} has permission "op"
+		set {_giveitem} to slot {_slot} of metadata tag "CatalogGUI" of {_player}
+		set {_lore::*} to uncolored lore of {_giveitem}
+		loop {_lore::*}:
+			add 1 to {_lorelines}
+		delete line {_lorelines} of lore of {_giveitem}
+		give {_player} {_giveitem}
+	if {_slot} is 8:
+		if {_player} has permission "op":
+			UpdateCatalogItems({_player})
