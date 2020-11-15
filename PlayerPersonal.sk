@@ -2,30 +2,95 @@ on consume of potion:
 	cancel event
 	set {_amount::*} to (split "%event-item's name%" by " ")
 	set {_amount::3} to uncolored "%{_amount::3}%" parsed as an integer
+	if event-item is not player's tool:
+		message "&cPotions can not be used in the off hand!" to player
+		stop
+	if {_amount::3} is 0:
+		set player's tool to air
+		stop
 	if "%event-item%" contains "Healing Potion":
 		if {_amount::3} >= 1:
 			metadata "health" of player < hpStat(player)
 			set metadata tag "health" of player to (metadata tag "health" of player) + 50
 			set name of player's tool to "%{_amount::1}% %{_amount::2}% %{_amount::3}-1%"
+			set {_add} to {_amount::3}-1
+			add "{PotionCount:%{_add}%}" to nbt of player's tool
 			set player's health to (metadata tag "health" of player)/10
 			if metadata "health" of player > hpStat(player):
 				set metadata tag "health" of player to hpStat(player)
+			set {_maxHP} to hpStat(player)
+			set {_php} to (10*(metadata tag "health" of player))/{_maxHP}
+			set player's health to {_php}
+			if {_add} is 0:
+				set player's tool to air
 	else if "%event-item%" contains "Mana Potion":
 		if {_amount::3} >= 1:
 			metadata "mana" of player < mpStat(player)
 			set metadata tag "mana" of player to (metadata tag "mana" of player) + 50
 			set name of player's tool to "%{_amount::1}% %{_amount::2}% %{_amount::3}-1%"
+			set {_add} to {_amount::3}-1
+			add "{PotionCount:%{_add}%}" to nbt of player's tool
 			if metadata "mana" of player > mpStat(player):
 				set metadata tag "mana" of player to mpStat(player)
+			if {_add} is 0:
+				set player's tool to air
+
+on click:
+	if player's tool is food:
+		set the player's food level to 9.5
+	else:
+		set the player's food level to 10
+
+
+on eat:
+	if event-item is not player's tool:
+		cancel event
+	set {_item} to player's tool
+	set {_name} to name of {_item}
+	set {_lore::*} to lore of {_item}
+	set {_heal::*} to {_lore::1} split at "+"
+	set {_heal} to {_heal::2}
+	set {_heal::*} to {_heal} split at " "
+	set {_heal} to {_heal::1}
+	set {_heal} to {_heal} parsed as number
+	if {_heal} is "∞":
+		set {_heal} to "INF"
+	if {_heal} is set:
+		if {_item} is set:
+			if metadata "health" of player = hpStat(player):
+				cancel event
+				stop
+			cancel event
+			if {_heal} is not "INF":
+				set metadata tag "health" of player to (metadata tag "health" of player) + {_heal}
+			else:
+				set metadata tag "health" of player to hpStat(player)
+			set player's health to (metadata tag "health" of player)/10
+			if metadata "health" of player > hpStat(player):
+				set metadata tag "health" of player to hpStat(player)
+			set {_maxHP} to hpStat(player)
+			set {_php} to (10*(metadata tag "health" of player))/{_maxHP}
+			set player's health to {_php}
+			remove 1 of player's tool from player's tool
+
+on tool change:
+	wait 1 tick
+	if player's tool is a food:
+		set the player's food level to 9.5
+	else:
+		set the player's food level to 10
 	
 on gamemode change:
 	wait 1 tick
 	if player's gamemode is not creative:
 		hotbarItems(player)
 	else:
-		set slot (1, 2, 3, 4, 5, 6, 7 and 8) of player's inventory to air
+		set slot (3, 4, 5, 6, 7 and 8) of player's inventory to air
 
 on inventory click:
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
 	if player's gamemode is survival:
 		set {_item} to event-slot
 		"%event-inventory%" contains "%player%"
@@ -34,11 +99,19 @@ on inventory click:
 			wait 3 ticks
 			set event-slot to {_item}
 	if clicked slot is 39:
+		"%event-inventory%" contains "%player%"
 		if "%click type%" contains "RIGHT":
 			armorGUI(player)
 	if event-inventory = (metadata tag "characterInventory" of player):
 		set {_profile} to metadata tag "profile" of player
-		if index of event-slot is not (16, 25, 34, 43 or 49):
+		if index of event-slot is not (16, 25, 34 or 43):
+			if ("LevelReq" tag of nbt of event-item) > {_player}'s level:
+				set {_item} to event-item
+				cancel event
+				set slot (index of event-slot) of metadata tag "characterInventory" of player to barrier named "&cYou are too low leveled to use this!"
+				wait 1 second
+				set slot (index of event-slot) of metadata tag "characterInventory" of player to {_item}
+				stop
 			if event-slot is a helmet:
 				remove event-item from player
 				give {armorPlayer::%player's uuid%::%{_profile}%::1} to player
@@ -75,6 +148,4 @@ on inventory click:
 				player has enough space for {armorPlayer::%player's uuid%::%{_profile}%::4}
 				give {armorPlayer::%player's uuid%::%{_profile}%::4} to player
 				delete {armorPlayer::%player's uuid%::%{_profile}%::4}
-			else if index of event-slot is 49:
-				cancel event
 			armorGUI(player)
