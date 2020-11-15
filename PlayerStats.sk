@@ -1,5 +1,3 @@
-
-
 on inventory click:
 	if event-inventory = (metadata tag "StatsGUI" of player):
 		StatsGUIIndexSlot(player, index of event-slot, click type)
@@ -45,7 +43,7 @@ function StatsGUI(player: player):
 	set slot 30  of metadata tag "StatsGUI" of {_player} to totem of undying named "&dWisdom &5(&d%{wisdomStat::%{_uuid}%::%{_profile}%} ? 0%&5)" with lore "&5+ &d1 MP" and "&5+&d 0.05 MP/5 Sec" and " " and "&5Shaman Bonus:" and "&5+&d 0.4 Damage" with nbt "{HideFlags:63}"
 	set slot 32  of metadata tag "StatsGUI" of {_player} to Golden Apple named "&eStamina &6(&e%{staminaStat::%{_uuid}%::%{_profile}%} ? 0%&6)" with lore "&6+&e 4 Hp" and "&6+&e 1 Defense" with nbt "{HideFlags:63}"
 	set slot 31  of metadata tag "StatsGUI" of {_player} to {_player}'s head named "&bStats &3(&b%{statPoints::%{_uuid}%::%{_profile}%} ? 0%&3)" with lore "&2•&a Defense: %defenseStat({_player}) ? ""NaN""%" and "&2•&a Luck: %luckStat({_player}) ? ""NaN""%" and "&2•&a Cooldown Speed: %cooldownSpeedStat({_player}) ? ""NaN""%" and "&2•&a Attack: %attackStat({_player}) ? ""NaN""%" and "&2•&a Critical: %criticalStat({_player}) ? ""NaN""%" and "&2•&a Block: %blockStat({_player}) ? ""NaN""%" and "&2•&a Speed: %speedStat({_player}) ? ""NaN""%" and "&2•&a MP: %mpStat({_player}) ? ""NaN""%" and "&2•&a MP Regen: %MPRegenStat({_player}) ? ""NaN""%" and "&2•&a Hp: %hpStat({_player}) ? ""NaN""%" and "&2•&a Hp Regen: %HPRegenStat({_player}) ? ""NaN""%" and "&2•&a Value: %priceStat({_player}) ? ""NaN""%"
-	set {_price} to ({strengthStat::%{_uuid}%::%{_profile}%}+{dexterityStat::%{_uuid}%::%{_profile}%}+{intelligenceStat::%{_uuid}%::%{_profile}%}+{wisdomStat::%{_uuid}%::%{_profile}%}+{staminaStat::%{_uuid}%::%{_profile}%})*150
+	set {_price} to ({strengthStat::%{_uuid}%::%{_profile}%}+{dexterityStat::%{_uuid}%::%{_profile}%}+{intelligenceStat::%{_uuid}%::%{_profile}%}+{wisdomStat::%{_uuid}%::%{_profile}%}+{staminaStat::%{_uuid}%::%{_profile}%})*75
 	set slot 8  of metadata tag "StatsGUI" of {_player} to Barrier named "&cReset All Stats!" with lore "&eCosts: &6%{_price}%"
 	open (metadata tag "StatsGUI" of {_player}) to {_player}
 	set metadata tag "inventoryOpened" of {_player} to true
@@ -75,8 +73,8 @@ function StatsGUIIndexSlot(player: player, slot: object, clicktype: object):
 		set {statPoints::%{_uuid}%::%{_profile}%} to 0
 	set {_points} to {statPoints::%{_uuid}%::%{_profile}%}
 	if {_slot} is 8:
-		if {Balance::%{_uuid}%::%{_profile}%} >= {_Total}*150:
-			set {Balance::%{_uuid}%::%{_profile}%} to {Balance::%{_uuid}%::%{_profile}%}-({_Total}*150)
+		if {Balance::%{_uuid}%::%{_profile}%} >= {_Total}*75:
+			set {Balance::%{_uuid}%::%{_profile}%} to {Balance::%{_uuid}%::%{_profile}%}-({_Total}*75)
 			set {statPoints::%{_uuid}%::%{_profile}%} to {_Total}+{statPoints::%{_uuid}%::%{_profile}%}
 			delete {strengthStat::%{_uuid}%::%{_profile}%}
 			delete {dexterityStat::%{_uuid}%::%{_profile}%}
@@ -85,19 +83,19 @@ function StatsGUIIndexSlot(player: player, slot: object, clicktype: object):
 			delete {staminaStat::%{_uuid}%::%{_profile}%}
 			StatsGUI({_player})
 		else:
-			message "&cYou need %{_Total}*150%&c Coins!" to {_player}
+			message "&cYou need %{_Total}*150%&c coins!" to {_player}
 			stop
 	if {_slot} is 20:
 		if {_clicktype} contains "right":
 			if {_points} < 10:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 10 to {strengthStat::%{_uuid}%::%{_profile}%}
 			StatsGUI({_player})
 		else:
 			if {_points} < 1:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 1 to {strengthStat::%{_uuid}%::%{_profile}%}
@@ -105,14 +103,14 @@ function StatsGUIIndexSlot(player: player, slot: object, clicktype: object):
 	if {_slot} is 22:
 		if {_clicktype} contains "right":
 			if {_points} < 10:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 10 to {dexterityStat::%{_uuid}%::%{_profile}%}
 			StatsGUI({_player})
 		else:
 			if {_points} < 1:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 1 to {dexterityStat::%{_uuid}%::%{_profile}%}
@@ -120,14 +118,14 @@ function StatsGUIIndexSlot(player: player, slot: object, clicktype: object):
 	if {_slot} is 24:
 		if {_clicktype} contains "right":
 			if {_points} < 10:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 10 to {intelligenceStat::%{_uuid}%::%{_profile}%}
 			StatsGUI({_player})
 		else:
 			if {_points} < 1:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 1 to {intelligenceStat::%{_uuid}%::%{_profile}%}
@@ -135,14 +133,14 @@ function StatsGUIIndexSlot(player: player, slot: object, clicktype: object):
 	if {_slot} is 30:
 		if {_clicktype} contains "right":
 			if {_points} < 10:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 10 to {wisdomStat::%{_uuid}%::%{_profile}%}
 			StatsGUI({_player})
 		else:
 			if {_points} < 1:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 1 to {wisdomStat::%{_uuid}%::%{_profile}%}
@@ -150,14 +148,14 @@ function StatsGUIIndexSlot(player: player, slot: object, clicktype: object):
 	if {_slot} is 32:
 		if {_clicktype} contains "right":
 			if {_points} < 10:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 10 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 10 to {staminaStat::%{_uuid}%::%{_profile}%}
 			StatsGUI({_player})
 		else:
 			if {_points} < 1:
-				message "&cYou have No Stat Points!" to {_player}
+				message "&cYou have no stat points!" to {_player}
 				stop
 			remove 1 from {statPoints::%{_uuid}%::%{_profile}%}
 			add 1 to {staminaStat::%{_uuid}%::%{_profile}%}
