@@ -6,7 +6,7 @@ command /Cratedelete [<number>] [<number>] [<number>]:
 			add 1 to {_number}
 			if {listcrates::%{_number}%} is {_tp}:
 				delete {listcrates::%{_number}%}
-				message "&6Deleted Crate"
+				message "&6Deleted crate"
 				execute player command "crate list"
 
 command /Crate [<text>]:
@@ -29,7 +29,7 @@ command /Crate [<text>]:
 				add 1 to {_number}
 				if location of block at player is {listcrates::%{_number}%}:
 					delete {listcrates::%{_number}%}
-					message "&6Deleted Crate"
+					message "&6Deleted crate"
 					if block at {_loc} is chest:
 						set block at {_loc} to air
 					stop
@@ -39,7 +39,7 @@ command /Crate [<text>]:
 				if block at loop-value is chest:
 					set block at loop-value to air
 			delete {listcrates::*}
-			message "&6Deleted all Crates"
+			message "&6Deleted all crates"
 		else if arg-1 is "list":
 			loop {listcrates::*}:
 				add 1 to {_number}
@@ -52,7 +52,7 @@ command /Crate [<text>]:
 			if block at {_spawnloc} is chest:
 				message "&cThere is already a crate here!"
 				stop
-			broadcast "&6A Loot Chest Was Spoted At %{_spawnloc}%&6!"
+			broadcast "&6A loot chest was spotted at %{_spawnloc}%&6!"
 			delete block at {_spawnloc}'s inventory
 			set block at {_spawnloc} to chest
 			set {_items::*} to dirt,stone,cobblestone,chest,white wool and torch,shulker box #shulker box is the item that spawns for rare loot
@@ -75,7 +75,7 @@ command /Crate [<text>]:
 			wait 5 seconds
 			delete block at {_spawnloc}'s inventory
 			set block at {_spawnloc} to air
-			broadcast "&6The Loot Chest Has Despawned"
+			broadcast "&6The loot chest has despawned"
 		else if arg-1 is "reload":
 			execute player command "/skript reload GlobalCrates"
 		else if arg-1 is "help":
@@ -104,11 +104,11 @@ on block place of chest:
 					message "&cThere is already a crate here!"
 					stop
 			add {_loc} to {listcrates::*}
-			message "&6Added Crate at %{_loc}%"
+			message "&6Added crate at %{_loc}%"
 		else:
 			loop 100 times:
 				add 1 to {_number}
 				if location of event-block is {listcrates::%{_number}%}:
 					delete {listcrates::%{_number}%}
-					message "&6Deleted Crate"
+					message "&6Deleted crate"
 					stop
