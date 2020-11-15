@@ -3,19 +3,38 @@ on chat:
 		message formatted "&c[Chat Filter] &7%player%: &f%message%" to all players where [input has permission "staffchat"]
 		stop
 	cancel event
-	set {_message} to "&8[&6%player's level%&8] %player's group% &7%player%: &f%message%"
+	if metadata tag "CustomArmorStandTypePlayerNoTalk" of player is true:
+		stop
+	set {_uuid} to uuid of player
+	set {_profile} to metadata tag "profile" of player
+	if {profiles::%{_uuid}%::%{_profile}%} is not set:
+		message "&cPlease Pick A Profile Before Talking!"
+		stop
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
+	set {_prefix} to join (characters at (integers between 0 and 2) in "%{_prefix::2}%")
+	set {_message} to "&8[&6%player's level%&8] %{_color}%[%{_prefix} in uppercase%] %player's group% &7%player%: &f%message%"
 	if message contains "[item]":
 		set {_itemLines} to formatted name of player's tool
+		#make embed:
+			#set description of embed to uncolored name of player's tool
+			#set color of the embed to green
 		while {_endLore} is not set:
 			add 1 to {_line}
 			if line {_line} of lore of player's tool is set:
 				set {_itemLines} to "%{_itemLines}%%nl%%line {_line} of lore of player's tool%"
+				#if line {_line} of lore of player's tool != "":
+					#if line {_line} of lore of player's tool does not contain "✦" or "❃":
+						#add field with value "%uncolored line {_line} of lore of player's tool%" to embed
+					#else if line {_line} of lore of player's tool contains "+":
+						#add field with value uncolored line {_line} of lore of player's tool to embed
+						
 			else:
 				set {_endLore} to true
 		set {_item} to formatted "<tooltip:%{_itemLines}%>%name of player's tool%<reset>"
 		replace "<none>" in {_item} with "%player's tool%"
 		if length of {_item} <= 500:
-			replace "[item]" in {_message} with "%{_item}%"
+			replace "[item]" in {_message} with "&l%{_item}%"
 		else:
 			send "%nl%&cThis item is too large to be displayed in chat!%nl%" to player
 			stop
@@ -26,3 +45,6 @@ on chat:
 		send formatted "&9Staff > &b%player%: &f%message%" to all players where [input has permission "staff"]
 		stop
 	send formatted "%{_message}%" to all players
+	#send "[%player's level%] %uncolored player's group% %player%: *%message%*" to channel with id "745822837448769668" with "Siege"
+	#if message contains "[item]":
+		#send last created embed to channel with id "745822837448769668" with "Siege"
