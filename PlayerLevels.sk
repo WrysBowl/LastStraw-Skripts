@@ -1,32 +1,43 @@
 function levelIncrease(exp: number, player: player):
+	set metadata tag "interruptActionBar" of {_player} to true
+	if {_exp} is not 0:
+		#broadcast "%{_exp}%"
+		send action bar "&5+ %{_exp}% EXP" to {_player}
 	set {_profile} to (metadata tag "profile" of {_player})
 	set {_uuid} to {_player}'s uuid
-	if {level::%{_uuid}%::%{_profile}%} >= 500:
-		set {_player}'s level to 500
+	if {level::%{_uuid}%::%{_profile}%} >= 100:
+		set {_player}'s level to 100
 		set {_player}'s level progress to 0
+		set {level::%{_uuid}%::%{_profile}%} to 100
 		stop
 	else if {level::%{_uuid}%::%{_profile}%} is not set:
 		set {level::%{_uuid}%::%{_profile}%} to 1
-	set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^4/100)
+	set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^2)+10
 	if ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
-		if ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
+		while ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
 			set {exp::%{_uuid}%::%{_profile}%} to (({_exp}+{exp::%{_uuid}%::%{_profile}%}) - {_levelCeiling})
 			add 1 to {level::%{_uuid}%::%{_profile}%}
 			add 3 to {statPoints::%{_uuid}%::%{_profile}%}
-			set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^4/100)
-		set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^4/100)
-		if ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
+			send title "&5Leveled Up!" with subtitle "&dYou are now level %{level::%{_uuid}%::%{_profile}%}%" to {_player} for 1 seconds
+			play sound "entity.ender_dragon.growl0" with volume 1 to {_player}
+			set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^2)+10
+			set {_player}'s level to {level::%{_uuid}%::%{_profile}%}
+			set {_player}'s level progress to ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})
+			if {level::%{_uuid}%::%{_profile}%} >= 100:
+				exit 1 loop
 			wait 1 tick
-			levelIncrease(0, {_player})
-			send title "&5Level Up!" with subtitle "&5>>>>>>[%{level::%{_uuid}%::%{_profile}%}%&5]<<<<<<" to {_player} for 5 seconds with fadein 1 second and fade out 1 second
+		wait 2 second
+		send subtitle "&dType /stats to use your &b%{statPoints::%{_uuid}%::%{_profile}%}% &dstat points" to {_player} for 1 seconds
+		exit 1 section
 	else:
 		add {_exp} to {exp::%{_uuid}%::%{_profile}%}
-	set metadata tag "interruptActionBar" of {_player} to true
-	set {_exp} to {_exp} parsed as number
-	if {_exp} > 0:
-		send action bar "&5+ %{_exp}% EXP" to {_player}
-	set {_player}'s level to {level::%{_uuid}%::%{_profile}%}
-	set {_player}'s level progress to ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})
+	if {level::%{_uuid}%::%{_profile}%} >= 100:
+		set {_player}'s level to 100
+		set {_player}'s level progress to 0
+		set {level::%{_uuid}%::%{_profile}%} to 100
+	else:
+		set {_player}'s level to {level::%{_uuid}%::%{_profile}%}
+		set {_player}'s level progress to ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})
 	
 command /level:
 	trigger:
@@ -34,7 +45,7 @@ command /level:
 		set {_player} to player
 		set {_uuid} to uuid of player
 		set {_exp} to 0
-		set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^4/100)
+		set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^2)+10
 		set {_xp} to ({exp::%{_uuid}%::%{_profile}%}+{_exp})
 		set {_xp2} to difference between {_xp} and {_levelCeiling}
 		set {_xp4} to {_xp}+{_xp2}
@@ -58,11 +69,15 @@ function levelIncreaseParty(exp: number, player: player):
 			set {_player}'s level to 100
 			set {_player}'s level progress to 0
 			stop
-		set {_levelCeiling} to rounded up (({_player}'s level)^4/100)
+		set {_levelCeiling} to rounded up (({_player}'s level)^2)+10
 		if ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
 			set {exp::%{_uuid}%::%{_profile}%} to (({_exp}+{exp::%{_uuid}%::%{_profile}%}) - {_levelCeiling})
 			add 1 to {_player}'s level
 			add 3 to {statPoints::%{_uuid}%::%{_profile}%}
+			send title "&5Leveled Up!" with subtitle "&dYou are now level %{level::%{_uuid}%::%{_profile}%}%" to {_player} for 1 seconds
+			play sound "entity.ender_dragon.growl0" with volume 1 to {_player}
+			wait 2 second
+			send subtitle "&dType /stats to use your &b%{statPoints::%{_uuid}%::%{_profile}%}% &dstat points" to {_player} for 1 seconds
 			exit 1 section
 		else:
 			add {_exp} to {exp::%{_uuid}%::%{_profile}%}
@@ -72,17 +87,9 @@ function levelIncreaseParty(exp: number, player: player):
     
 command /resetEXP:
 	trigger:
-		set {_player} to player
-		set {_uuid} to player's uuid
 		set {_profile} to (metadata tag "profile" of player)
 		delete {exp::%player's uuid%::%{_profile}%}
-		set {statPoints::%{_uuid}%::%{_profile}%} to 0
 		set {level::%player's uuid%::%{_profile}%} to 1
 		send "&5EXP has been reset"
 		set player's level to 1
 		set player's level progress to 0
-		delete {strengthStat::%{_uuid}%::%{_profile}%}
-		delete {dexterityStat::%{_uuid}%::%{_profile}%}
-		delete {intelligenceStat::%{_uuid}%::%{_profile}%}
-		delete {wisdomStat::%{_uuid}%::%{_profile}%}
-		delete {staminaStat::%{_uuid}%::%{_profile}%}
