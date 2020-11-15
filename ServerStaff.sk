@@ -69,23 +69,6 @@ command /saveitems [<text>] [<text>]:
 				else:
 					message "%{_slotx}%: %{inv::%player's uuid%::%arg-2%::%{_slotx}%}%"
 			message " "
-			
-on item spawn:
-	if line 1 of event-item's lore is set:
-		set {_size} to size of event-item's lore
-		set {_lore} to ": %line {_size} of event-item's lore%"
-		if length of {_lore} < 3:
-			set {_lore} to ""
-	else:
-		set {_lore} to ""
-	if item amount of event-item > 1:
-		set {_itemAmount} to "&7+%item amount of event-item% "
-	else:
-		set {_itemAmount} to ""
-	set {_itemName} to "%{_itemAmount}%%name of event-item%%{_lore}%"
-	if {_itemName} does not contain "<none>":
-		set display name of event-entity to "%{_itemName}%"
-	
 
 command /rankadd [<offline player>] [<text>]:
 	permission: op
