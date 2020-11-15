@@ -1,10 +1,27 @@
 on damage of player:
-	if "%GetTeam(victim)%" is "%GetTeam(attacker)%":
+	set {_dd} to damage
+	set {_uuid} to attacker's uuid
+	set {_profile} to metadata tag "profile" of attacker
+	if damage cause is fall:
+		set damage to damage * 6
+	if attacker is a mob:
+		set {_Damage} to nbt of attacker
+		set {_Damage::*} to {_Damage} split at "generic.attack_damage"",Base:"
+		set {_Damage} to {_Damage::2}
+		set {_Damage::*} to {_Damage} split at "d},{Name:"
+		set {_Damage} to {_Damage::1}
+		set {_Damage} to {_Damage} parsed as number
+		set damage to {_Damage}
+#^ Gets The Damage Of the Attacker so that arrows do not do arrow dmg it dose the damage of the mob its self
+	if GetTeam(victim) is GetTeam(attacker):
 		cancel event
 		stop
 	if attacker is victim:
 		set damage to 0
 		cancel event
+	if metadata tag "Grappling_Hook" of victim is set:
+		cancel event
+		stop
 	if metadata value "NoDamage" of event-projectile is true:
 		set damage to 0
 		cancel event
@@ -13,6 +30,37 @@ on damage of player:
 		cancel event
 		stop
 	if metadata tag "NoDmgSpawning" of attacker is true:
+		cancel event
+		stop
+	if victim is in world "Hub":
+		cancel event
+		stop
+	if victim is in world "Tutorial":
+		attacker is a player
+		cancel event
+		stop
+	if attacker's level < 5:
+		attacker is not a mob
+		cancel event
+		message "&cYou must be at least level 5 to attack others players." to attacker
+		stop
+	if victim's level < 5:
+		attacker is a player
+		cancel event
+		message "&cYou can not damage players lower than level 5" to attacker
+		stop
+	if attacker's tool is a bow:
+		if event-projectile is not set:
+			cancel event
+			message "&cYou can not hit with a bow!" to attacker
+			stop
+	if attacker's tool is a stick or sunflower:
+		if metadata value "WandDamage" of attacker is false:
+			cancel event
+			message "&cYou can not hit with a wand!" to attacker
+			stop
+	if attacker's tool is not a sword or shovel or axe or bow or stick or sunflower or red stained glass pane:
+		attacker is a player
 		cancel event
 		stop
 	if metadata value "Rat" of attacker is true:
@@ -44,41 +92,116 @@ on damage of player:
 				set {_check} to 1
 		if (metadata tag "party" of victim) != (metadata tag "party" of attacker):
 			set {_check} to 1
-		if ("LevelReq" tag of nbt of attacker's tool) > attacker's level:
-			send "&cYou are not a high enough level to use this!" to attacker
-			cancel event
-			stop
 		if ("ClassReq" tag of nbt of attacker's tool) is set:
 			if "%{profiles::%{_uuid}%::%{_profile}%}%" does not contain ("ClassReq" tag of nbt of attacker's tool):
 				"ClassReq" tag of nbt of attacker's tool is set
 				send "&cYou are not of the required class to use this!" to attacker
 				cancel event
+				stop
+		if ("LevelReq" tag of nbt of attacker's tool) > attacker's level:
+			send "&cYou are not a high enough level to use this!" to attacker
+			cancel event
+			stop
 		if {_check} is 1:
+			if blockStat(victim) > random number between 0 and 100:
+				cancel event
+				set damage to 0
+				stop
 			if attacker is a player:
-				if blockStat(victim) > random number between 0 and 100:
-					stop
-				else if attacker's tool is green stained glass pane:
+				set metadata tag "LastDmgCooldown" of attacker to "CooldownSpeed" tag of nbt of attacker's tool
+				if attacker's tool is green stained glass pane or yellow stained glass pane:
 					if criticalStat(attacker) > random number between 0 and 100:
 						set metadata tag "health" of victim to metadata tag "health" of victim - (final damage*2)*(1-(defenseStat(victim)/100))
 					else:
 						set metadata tag "health" of victim to metadata tag "health" of victim - (final damage)*(1-(defenseStat(victim)/100))
 				else:
 					if criticalStat(attacker) > random number between 0 and 100:
+						set {_crit} to 2
 						set metadata tag "health" of victim to metadata tag "health" of victim - ((attackStat(attacker))*2)*(1-(defenseStat(victim)/100))
 					else:
+						set {_crit} to 1
 						set metadata tag "health" of victim to metadata tag "health" of victim - (attackStat(attacker))*(1-(defenseStat(victim)/100))
 			else:
-				set metadata tag "health" of victim to (metadata tag "health" of victim) - damage
+				set metadata tag "health" of victim to (metadata tag "health" of victim) - (final damage)*(1-(defenseStat(victim)/100))
 			set damage to 0
 			set victim's health to ((10*(metadata tag "health" of victim))/hpStat(victim))
 			if metadata tag "health" of victim <= 0:
 				set damage to victim's health
+				set {_profile} to metadata tag "profile" of attacker
+				set {balance::%attacker's uuid%::%{_profile}%} to {balance::%attacker's uuid%::%{_profile}%}*1.25
 		else:
 			cancel event
 			message "&6You can not attack your own party members!" to attacker
 			stop
-	else:
-		cancel event
+	damageHologram((attackStat(attacker) ? {_dd}), ({_crit} ? 1), victim)
+
+on death:
+	set {_name} to name of victim
+	if "%{_name}%" contains "Crusader King":
+		broadcast " "
+		broadcast "&6-------------------------------------"
+		broadcast " "
+		broadcast "&6The &cCrusader King&6 was slain!"
+		broadcast " "
+		broadcast "&6-------------------------------------"
+		broadcast " "
+		loop all players:
+			if GetTeam(loop-player) contains "Blue":
+				set {_uuid} to uuid of loop-player
+				set {_profile} to metadata tag "profile" of loop-player
+				set {_V} to {VaultBal::%{_uuid}%::%{_profile}%}
+				set {VaultBal::%{_uuid}%::%{_profile}%} to {VaultBal::%{_uuid}%::%{_profile}%}+({VaultBal::%{_uuid}%::%{_profile}%}*.05)
+				message "&6You earned $%moneyComma({VaultBal::%{_uuid}%::%{_profile}%}-{_V})%&6!" to loop-player
+		loop 200 times:
+			set {_item} to sunflower named "&1[&9Blue&1]&e&l Gold Coin"
+			add "{RR:%random integer between 1 and 99999%}" to nbt of {_item}
+			add "{KingCoin:blue}" to nbt of {_item}
+			drop random integer between 1 and 64 of {_item} at victim
+			set {_item} to last spawned entity
+			push {_item} (direction from {_item} to location infront of {_item}) at speed random number between 1 and 4
+			push {_item} up at speed random number between 0 and 1
+		wait 1 tick
+		loop 200 times:
+			set {_item} to sunflower named "&1[&9Blue&1]&e&l Gold Coin"
+			add "{RR:%random integer between 1 and 99999%}" to nbt of {_item}
+			add "{KingCoin:blue}" to nbt of {_item}
+			drop random integer between 1 and 64 of {_item} at victim
+			set {_item} to last spawned entity
+			push {_item} (direction from {_item} to location infront of {_item}) at speed random number between 1 and 4
+			push {_item} up at speed random number between 1 and 3
+			CoinBlue({_item})
+	if "%{_name}%" contains "Knight King":
+		broadcast " "
+		broadcast "&6-------------------------------------"
+		broadcast " "
+		broadcast "&6The &9Knight King&6 was slain!"
+		broadcast " "
+		broadcast "&6-------------------------------------"
+		broadcast " "
+		loop all players:
+			if GetTeam(loop-player) contains "Red":
+				set {_uuid} to uuid of loop-player
+				set {_profile} to metadata tag "profile" of loop-player
+				set {_V} to {VaultBal::%{_uuid}%::%{_profile}%}
+				set {VaultBal::%{_uuid}%::%{_profile}%} to {VaultBal::%{_uuid}%::%{_profile}%}+({VaultBal::%{_uuid}%::%{_profile}%}*.05)
+				message "&6You earned $%moneyComma({VaultBal::%{_uuid}%::%{_profile}%}-{_V})%&6!" to loop-player
+		loop 200 times:
+			set {_item} to sunflower named "&4[&cRed&4]&e&l Gold Coin"
+			add "{RR:%random integer between 1 and 99999%}" to nbt of {_item}
+			add "{KingCoin:red}" to nbt of {_item}
+			drop random integer between 1 and 64 of {_item} at victim
+			set {_item} to last spawned entity
+			push {_item} (direction from {_item} to location infront of {_item}) at speed random number between 1 and 4
+			push {_item} up at speed random number between 0 and 1
+		wait 1 tick
+		loop 200 times:
+			set {_item} to sunflower named "&4[&cRed&4]&e&l Gold Coin"
+			add "{RR:%random integer between 1 and 99999%}" to nbt of {_item}
+			add "{KingCoin:red}" to nbt of {_item}
+			drop random integer between 1 and 64 of {_item} at victim
+			set {_item} to last spawned entity
+			push {_item} (direction from {_item} to location infront of {_item}) at speed random number between 1 and 4
+			push {_item} up at speed random number between 1 and 3
 
 on spawn of a mob:
 	set metadata tag "NoDmgSpawning" of mob to true
@@ -90,6 +213,17 @@ on damage of a mob:
 		if name of victim is not set:
 			cancel event
 			stop
+	if victim's display name contains "Knight":
+		if GetTeam(attacker) contains "Blue":
+			cancel event
+			stop
+	if victim's display name contains "Crusader":
+		if GetTeam(attacker) contains "Red":
+			cancel event
+			stop
+	if attacker's held item is air:
+		attacker is a player
+		set damage to 1
 	if metadata tag "NoDmgSpawning" of victim is true:
 		cancel event
 		stop
@@ -99,50 +233,130 @@ on damage of a mob:
 	if metadata tag "name" of victim is "":
 		cancel event
 		stop
+	if attacker's tool is a bow:
+		if event-projectile is not set:
+			cancel event
+			message "&cYou cannot hit with a bow!" to attacker
+			stop
+	if attacker's tool is a stick or sunflower:
+		if metadata value "WandDamage" of attacker is false:
+			cancel event
+			message "&cYou cannot hit with a wand!" to attacker
+			stop
+	if attacker's tool is not a sword or shovel or axe or bow or stick or sunflower or red stained glass pane:
+		attacker is a player
+		cancel event
+		stop
 	if the attacker is a player:
 		if nbt of victim contains "{Invulnerable:1b}":
+			cancel event
+			stop
+		set {_zowner} to metadata value "OwnerZ" of victim
+		set {_zowner} to {_zowner} parsed as player
+		if GetTeam({_zowner}) is GetTeam(attacker):
 			cancel event
 			stop
 		set {_mobUUID} to victim's uuid
 		set {_uuid} to attacker's uuid
 		set {_profile} to metadata tag "profile" of attacker
-		if ("LevelReq" tag of nbt of attacker's tool) > attacker's level:
-			send "&cYou are not a high enough level to use this!" to attacker
-			cancel event
-		else if ("ClassReq" tag of nbt of attacker's tool) is set:
+		if ("ClassReq" tag of nbt of attacker's tool) is set:
 			if "%{profiles::%{_uuid}%::%{_profile}%}%" does not contain ("ClassReq" tag of nbt of attacker's tool):
 				"ClassReq" tag of nbt of attacker's tool is set
 				send "&cYou are not of the required class to use this!" to attacker
 				cancel event
+				stop
+		if ("LevelReq" tag of nbt of attacker's tool) > attacker's level:
+			send "&cYou are not a high enough level to use this!" to attacker
+			cancel event
+			stop
+		if criticalStat(attacker) > random number between 0 and 100:
+			set {_crit} to 2
+			set metadata tag "currentDamaged" of victim to ((attackStat(attacker))*2 + metadata tag "currentDamaged" of victim)
 		else:
-			if criticalStat(attacker) > random number between 0 and 100:
-				set metadata tag "currentDamaged" of victim to ((attackStat(attacker))*2 + metadata tag "currentDamaged" of victim)
-			else:
-				set metadata tag "currentDamaged" of victim to (attackStat(attacker) + metadata tag "currentDamaged" of victim)
+			set {_crit} to 1
+			set metadata tag "currentDamaged" of victim to (attackStat(attacker) + metadata tag "currentDamaged" of victim)
 	else:
-		if damage cause is projectile:
-			set metadata tag "currentDamaged" of victim to ((metadata tag "currentDamaged" of victim) + 0)
-		else:
+		if damage cause is not projectile:
 			set metadata tag "currentDamaged" of victim to ((metadata tag "currentDamaged" of victim) + final damage)
+	set metadata tag "LastDmgCooldown" of attacker to "CooldownSpeed" tag of nbt of attacker's tool
 	set {_mobHealth} to ((metadata tag "health" of victim)-(metadata tag "currentDamaged" of victim))
 	set victim's health to {_mobHealth}
-	set the damage to 0
 	set display name of victim to "&c%metadata tag ""name"" of victim% %{_mobHealth}% / %metadata tag ""health"" of victim% &c❤"
 	set {_mobHealth} to {_mobHealth} parsed as number
-	if {_mobHealth} <= 0: #fail safe code to kill mob 
+	if {_mobHealth} <= 0: #fail safe code to kill mob
 		set victim's health to 0
-		set {_Level} to metadata tag "MobLevel" of victim
-		GenMobLoot(attacker, location of victim, "%{_Level}%", "%name of victim%")
+		set {_Level::*} to name of victim split at "["
+		set {_Level2::*} to {_Level::2} split at "]"
+		set {_Level} to {_Level2::1}
+		set {_a} to attacker
+		if {_a} is not a player:
+			set {_a} to "none" parsed as offline player
+		GenMobLoot({_a}, victim, "%{_Level}%", name of victim)
+	play sound "entity.dolphin.eat" with volume 3 to attacker
+	play sound "ntity.slime.attack" with volume 3 to attacker
+	damageHologram((attackStat(attacker) ? damage), ({_crit} ? 1), victim)
+	set the damage to 0
+
+function damageHologram(attack: number, crit: number, victim: entity):
+	set {_attack} to {_attack}*{_crit}
+	spawn armor stand at {_victim} with nbt "{Invulnerable:1b,Fire:-1,Small:1b,Invisible:1b,Rotation:[%random integer between -180 and 180%.0f, %random integer between -90 and 0%.0f],Motion:[%random number between -0.1 and 0.1%d,%random number between 0.3 and 0.5%d,%random number between -0.1 and 0.1%d]}"
+	set {_armor} to last spawned armor stand
+	add {_armor} to {RemoveExtraArmor::*}
+	if {_crit} <= 1:
+		set {_armor}'s display name to "&c%{_attack}%&4 ☠"
+	else:
+		set {_armor}'s display name to "&e%{_attack}%&6 ☠"
+	wait 1 seconds
+	kill {_armor}
+	remove {_armor} from {RemoveExtraArmor::*}
+
+on skript start:
+	loop {RemoveExtraArmor::*}:
+		kill loop-value
+	delete {RemoveExtraArmor::*}
 
 
 on death of player:
-	if attacker is player:
-		set the death message to "&a%player% Was Killed By %attacker%&a!"
+	if metadata tag "DontDieMsg" of player is true:
+		set the death message to ""
+		stop
+	set metadata tag "DontDieMsg" of player to true
+	if attacker is a player:
+		set the death message to "&a%player% was killed by %attacker%&a!"
 	else:
 		if attacker is set:
-			set the death message to "&a%player% Was Killed By A %Attacker%&a!"
+			set {_name::*} to metadata tag "name" of Attacker split at " "
+			if size of {_name::*} is not 3:
+				if  "x%{_name::2}% %{_name::3} ? """"%" contains "<none>":
+					set the death message to "&a%player% died!"
+				else:
+					set the death message to "&a%player% was killed by %{_name::2}% %{_name::3} ? """"%&a!"
+			else:
+				if metadata tag "name" of Attacker is set:
+					set the death message to "&a%player% was killed by %{_name::2}%&a!"
 		else:
-			set the death message to "&a%player% Died!"
-	wait 2 ticks
+			set the death message to "&a%player% died!"
+	wait 1 ticks
+	clear metadata tag "DontDieMsg" of player
 	force victim to respawn
 	set metadata tag "health" of victim to (hpStat(victim))
+	wait 1 tick
+	if GetTeam(victim) is "&9Blue":
+		teleport victim to {Blue.Base}
+	else:
+		teleport victim to {Red.Base}
+		
+on death:
+	set {_profile} to metadata tag "profile" of player
+	set {_uuid} to uuid of player
+	set {_I} to metadata tag "NoDropCoins" of player
+	if {_I} is not set:
+		set metadata tag "NoDropCoins" of player to 1
+		set {_I} to 1
+	if {_I} is 1:
+		set metadata tag "NoDropCoins" of player to 2
+		set {balance::%{_uuid}%::%{_profile}%} to {balance::%{_uuid}%::%{_profile}%}*0.75
+		wait 20 ticks
+		message "&eYou lost $%{balance::%{_uuid}%::%{_profile}%}/2%&e from dying!"
+		wait 5 seconds
+		set metadata tag "NoDropCoins" of player to 1
