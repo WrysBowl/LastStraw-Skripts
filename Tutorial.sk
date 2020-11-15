@@ -1,0 +1,154 @@
+#Basic tutorial setup
+on right click on mob or player:
+	if event-entity's display name contains "Tutorial":
+		set metadata tag "Tutorial" of player to dropper inventory named "Tutorial"
+		set slot 4 of metadata tag "Tutorial" of player to green wool named "&aAccept" with lore "&2You will be sent to the tutorial island"
+		open (metadata tag "Tutorial" of player) to player
+		set metadata tag "inventoryOpened" of player to true
+		clear metadata tag "pageNumber" of player
+	else if event-entity's name contains "&6Ray":
+		if event-entity's name is "&a&6Ray":
+			RayFirst(player)
+		else if event-entity's name is "&b&6Ray":
+			RaySecond(player)
+		else if event-entity's name is "&c&6Ray":
+			RayThird(player)
+	else if event-entity's name contains "&aJump!":
+		tutorialSlimeJump(player)
+	else if event-entity's name contains "&eHub":
+		make player execute command "/hub"
+			
+on inventory click:
+	if event-inventory = metadata tag "Tutorial" of player:
+		if index of event-slot is 4:
+			tutorialStart(player)
+			clear metadata tag "Tutorial" of player
+
+command /tutorialTP <integer>:
+	Permission: op
+	trigger:
+		if arg-1 > 0:
+			set {tutorial::%arg-1%} to player's location
+			send "&6Set tutorial location ##%arg-1% to %location of player%"
+
+function tutorialStart(player: player):
+	close {_player}'s inventory
+	loop 5 times:
+		send subtitle "&2Teleporting in %abs(loop-value - 6)%" to {_player} for 1 second
+		wait 1 second
+	teleport {_player} to {tutorial::1}
+
+#Tutorial NPC dialogue
+command /pageNum [<integer>] [<text>] [<text>]:
+	trigger:
+		if arg-2 is "SSC": #Code to allow access to changing page number
+			set {_pageNum} to (metadata tag "pageNumber" of player) ? 1
+			set {_page} to {_pageNum}+(arg-1)
+			if {_page} > 0:
+				if arg-3 is "RayStart":
+					if {_page} is between 1 and 4:
+						set metadata tag "pageNumber" of player to {_page}
+						RayFirst(player)
+				else if arg-3 is "RaySecond":
+					if {_page} is between 1 and 4:
+						set metadata tag "pageNumber" of player to {_page}
+						RaySecond(player)
+				else if arg-3 is "RayThird":
+					if {_page} is between 1 and 8:
+						set metadata tag "pageNumber" of player to {_page}
+						RayThird(player)
+			else:
+				clear metadata tag "pageNumber" of player
+
+function RayFirst(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lTutorial" to {_player}
+	if {_page} is 1:
+		send "&6Ray: &7We've got a lot left to explore of this beautiful place %{_player}%&7!" to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum 1 SSC RayStart>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Ray: &7Say did you bring a weapon?" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RayStart>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum 1 SSC RayStart>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Ray: &7Perfect, let's go exploring!" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RayStart>&c<< Back<reset>          <tooltip:&aAccept><command:/pageNum 1 SSC RayStart>&aAccept >><reset>" to {_player}
+	else if {_page} is 4:
+		send "&6Chronos: &7Ah coming back?%nl%%nl%%nl%" to {_player}
+		wait 2 seconds	
+		send "&6Chronos: &7Your friends will never be able to stay with the Saints." to {_player}
+		spawn pig at {tutorial::2} with nbt "{Silent:1}"
+		set {_pig} to last spawned pig
+		apply invisibility 2 without particles to {_pig} for 10 seconds
+		make {_player} ride {_pig}
+		add "{Rotation:[-47f, -41f]}" to {_pig}'s nbt
+		push {_pig} in direction of {_pig} at speed 6.7
+		wait 70 ticks
+		teleport {_player} to {tutorial::3}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
+	
+function RaySecond(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lTutorial" to {_player}
+	if {_page} is 1:
+		send "&6Ray: &7Took you a while! At least you have your weapon." to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum 1 SSC RaySecond>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Ray: &7I've been staying up here where it's safe. There are slimes down there that you need to kill for us to get down to the main island." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RaySecond>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum 1 SSC RaySecond>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Ray: &7Can you kill five of them?" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RaySecond>&c<< Back<reset>          <tooltip:&aAccept><command:/pageNum 1 SSC RaySecond>&aAccept >><reset>" to {_player}
+	else if {_page} is 4:
+		send "&6Chronos: &7...%nl%%nl%%nl%" to {_player}
+		wait 2 seconds
+		send "&6Chronos: &7Have fun." to {_player}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
+
+function tutorialSlimeJump(player: player):
+	spawn pig at {tutorial::4} with nbt "{Silent:1}"
+	set {_pig} to last spawned pig
+	apply invisibility 2 without particles to {_pig} for 10 seconds
+	make {_player} ride {_pig}
+	add "{Rotation:[68f, -30f]}" to {_pig}'s nbt
+	push {_pig} in direction of {_pig} at speed 5
+	wait 75 ticks
+	teleport {_player} to {tutorial::5}
+	
+function RayThird(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lTutorial" to {_player}
+	if {_page} is 1:
+		send "&6Ray: &7You didn't actually kill them, did you?" to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum 1 SSC RayThird>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Ray: &7So you may be wondering...%nl%%nl%%nl%" to {_player}
+		wait 2 seconds
+		send "&aHungry Caterpillar: &7Ah hello old friend, interesting to see you again." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RayThird>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum 1 SSC RayThird>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&aHungry Caterpillar: &7You keep coming back with a new child for me, how kind." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RayThird>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum 1 SSC RayThird>&aNext >><reset>" to {_player}
+	else if {_page} is 4:
+		send "&6Ray: &7%{_player}%&7, I felt something grab me and now I'm here with this fat chunk." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RayThird>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum 1 SSC RayThird>&aNext >><reset>" to {_player}
+	else if {_page} is 5:
+		send "&aHungry Caterpillar: &7Do you know why we spare you?" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RayThird>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum 1 SSC RayThird>&aNext >><reset>" to {_player}
+	else if {_page} is 6:
+		send "&aHungry Caterpillar: &7You're the only one who can travel to the Dark Depths, who won't have their soul tainted." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RayThird>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum 1 SSC RayThird>&aNext >><reset>" to {_player}
+	else if {_page} is 7:
+		send "&aHungry Caterpillar: &7Hurry to the portal, you have a lot ahead of you.%nl%%nl%%nl%" to {_player}
+		wait 3 seconds
+		send "&aHungry Caterpillar: &7And don't worry about your friend. He will be safe in one of the 'good' islands." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum -1 SSC RayThird>&c<< Back<reset>          <tooltip:&aAccept><command:/pageNum 1 SSC RayThird>&aAccept >><reset>" to {_player}
+	else if {_page} is 8:
+		make {_player} execute command "/hub"
+		send subtitle "&aWe'll meet in Hilly Woods" to {_player} for 2 seconds
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
