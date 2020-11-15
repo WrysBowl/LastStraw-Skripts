@@ -1,0 +1,80 @@
+on join:
+	set line 1 of tablist header for player to "&6&lSiege"
+	set line 3 of tablist header for player to "&7>> &6Welcome to Siege &7<<"
+	set line 5 of tablist header for player to "&7  ₪₪₪ &6&oplay.SiegeRPG.net&7 ₪₪₪  "
+	set line 6 of tablist header for player to "&7▬▬ι═══════ﺤ"
+	set the height of tablist header for player to 7
+	set line 3 of tablist footer for player to "&6Discord: &7/discord"
+	set line 4 of tablist footer for player to "&6Website: &7None yet!"
+	set the height of tablist footer for player to 8
+	set {_PlayerCount} to size of online players
+	remove {VanishList} from {_PlayerCount}
+	if size of online players is 1:
+		set line 5 of tablist footer for all players to "&7You're the &6&n%{_PlayerCount}%&7 player online!"
+	else:
+		set line 5 of tablist footer for all players to "&7There are &6&n%{_PlayerCount}%&7 players online"
+
+on quit:
+	wait 1 tick
+	set {_PlayerCount} to size of online players
+	remove {VanishList} from {_PlayerCount}
+	if size of online players is 1:
+		set line 5 of tablist footer for all players to "&7You're the &6&n%{_PlayerCount}%&7 player online!"
+	else:
+		set line 5 of tablist footer for all players to "&7There are &6&n%{_PlayerCount}%&7 players online"
+
+every 2 ticks in "LastStraw":
+	if {phase::1} is not set:
+		set {phase::1} to true
+		set line 4 of tablist header for all players to "&6&o█▇▆▅▄▂▁"
+		stop
+	if {phase::2} is not set:
+		set {phase::2} to true
+		set line 4 of tablist header for all players to "&6&o▇▆▅▄▂▁▂"
+		stop
+	if {phase::3} is not set:
+		set {phase::3} to true
+		set line 4 of tablist header for all players to "&6&o▆▅▄▂▁▂▄"
+		stop
+	if {phase::4} is not set:
+		set {phase::4} to true
+		set line 4 of tablist header for all players to "&6&o▅▄▂▁▂▄▅"
+		stop
+	if {phase::5} is not set:
+		set {phase::5} to true
+		set line 4 of tablist header for all players to  "&6&o▄▂▁▂▄▅▆"
+		stop
+	if {phase::6} is not set:
+		set {phase::6} to true
+		set line 4 of tablist header for all players to "&6&o▂▁▂▄▅▆▇"
+		stop
+	if {phase::7} is not set:
+		set {phase::7} to true
+		set line 4 of tablist header for all players to "&6&o▁▂▄▅▆▇█"
+		stop
+	if {phase::8} is not set:
+		set {phase::8} to true
+		set line 4 of tablist header for all players to "&6&o▂▄▅▆▇█▇"
+		stop
+	if {phase::9} is not set:
+		set {phase::9} to true
+		set line 4 of tablist header for all players to "&6&o▄▅▆▇█▇▆"
+		stop
+	if {phase::10} is not set:
+		set {phase::10} to true
+		set line 4 of tablist header for all players to "&6&o▅▆▇█▇▆▅"
+		stop
+	if {phase::11} is not set:
+		set {phase::11} to true
+		set line 4 of tablist header for all players to "&6&o▆▇█▇▆▅▄"
+		stop
+	if {phase::12} is not set:
+		set {phase::12} to true
+		set line 4 of tablist header for all players to "&6&o▇█▇▆▅▄▂"
+		set {_PlayerCount} to size of online players
+		remove {VanishList} from {_PlayerCount}
+		if size of online players is 1:
+			set line 5 of tablist footer for all players to "&7You're the &6&n%{_PlayerCount}%&7 player online!"
+		else:
+			set line 5 of tablist footer for all players to "&7There are &6&n%{_PlayerCount}%&7 players online"
+	delete {phase::*}
