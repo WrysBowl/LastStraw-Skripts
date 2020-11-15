@@ -22,7 +22,7 @@ command /party [<text>] [<player>]:
 					if metadata tag "party" of arg-2 is not set:
 						if "%metadata tag ""invite"" of arg-2%" does not contain "%player%":
 							message "&aInvited %arg-2%&6!"
-							send formatted "&aWould you like to join %player%&a's Party?  <tooltip:&a&lYes><cmd:/party join %player%>&a&l[Yes]  <tooltip:&c&lNo>&c&l[No]" to arg-2
+							send formatted "&aWould you like to join %player%&a's Party?  <tooltip:&a&lAccept><cmd:/party join %player%>&a&l[Click to Accept]" to arg-2
 							if metadata tag "invite" of arg-2 is not set:
 								set metadata tag "invite" of arg-2 to "%player%"
 								exit 1 section
@@ -39,16 +39,17 @@ command /party [<text>] [<player>]:
 		else if {_arg-1} is "leave":
 			if metadata tag "party" of player is set:
 				message "&c%player%&c left the party!" to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
+				set {_partyMembers::*} to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
 				clear metadata tag "party" of player
 				clear metadata tag "chat" of player
-				set {_partyMembers::*} to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
-				if size of {_partyMembers::*} is 1:
+				if size of {_partyMembers::*} <= 2:
 					message "&cYou were the only person in the party, so it has been disbanded." to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
 					clear metadata tag "party" of {_partyMembers::*}
 					clear {_partyMembers::*}'s scoreboard
 					stop
-				if "%{_partySize::*}%" does not contain "%metadata tag ""party"" of {_partyMembers::*}%":
+				if "%{_partyMembers::*}%" does not contain "%metadata tag ""party"" of {_partyMembers::*}%":
 					set metadata tag "party" of {_partyMembers::*} to a random player out of {_partyMembers::*}
+				clear player's scoreboard
 				exit 1 section
 			else:
 				message "&cYou are not in a party!"
@@ -96,58 +97,75 @@ command /party [<text>] [<player>]:
 					message "&c%arg-2%&c left the party!" to all players where [(metadata tag "party" of input) = (metadata tag "party" of arg-2)]
 					clear metadata tag "party" of arg-2
 					clear arg-2's scoreboard
+					clear player's scoreboard
 				else:
 					message "&cYou are not the leader of this party."
 			else:
-				message "&cType /party kick <player> to kick a player."
+				message "&cType /party kick <player> to kick a player."			
 				
 function scrollPartyScore(player: player, scroll: object):
 	set {_uuid} to {_player}'s uuid
 	set {_profile} to metadata tag "profile" of {_player}
-	set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^4/100)
+	set {_levelCeiling} to rounded up ({level::%{_uuid}%::%{_profile}%}^2)+10
 	set {_partyMembers::*} to all players where [(metadata tag "party" of input) = (metadata tag "party" of {_player})]
 	set title of {_player}'s scoreboard to "&6&lSiege &7(%player count%&7/%max player count%&7)"
 	set line 15 of {_player}'s scoreboard to ""
-	set line 14 of {_player}'s scoreboard to "&6Profile: &7%{_player}%"
+	set line 14 of {_player}'s scoreboard to "&6Profile: &e%{_player}%"
 	if ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})*100 >= 500:
-		set line 13 of {_player}'s scoreboard to " &7➤ Level: &5%{level::%{_uuid}%::%{_profile}%} ? 0% &5(&d0&d%%&5)"
+		set line 13 of {_player}'s scoreboard to " &e➤ Level: &5%{level::%{_uuid}%::%{_profile}%} ? 0% &5(&d0&d%%&5)"
 	else:
-		set line 13 of {_player}'s scoreboard to " &7➤ Level: &5%{level::%{_uuid}%::%{_profile}%} ? 0% &5(&d%({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})*100%&d%%&5)"
-	set line 12 of {_player}'s scoreboard to " &7➤ Balance: &a%moneyComma({balance::%{_uuid}%::%{_profile}%}) ? 0%"
-	set line 11 of {_player}'s scoreboard to "&6Party: &7%size of {_partyMembers::*}% %metadata tag ""party"" of {_player} ? ""&6&nInvites""%"
+		set line 13 of {_player}'s scoreboard to " &e➤ Level: &5%{level::%{_uuid}%::%{_profile}%} ? 0% &5(&d%({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})*100%&d%%&5)"
+	set line 12 of {_player}'s scoreboard to " &e➤ Balance: &a%moneyComma({balance::%{_uuid}%::%{_profile}%}) ? 0%"
 	if metadata tag "party" of {_player} is set:
-		loop size of {_partyMembers::*} times:
-			set {_uuidParty} to {_partyMembers::%loop-value%}'s uuid
-			set {_profileParty} to metadata tag "profile" of {_partyMembers::%loop-value%}
-			add "&7║ &6%{_partyMembers::%loop-value%}% &5Lvl. %{level::%{_uuidParty}%::%{_profileParty}%}%" to {_scoreLines::*}
-			add "&7║ &c%((metadata tag ""health"" of {_partyMembers::%loop-value%})/hpStat({_partyMembers::%loop-value%}))*100%&4%% &b%((metadata tag ""mana"" of {_partyMembers::%loop-value%})/mpStat({_partyMembers::%loop-value%}))*100%&3%%  &8[%{profiles::%{_uuid}%::%{_profile}%}%&8]" to {_scoreLines::*}
-		loop 9 times:
-			if size of {_scoreLines::*} > 10:
-				set {_loopValue} to loop-value + {_scroll}-1
+		set line 11 of {_player}'s scoreboard to "&6Party: &e%size of {_partyMembers::*}% %metadata tag ""party"" of {_player} ? ""&6&nPlayers""%"
+		set line 10 of {_player}'s scoreboard to " "
+		loop 6 times:
+			loop size of {_partyMembers::*} times:
+				add 1 to {_count}
+				set {_uuidParty} to {_partyMembers::%loop-value-2%}'s uuid
+				set {_profileParty} to metadata tag "profile" of {_partyMembers::%loop-value-2%}
+				set {_prefix::*} to {profiles::%{_uuidParty}%::%{_profileParty}%} split at " "
+				set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
+				set {_prefix} to join (characters at (integers between 0 and 2) in "%{_prefix::2}%")
+				add "&e%{_count}%. %{_partyMembers::%loop-value-2%}% &5Lvl. %{level::%{_uuidParty}%::%{_profileParty}%}%" to {_scoreLines::*}
+				add "&c%((metadata tag ""health"" of {_partyMembers::%loop-value-2%})/hpStat({_partyMembers::%loop-value-2%}))*100%&4%% &b%((metadata tag ""mana"" of {_partyMembers::%loop-value-2%})/mpStat({_partyMembers::%loop-value-2%}))*100%&3%%  &8[%{_color}%%{_prefix} in uppercase%&8]" to {_scoreLines::*}
+		loop 8 times:
+			if size of {_scoreLines::*} > 8:
+				set {_loopValue} to loop-value + {_scroll}-2
 			else:
 				set {_loopValue} to loop-value
 			if {_scoreLines::%{_loopValue}%} is set:
-				set line (11 - (loop-value)) of {_player}'s scoreboard to "%{_scoreLines::%{_loopValue}%}%"
+				set line (10 - (loop-value)) of {_player}'s scoreboard to "%{_scoreLines::%{_loopValue}%}%"
 			else:
-				set line (11 - (loop-value)) of {_player}'s scoreboard to "&7║"
+				set line (10 - (loop-value)) of {_player}'s scoreboard to " "
+		set line 1 of {_player}'s scoreboard to "&6Character %{_profile} ? 0%: %{profiles::%{_uuid}%::%{_profile}%} ? ""Undetermined""%"
 	else:
 		set {_inviteList::*} to metadata tag "invite" of {_player} split at " "
-		loop 9 times:
-			if size of {_inviteList::*} > 10:
+		set line 11 of {_player}'s scoreboard to "&6Party: &e%size of {_inviteList::*}% %metadata tag ""party"" of {_player} ? ""&6&nInvites""%"
+		loop 8 times:
+			if size of {_inviteList::*} > 9:
 				set {_loopValue} to loop-value + {_scroll} - 1
 			else:
 				set {_loopValue} to loop-value
 			if {_inviteList::%{_loopValue}%} is set:
-				set line (11 - (loop-value)) of {_player}'s scoreboard to "&7║ &6%{_loopValue}%. &7%{_inviteList::%{_loopValue}%}% invited you"
+				set {_inviteList::%{_loopValue}%} to "%{_inviteList::%{_loopValue}%}%" parsed as a player
+				set {_uuidParty} to {_inviteList::%{_loopValue}%}'s uuid
+				set {_profileParty} to metadata tag "profile" of {_inviteList::%{_loopValue}%}
+				set {_prefix::*} to {profiles::%{_uuidParty}%::%{_profileParty}%} split at " "
+				set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
+				set {_prefix} to join (characters at (integers between 0 and 2) in "%{_prefix::2}%")
+				set line (11 - (loop-value)) of {_player}'s scoreboard to " &e➤&8[&5%{_inviteList::%{_loopValue}%}'s level%&8] &e%{_inviteList::%{_loopValue}%}% &8[%{_color}%%{_prefix} in uppercase%&8]"
 			else:
-				set line (11 - (loop-value)) of {_player}'s scoreboard to "&7║"
-	set line 1 of {_player}'s scoreboard to "&6Character %{_profile} ? 0%: %{profiles::%{_uuid}%::%{_profile}%} ? ""Undetermined""%"
+				set line (11 - (loop-value)) of {_player}'s scoreboard to " "
+				set line (10 - (loop-value)) of {_player}'s scoreboard to "&6Char %{_profile} ? 0%: %{profiles::%{_uuid}%::%{_profile}%} ? ""Undetermined""%"
+				stop
 		
 
 on tool change:
 	if player is sneaking:
 		set {_addNum} to metadata tag "partyShift" of player
 		set {_partyMembers::*} to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
+		#if (size of {_partyMembers::*}) > 4:
 		set {_oldSlot} to (player's current hotbar slot)
 		wait 1 ticks
 		if (player's current hotbar slot) > {_oldSlot}:
