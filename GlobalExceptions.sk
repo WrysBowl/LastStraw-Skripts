@@ -5,23 +5,35 @@ on place:
 on inventory click:
 	if player's gamemode is not creative:
 		if event-inventory is player's inventory:
-			if (integers between 1 and 8) contains index of event-slot:
+			if (integers between 3 and 8) contains index of event-slot:
 				cancel event
             
 on player drop:
     if player's gamemode is not creative:
-        if (integers between 1 and 8) contains hotbar slot of player:
+        if (integers between 3 and 8) contains hotbar slot of player:
             cancel event
         
 on swap item:
     if player's gamemode is not creative:
         cancel event
-
+		
+on anvil damage:
+	cancel event
+	
 on craft:
 	cancel event
     
 on exp spawn:
     cancel event
+	
+on entity target:
+	if target is a player:
+		if entity's display name contains "Knight":
+			if GetTeam(target) contains "Blue":
+				cancel event
+		else if entity's display name contains "Crusader":
+			if GetTeam(target) contains "Red":
+				cancel event
 	
 on inventory click:
 	if metadata tag "inventoryOpened" of player is true:
@@ -32,9 +44,41 @@ on inventory close:
 	
 on fade:
     cancel event
+	
+on leaves decay:
+    cancel event
 
 on break of ripe wheat plant:
     cancel event
     
 on hunger meter change:
     cancel event
+
+on damage of item frame:
+	gamemode of attacker is not creative
+	cancel event
+
+on right click on item frame:
+	gamemode of player is not creative
+	cancel event
+
+
+on damage:
+	if damage cause is void:
+		wait 1 tick
+		make victim execute command "/hub"
+
+on right click:
+	player's gamemode is not creative
+	if event-block is chest or hopper or dispenser or dropper or trapped chest or barrel or trapdoor or cauldron or campfire:
+		cancel event
+
+on right click:
+	player's gamemode is not creative
+	set {_name} to event-block
+	if "%{_name}%" contains "pot":
+		cancel event
+		
+on right click with armor:
+	cancel event
+	send title "&cError" with subtitle "&7Click on your helmet to access the armor editor" to player for 1 second
