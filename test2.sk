@@ -30,4 +30,330 @@ command /slimeMobs:
 			wait 5 ticks
 		kill {_slime::*}
 
+command /help [<text>]:
+	trigger:
+		set {_search} to arg-1
+		HelpGui(player, {_search})
+
+
+
+command /trade [<player>]:
+	trigger:
+		if arg-1 is player:
+			message "&cYou cannot trade yourself!"
+			stop
+		if metadata tag "TradePlayerTrade" of player is "%arg-1%":
+			message "&cYou allready set a trade request to this player!"
+			stop
+		set metadata tag "TradePlayerTrade" of player to "%arg-1%"
+		message "&aYou sent a trade request to &2%arg-1%" to player
+		if metadata tag "TradePlayerTrade" of arg-1 is not "%player%":
+			send formatted "<tooltip:&aClick To Accept><cmd:/trade %player%>&2%player%&a sent you a trade request!" to arg-1
+		else:
+			message "&aYou accepted &2%arg-1%&a's trade request" to player
+		TradeGui(player, arg-1, "true")
+		wait 10 seconds
+		metadata tag "TradePlayerTrade" of player is "%arg-1%"
+		clear metadata tag "TradePlayerTrade" of player
+
+on right click on player:
+	if event-entity is not a npc:
+		event-entity is a player
+		player is sneaking
+		player's tool is air
+		if metadata tag "TradePlayerTrade" of player is "%event-entity%":
+			message "&cYou allready set a trade request to this player!" to player
+			stop
+		set metadata tag "TradePlayerTrade" of player to "%event-entity%"
+		if metadata tag "TradePlayerTrade" of event-entity is not "%player%":
+			message "&aYou sent a trade request to &2%event-entity%" to player
+			send formatted "<tooltip:&aClick To Accept><cmd:/trade %player%>&2%player%&a sent you a trade request!" to event-entity
+		else:
+			message "&aYou accepted &2%event-entity%&a's trade request" to player
+		TradeGui(player, event-entity, "true")
+		wait 10 seconds
+		metadata tag "TradePlayerTrade" of player is "%event-entity%"
+		clear metadata tag "TradePlayerTrade" of player
+
+
+
+
+
+function TradeGui(player: player, trader: player, check: text):
+	metadata tag "TradePlayerTrade" of {_player} is "%{_trader}%"
+	metadata tag "TradePlayerTrade" of {_trader} is "%{_player}%"
+	if {_check} is "true":
+		TradeGui({_trader}, {_player}, "false")
+	clear metadata tag "TradePlayerTrade" of {_player}
+	clear metadata tag "TradePlayerTrade" of {_trader}
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set metadata tag "TradeGui" of {_player} to chest inventory with 6 rows named "&8Trading %{_trader}%"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44, 13, 22, 31, 40 and (integers between 45 and 53)) of metadata tag "TradeGui" of {_player} to dark gray stained glass pane named "&a"
+	set slot 48 of metadata tag "TradeGui" of {_player} to lime stained glass pane named "&aAccept"
+	set slot 49 of metadata tag "TradeGui" of {_player} to sunflower named "&eCoins:" with lore "&e%{_player}%&e: 0" and "&e%{_trader}%&e: 0" and "" and "&7Click: +1$" and "&7Right Click: +10$" and "&7Shift Click: +100$" and "&7Shift Right Click: +1,000$" and "&7Middle Click: +10,000$" and "&7Drop: +100,000$"
+	set slot 50 of metadata tag "TradeGui" of {_player} to red stained glass pane named "&cDecline"
+	open (metadata tag "TradeGui" of {_player}) to {_player}
+	set metadata tag "inventoryOpenedTrade" of {_player} to true
+	set metadata tag "TradePlayer" of {_player} to "%{_trader}%"
+	set metadata tag "TradeMoney" of {_player} to 0
+
+on inventory click:
+	if metadata tag "inventoryOpenedTrade" of player is true:
+		set {_player} to player
+		set {_uuid} to uuid of {_player}
+		set {_profile} to metadata tag "profile" of {_player}
+		set {_trade} to metadata tag "TradePlayer" of player
+		set {_bal} to metadata tag "TradeMoney" of {_player}
+		set {_trade} to {_trade} parsed as player
+		set {_uuid.trade} to uuid of {_trade}
+		set {_profile.trade} to metadata tag "profile" of {_trade}
+		if name of event-item is "&aAccept" or "&cDecline" or "&eCoins:" or "&a" or "&aAccepted":
+			cancel event
+		else if event-slot is 14, 15, 23, 24, 25, 32, 33, 34, 41, 42, 43 or 16:
+			event-inventory is metadata tag "TradeGui" of player
+			cancel event
+		if slot 48 of metadata tag "TradeGui" of {_player} is green stained glass pane:
+			cancel event
+		if event-slot is 48:
+			if slot 48 of metadata tag "TradeGui" of player is lime stained glass pane:
+				cancel event
+				wait 1 tick
+				set slot 48 of metadata tag "TradeGui" of player to green stained glass pane named "&aAccepted"
+			else:
+				cancel event
+				wait 1 tick
+				set slot 48 of metadata tag "TradeGui" of player to lime stained glass pane named "&aAccept"
+			wait 3 ticks
+			slot 48 of metadata tag "TradeGui" of {_trade} is green stained glass pane
+			slot 48 of metadata tag "TradeGui" of {_player} is green stained glass pane
+			loop 6 times:
+				wait 10 ticks
+				if slot 48 of metadata tag "TradeGui" of {_trade} is not green stained glass pane:
+					stop
+				if slot 48 of metadata tag "TradeGui" of {_player} is not green stained glass pane:
+					stop
+			loop 53 times:
+				set {_item} to slot loop-value of metadata tag "TradeGui" of {_trade}
+				name of {_item} is not "&aAccept" or "&cDecline" or "&eCoins:" or "&a" or "&aAccepted"
+				loop-value is not 14, 15, 23, 24, 25, 32, 33, 34, 41, 42, 43 or 16
+				give player {_item}
+			loop 53 times:
+				set {_item} to slot loop-value of metadata tag "TradeGui" of {_player}
+				name of {_item} is not "&aAccept" or "&cDecline" or "&eCoins:" or "&a" or "&aAccepted"
+				loop-value is not 14, 15, 23, 24, 25, 32, 33, 34, 41, 42, 43 or 16
+				give {_trade} {_item}
+			set {_player.money} to metadata tag "TradeMoney" of {_player}
+			set {_trade.money} to metadata tag "TradeMoney" of {_trade}
+			add {_trade.money} to {Balance::%{_uuid}%::%{_profile}%}
+			remove {_player.money} from {Balance::%{_uuid}%::%{_profile}%}
+			add {_player.money} to {Balance::%{_uuid.trade}%::%{_profile.trade}%}
+			remove {_trade.money} from {Balance::%{_uuid.trade}%::%{_profile.trade}%}
+			message "&aTrade accepted!" to {_player}
+			message "&aTrade accepted!" to {_trade}
+			clear metadata tag "TradeGui" of {_player}
+			clear metadata tag "TradeGui" of {_trade}
+			close player's inventory
+		if event-slot is 50:
+			close player's inventory
+		if event-slot is 49:
+			slot 48 of metadata tag "TradeGui" of {_player} is lime stained glass pane
+			set {_click.type} to "%click type%"
+			if {_click.type} contains "swap offhand":
+				set {_money} to "-%{_bal}%" parsed as number
+			if {_click.type} contains "left mouse button":
+				set {_money} to 1
+			if {_click.type} contains "right mouse button":
+				set {_money} to 10
+			if {_click.type} contains "left mouse button with shift":
+				set {_money} to 100
+			if {_click.type} contains "right mouse button with shift":
+				set {_money} to 1000
+			if {_click.type} contains "middle mouse button":
+				set {_money} to 10000
+			if {_click.type} contains "drop key":
+				set {_money} to 100000
+			if {Balance::%{_uuid}%::%{_profile}%} >= {_bal}+{_money}:
+				set metadata tag "TradeMoney" of {_player} to {_bal}+{_money}
+
+
+
+function TradeGUIIndexSlot(player: player, slot: object, clicktype: object):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+
+on inventory open:
+	set {_trade} to metadata tag "TradePlayer" of player
+	set {_trade} to {_trade} parsed as player
+	set {_player} to player
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	wait 1 tick
+	while player's current inventory is (metadata tag "TradeGui" of player):
+		set {_player.money} to metadata tag "TradeMoney" of {_player}
+		set {_trade.money} to metadata tag "TradeMoney" of {_trade}
+		set {_player.money} to {_player.money} parsed as number
+		set {_trade.money} to {_trade.money} parsed as number
+		if {_trade} is not set:
+			set {_error} to true
+			close player's inventory
+		set slot 49 of metadata tag "TradeGui" of {_player} to sunflower named "&eCoins:" with lore "&e%{_player}%&e: %moneyComma({_player.money}) ? 0%" and "&e%{_trade}%&e: %moneyComma({_trade.money}) ? 0%" and "" and "&7Click: +1$" and "&7Right Click: +10$" and "&7Shift Click: +100$" and "&7Shift Right Click: +1,000$" and "&7Middle Click: +10,000$" and "&7Drop: +100,000$" and "&7Offhand Swap: Reset"
+		loop 10 times:
+			wait 1 tick
+			player's current inventory is not (metadata tag "TradeGui" of player)
+			exit 1 loop
+		loop 53 times:
+			set {_item} to slot loop-value of metadata tag "TradeGui" of {_trade}
+			name of {_item} is not "&aAccept" or "&cDecline" or "&eCoins:" or "&a" or "&aAccepted"
+			loop-value is not 14, 15, 23, 24, 25, 32, 33, 34, 41, 42, 43 or 16
+			if {_item} is not air:
+				set slot (loop-value + 4) of metadata tag "TradeGui" of {_player} to {_item}
+			else:
+				set slot (loop-value + 4) of metadata tag "TradeGui" of {_player} to light gray stained glass pane named "&a"
+		if slot 48 of metadata tag "TradeGui" of {_trade} is green stained glass pane:
+			set {_item} to slot 48 of metadata tag "TradeGui" of player
+			set {_item} to shiny {_item}
+			set slot 48 of metadata tag "TradeGui" of player to {_item}
+		else:
+			set {_item} to slot 48 of metadata tag "TradeGui" of player
+			if {_item} is lime stained glass pane:
+				set {_item} to lime stained glass pane named "&aAccept"
+			else:
+				set {_item} to green stained glass pane named "&aAccepted"
+			set slot 48 of metadata tag "TradeGui" of player to {_item}
+	close {_trade}'s inventory
+	{_error} is not true
+	if metadata tag "TradeGui" of {_trade} is set:
+		if metadata tag "TradeGui" of {_player} is set:
+			set {_player.money} to metadata tag "TradeMoney" of {_player}
+			set {_trade.money} to metadata tag "TradeMoney" of {_trade}
+			set {_player.money} to {_player.money} parsed as number
+			set {_trade.money} to {_trade.money} parsed as number
+			loop 53 times:
+				set {_item} to slot loop-value of metadata tag "TradeGui" of {_trade}
+				name of {_item} is not "&aAccept" or "&cDecline" or "&eCoins:" or "&a" or "&aAccepted"
+				loop-value is not 14, 15, 23, 24, 25, 32, 33, 34, 41, 42, 43 or 16
+				give {_trade} {_item}
+			clear metadata tag "TradeGui" of {_trade}
+			loop 53 times:
+				set {_item} to slot loop-value of metadata tag "TradeGui" of {_player}
+				name of {_item} is not "&aAccept" or "&cDecline" or "&eCoins:" or "&a" or "&aAccepted"
+				loop-value is not 14, 15, 23, 24, 25, 32, 33, 34, 41, 42, 43 or 16
+				give {_player} {_item}
+			wait 3 ticks
+			clear metadata tag "TradeGui" of {_player}
+			clear metadata tag "inventoryOpenedTrade" of {_player}
+			clear metadata tag "TradeMoney" of {_player}
+			message "&cTrade declined!" to {_player}
+			message "&cTrade declined!" to {_trade}
+	
+
+
+
+function HelpGui(player: player, search: text):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set metadata tag "HelpGUI" of {_player} to chest inventory with 5 rows named "&eHelp: %{_search}? ""None""%"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35 and (integers between 36 and 44)) of metadata tag "HelpGUI" of {_player} to yellow stained glass pane named "&a"
+	open (metadata tag "HelpGUI" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+	if "Color Backpacks" contains "%{_search}%":
+		add dirt named "&7Color Backpacks" to {_items::*}
+	if "Get Backpacks" contains "%{_search}%":
+		add dirt named "&7Get Backpacks" to {_items::*}
+	if "Use Backpacks" contains "%{_search}%":
+		add dirt named "&7Use Backpacks" to {_items::*}
+	if "Sell Items" contains "%{_search}%":
+		add dirt named "&7Sell Items" to {_items::*}
+	if "Get Items" contains "%{_search}%":
+		add dirt named "&7Get Items" to {_items::*}
+	if "Get Coins" contains "%{_search}%":
+		add dirt named "&7Get Coins" to {_items::*}
+	if "Sell Items" contains "%{_search}%":
+		add dirt named "&7Sell Items" to {_items::*}
+	if "Trade" contains "%{_search}%":
+		add dirt named "&7Trade" to {_items::*}
+	if "Upgrade Gear" contains "%{_search}%":
+		add dirt named "&7Upgrade Gear" to {_items::*}
+	if "Enhancements" contains "%{_search}%":
+		add dirt named "&7Enhancements" to {_items::*}
+	if "Class For Items" contains "%{_search}%":
+		add dirt named "&7Class For Items" to {_items::*}
+	if "How To Get Xp" contains "%{_search}%":
+		add dirt named "&7How To Get Xp" to {_items::*}
+	if "How To Level Up" contains "%{_search}%":
+		add dirt named "&7How To Level Up" to {_items::*}
+	if "How To Get Money" contains "%{_search}%":
+		add dirt named "&7How To Get Money" to {_items::*}
+	if "Common Commands" contains "%{_search}%":
+		add dirt named "&7Common Commands" to {_items::*}
+	if "Hub" contains "%{_search}%":
+		add dirt named "&7Hub" to {_items::*}
+	if "Hilly Woods" contains "%{_search}%":
+		add dirt named "&7Hilly Woods" to {_items::*}
+	if "Party Commands" contains "%{_search}%":
+		add dirt named "&7Party Commands" to {_items::*}
+	if "Party" contains "%{_search}%":
+		add dirt named "&7Party" to {_items::*}
+	if "Tutorial" contains "%{_search}%":
+		add dirt named "&7Tutorial" to {_items::*}
+	if "Mobs" contains "%{_search}%":
+		add dirt named "&7Mobs" to {_items::*}
+	if "Mob Loot" contains "%{_search}%":
+		add dirt named "&7Mob Loot" to {_items::*}
+	loop {_items::*}:
+		add 1 to {_slot}
+		if {_slot} is between 1 and 7:
+			set {_slot2} to {_slot}+9
+		else if {_slot} is between 8 and 14:
+			set {_slot2} to {_slot}+11
+		else if {_slot} is between 15 and 21:
+			set {_slot2} to {_slot}+13
+		else:
+			exit loop
+		set slot {_slot2} of metadata tag "HelpGUI" of {_player} to loop-value
+
+
+function HelpGUIIndexSlot(player: player, slot: object, clicktype: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	if slot {_slot} of metadata tag "HelpGUI" of {_player} is not yellow stained glass pane or air:
+		close {_player}'s inventory
+		set {_item} to slot {_slot} of metadata tag "HelpGUI" of {_player}
+		set {_lore::*} to lore of {_item}
+		message "&e-----[&6%uncolored name of {_item}%&e]-----" to {_player}
+		loop {_lore::*}:
+			message loop-value to {_player}
+
+on inventory click:
+	if event-inventory = (metadata tag "HelpGUI" of player):
+		HelpGUIIndexSlot(player, index of event-slot, click type)
+	if event-inventory = (metadata tag "TradeGUI" of player):
+		TradeGUIIndexSlot(player, index of event-slot, click type)
+
+
+command /lava [<item>]:
+	trigger:
+		set {SmartTestingLEL} to false
+		loop 100 times:
+			if {SmartTestingLEL} is true:
+				exit 1 loop
+			loop blocks in radius 3 of player where [(input != air)]:
+				make player see loop-block as arg-1
+			wait 3 ticks
+
+
+command /lava2 [<item>]:
+	trigger:
+		loop blocks in radius 10 of player where [(input != air)]:
+			make player see loop-block as arg-1
+
+
+on load:
+	set {SmartTestingLEL} to true
+
+
+
+
+
 
