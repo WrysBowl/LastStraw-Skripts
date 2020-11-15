@@ -1,9 +1,14 @@
 script options:
 	$ use permissions
 
+on first join:
+	wait 1 second
+	clear player's inventory
+	teleport player to {All.Hub}
 
 on join:
 	set player's walk speed to 0.3
+	teleport player to {All.Hub}
 	joinGUI(player)
 	if player has not played before:
 		set player's level to 1
@@ -14,8 +19,69 @@ on join:
 	wait 2 ticks
 	clear player's inventory
 	set player's gamemode to adventure
+	make player execute command "/hub"
 
 		
+
+on click:
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	{profiles::%{_uuid}%::%{_profile}%} is not set
+	cancel event
+	joinGUI(player)
+
+on inventory click:
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	{profiles::%{_uuid}%::%{_profile}%} is not set
+	event-inventory != (metadata tag "profileGUI3" of player) or (metadata tag "profileGUI2" of player) or (metadata tag "profileGUI" of player)
+	cancel event
+	#joinGUI(player)
+
+
+on inventory open:
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	{profiles::%{_uuid}%::%{_profile}%} is not set
+	event-inventory != (metadata tag "profileGUI3" of player) or (metadata tag "profileGUI2" of player) or (metadata tag "profileGUI" of player)
+	wait 1 tick
+	close player's inventory
+	joinGUI(player)
+
+on portal enter:
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	if {profiles::%{_uuid}%::%{_profile}%} is not set:
+		stop
+	if GetTeam(player) is "&9Blue":
+		teleport player to {Blue.Base}
+	else:
+		teleport player to {Red.Base}
+	set player's gamemode to adventure
+	wait 1 tick
+	hotbarItems(player)
+	set player's gamemode to adventure
+
+
+
+on damage:
+	if y-coordinate of victim < 0:
+		wait 1 tick
+		kill victim
+
+on join:
+	set join message to "&8[&a+&8] &a%player% joined"
+
+on quit:
+	set leave message to "&8[&c-&8] &c%player% has left"
+
+
+
+
 on quit:
 	set {_player} to player
 	set {_uuid} to {_player}'s uuid
@@ -56,34 +122,100 @@ on inventory click:
 	if event-inventory = (metadata tag "profileGUI3" of player):
 		profileGUI3IndexSlot(player, index of event-slot)
 
+on join:
+	if {playerLists::*} contains player's uuid:
+		stop
+	else:
+		add player's uuid to {playerLists::*}
+
+
+function UpdateRanksFix(player: player):
+	set {_uuid} to {_player}'s uuid
+	if {_player} is set:
+		if {_player} has permission "nte.RedMage":
+			add "nte.RedMage" to {_perm::*}
+		if {_player} has permission "nte.RedShaman":
+			add "nte.RedShaman" to {_perm::*}
+		if {_player} has permission "nte.RedWarrior":
+			add "nte.RedWarrior" to {_perm::*}
+		if {_player} has permission "nte.RedArcher":
+			add "nte.RedArcher" to {_perm::*}
+		if {_player} has permission "nte.BlueMage":
+			add "nte.BlueMage" to {_perm::*}
+		if {_player} has permission "nte.BlueShaman":
+			add "nte.BlueShaman" to {_perm::*}
+		if {_player} has permission "nte.BlueWarrior":
+			add "nte.BlueWarrior" to {_perm::*}
+		if {_player} has permission "nte.BlueArcher":
+			add "nte.BlueArcher" to {_perm::*}
+		if {_player} has permission "nte.nte.BlueArcher.Staff":
+			add "nte.BlueArcher.Staff" to {_perm::*}
+		if {_player} has permission "nte.BlueMage.Staff":
+			add "nte.BlueMage.Staff" to {_perm::*}
+		if {_player} has permission "nte.BlueShaman.Staff":
+			add "nte.BlueShaman.Staff" to {_perm::*}
+		if {_player} has permission "nte.BlueWarrior.Staff":
+			add "nte.BlueWarrior.Staff" to {_perm::*}
+		if {_player} has permission "nte.RedArcher.Staff":
+			add "nte.RedArcher.Staff" to {_perm::*}
+		if {_player} has permission "nte.RedMage.Staff":
+			add "nte.RedMage.Staff" to {_perm::*}
+		if {_player} has permission "nte.RedShaman.Staff":
+			add "nte.RedShaman.Staff" to {_perm::*}
+		if {_player} has permission "nte.RedWarrior.Staff":
+			add "nte.RedWarrior.Staff" to {_perm::*}
+		loop {_perm::*}:
+			set {_perm} to loop-value
+			execute console command "lp user %{_player}% permission unset %{_perm}%"
+			wait 1 tick
+#
+		set {_profile} to metadata tag "profile" of {_player}
+		set {_perm} to uncolored {profiles::%{_uuid}%::%{_profile}%}
+		set {_perm} to "nte.%{_perm}%"
+		replace " " in {_perm} with ""
+		if {_player} has permission "staff":
+			set {_perm} to "%{_perm}%.Staff"
+			execute console command "lp user %{_player}% permission set %{_perm}% true"
+			set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
+		else:
+			execute console command "lp user %{_player}% permission set %{_perm}% true"
+
 on inventory close:
 	set {_player} to player
 	set {_uuid} to {_player}'s uuid
 	set {_profile} to metadata tag "profile" of {_player}
-	if metadata tag "profile" of player is not set:
-		if event-inventory = (metadata tag "profileGUI" of player):
-			wait 1 tick
-			joinGUI(player)
-	else if event-inventory = (metadata tag "profileGUI2" of player):
+	set {_stop} to metadata tag "profileStop" of {_player}
+	set {_loc} to location of player
+	wait 5 tick
+	"%player's current inventory%" contains "<none>":
+		stop
+	event-inventory = (metadata tag "profileGUI3" of player) or (metadata tag "profileGUI2" of player) or (metadata tag "profileGUI" of player)
+	if {profiles::%{_uuid}%::%{_profile}%} is not set:
 		wait 1 tick
-		if player's current inventory is not ((metadata tag "profileGUI2" of player) or (metadata tag "profileGUI3" of player)):
-			joinGUI(player)
-			clear metadata tag "profile" of player
-	else if event-inventory = (metadata tag "profileGUI3" of player):
-		wait 1 tick
-		{profiles::%{_uuid}%::%{_profile}%} is not set
+		teleport player to {_loc}
 		joinGUI(player)
-		clear metadata tag "profile" of player
-
 			
 function joinGUI(player: player):
 	set {_uuid} to {_player}'s uuid
+	clear {_player}'s inventory
 	set metadata tag "profileGUI" of {_player} to chest inventory with 5 rows named "Pick a Profile"
 	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35 and (integers between 36 and 44)) of metadata tag "profileGUI" of {_player} to green stained glass pane named "&a"
-	set slot 19 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::1} ? ""&cAvailable Profile""% &71" with lore "&aBalance: %{balance::%{_uuid}%::1} ? 0%", "&dLevel: %{level::%{_uuid}%::1} ? 0%&d %({exp::%{_uuid}%::1}/({level::%{_uuid}%::1}^4/100))*100%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
-	set slot 21 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::2} ? ""&cAvailable Profile""% &72" with lore "&aBalance: %{balance::%{_uuid}%::2} ? 0%","&dLevel: %{level::%{_uuid}%::2} ? 0%&d %({exp::%{_uuid}%::2}/({level::%{_uuid}%::2}^4/100))*100%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
-	set slot 23 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::3} ? ""&cAvailable Profile""% &73" with lore "&aBalance: %{balance::%{_uuid}%::3} ? 0%", "&dLevel: %{level::%{_uuid}%::3} ? 0%&d %({exp::%{_uuid}%::3}/({level::%{_uuid}%::3}^4/100))*100%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
-	set slot 25 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::4} ? ""&cAvailable Profile""% &74" with lore "&aBalance: %{balance::%{_uuid}%::4} ? 0%", "&dLevel: %{level::%{_uuid}%::4} ? 0%&d %({exp::%{_uuid}%::4}/({level::%{_uuid}%::4}^4/100))*100%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
+	set {_xp1} to ({exp::%{_uuid}%::1}/(({level::%{_uuid}%::1}^2)+10))*100
+	set {_xp2} to ({exp::%{_uuid}%::2}/(({level::%{_uuid}%::2}^2)+10))*100
+	set {_xp3} to ({exp::%{_uuid}%::3}/(({level::%{_uuid}%::3}^2)+10))*100
+	set {_xp4} to ({exp::%{_uuid}%::4}/(({level::%{_uuid}%::4}^2)+10))*100
+	if {_xp1} > 100:
+		set {_xp1} to 100
+	if {_xp2} > 100:
+		set {_xp2} to 100
+	if {_xp3} > 100:
+		set {_xp3} to 100
+	if {_xp4} > 100:
+		set {_xp4} to 100
+	set slot 19 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::1} ? ""&cAvailable Profile""% &71" with lore "&aBalance: %moneyComma({balance::%{_uuid}%::1}) ? 0%", "&dLevel: %{level::%{_uuid}%::1} ? 0%&d %{_xp1}%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
+	set slot 21 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::2} ? ""&cAvailable Profile""% &72" with lore "&aBalance: %moneyComma({balance::%{_uuid}%::2}) ? 0%", "&dLevel: %{level::%{_uuid}%::2} ? 0%&d %{_xp2}%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
+	set slot 23 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::3} ? ""&cAvailable Profile""% &73" with lore "&aBalance: %moneyComma({balance::%{_uuid}%::3}) ? 0%", "&dLevel: %{level::%{_uuid}%::3} ? 0%&d %{_xp3}%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
+	set slot 25 of metadata tag "profileGUI" of {_player} to item frame named "%{profiles::%{_uuid}%::4} ? ""&cAvailable Profile""% &74" with lore "&aBalance: %moneyComma({balance::%{_uuid}%::4}) ? 0%", "&dLevel: %{level::%{_uuid}%::4} ? 0%&d %{_xp4}%&5%%", "", "&cShift + Left Click" and "&cTo delete profile"
 	open (metadata tag "profileGUI" of {_player}) to {_player}
 	set metadata tag "inventoryOpened" of {_player} to true
 
@@ -118,24 +250,23 @@ function profileGUIIndexSlot(player: player, slot: object):
 			armor({_player}, {_profile})
 			hotbarItems({_player})
 			set metadata tag "health" of {_player} to (hpStat({_player}))
-		if {_player} has permission "staff":
-			set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
+			UpdateRanksFix({_player})
 		levelIncrease(0, {_player})
 
 
 			
 function joinGUI2(player: player, profile: integer):
+	close {_player}'s inventory
 	set {_uuid} to {_player}'s uuid
 	set metadata tag "profile" of {_player} to {_profile}
 	set metadata tag "profileGUI2" of {_player} to chest inventory with 5 rows named "Pick a Class"
 	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35 and (integers between 36 and 44)) of metadata tag "profileGUI2" of {_player} to lime stained glass pane named "&a"
-	set slot 19 of metadata tag "profileGUI2" of {_player} to ("0845" parsed as an offline player)'s skull named "&cWarrior"
-	set slot 21 of metadata tag "profileGUI2" of {_player} to ("SweetBiaSweet" parsed as an offline player)'s skull named "&bArcher"
-	set slot 23 of metadata tag "profileGUI2" of {_player} to ("051r1S" parsed as an offline player)'s skull named "&dMage"
-	set slot 25 of metadata tag "profileGUI2" of {_player} to ("123hane123" parsed as an offline player)'s skull named "&aShaman"
+	set slot 19 of metadata tag "profileGUI2" of {_player} to ("DerKaiser69" parsed as an offline player)'s skull named "&cWarrior" with lore "&7- Deal quick melee damage" and "&7- Naturally a tank"
+	set slot 21 of metadata tag "profileGUI2" of {_player} to ("SweetBiaSweet" parsed as an offline player)'s skull named "&bArcher" with lore "&7- Long ranged fast attacks" and "&7- Naturally high critical rate"
+	set slot 23 of metadata tag "profileGUI2" of {_player} to ("051r1S" parsed as an offline player)'s skull named "&dMage" with lore "&7- Long ranged, but slow attacks" and "&7- Deals area damage"
+	set slot 25 of metadata tag "profileGUI2" of {_player} to ("Arklander" parsed as an offline player)'s skull named "&aShaman" with lore "&7- Deal quick melee damage", "&7- Buff/debuff targets" and "&7- Skill heavy"
 	set slot 31 of metadata tag "profileGUI2" of {_player} to barrier named "&cBack"
 	open (metadata tag "profileGUI2" of {_player}) to {_player}
-	set metadata tag "inventoryOpened" of {_player} to true
 
 function profileGUI2IndexSlot(player: player, slot: object):
 	set {_uuid} to {_player}'s uuid
@@ -153,12 +284,15 @@ function profileGUI2IndexSlot(player: player, slot: object):
 		joinGUI3({_player}, "Shaman")
 	else if {_slot} is 31:
 		clear metadata tag "ProfilePickOpen" of {_player}
+		wait 1 tick
 		joinGUI({_player})
+		wait 1 tick
+		clear {_player}'s inventory
 		
 		
 function joinGUI3(player: player, class: string):
+	close {_player}'s inventory
 	set {_uuid} to {_player}'s uuid
-	set metadata tag "ProfilePickOpen" of {_player} to true
 	set metadata tag "class" of {_player} to {_class}
 	set metadata tag "profileGUI3" of {_player} to chest inventory with 5 rows named "Pick a Team"
 	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35 and (integers between 36 and 44)) of metadata tag "profileGUI3" of {_player} to lime stained glass pane named "&a"
@@ -166,7 +300,6 @@ function joinGUI3(player: player, class: string):
 	set slot 23 of metadata tag "profileGUI3" of {_player} to red wool named "&cCrusaders"
 	set slot 31 of metadata tag "profileGUI3" of {_player} to barrier named "&cBack"
 	open (metadata tag "profileGUI3" of {_player}) to {_player}
-	set metadata tag "inventoryOpened" of {_player} to true
 	
 function profileGUI3IndexSlot(player: player, slot: object):
 	set {_uuid} to {_player}'s uuid
@@ -174,10 +307,15 @@ function profileGUI3IndexSlot(player: player, slot: object):
 	set {_class} to metadata tag "class" of {_player}
 	if {_slot} is 21: #Blue Team
 		set {profiles::%{_uuid}%::%{_profile}%} to "&9Blue %{_class}%"
+		UpdateRanksFix({_player})
 	else if {_slot} is 23: #Red Team
 		set {profiles::%{_uuid}%::%{_profile}%} to "&cRed %{_class}%"
+		UpdateRanksFix({_player})
 	else if {_slot} is 31:
+		wait 1 tick
 		joinGUI2({_player}, {_profile})
+		wait 1 tick
+		clear {_player}'s inventory
 	if {_slot} is 21 or 23:
 		delete {savedSkills::%{_uuid}%::%{_profile}%::*}
 		send title "&aSelected %{profiles::%{_uuid}%::%{_profile}%}%!" to {_player} for 5 seconds with fadein 1 second and fade out 1 second
@@ -188,10 +326,37 @@ function profileGUI3IndexSlot(player: player, slot: object):
 			set {_perm} to "%{_perm}%.Staff"
 		execute console command "lp user %{_player}% permission set %{_perm}% true"
 		armor({_player}, {_profile})
+		clear {_player}'s inventory
 		hotbarItems({_player})
 		close {_player}'s inventory
 		levelIncrease(0, {_player})
+		delete {VaultBal::%{_uuid}%::%{_profile}%}
+		delete {VaultPBal::%{_uuid}%::%{_profile}%}
 		wait 1 tick
 		if {_player} has permission "staff":
 			set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
 		levelIncrease(0, {_player})
+		wait 1 tick
+		clear {_player}'s inventory
+		if {_Class} contains "Warrior":
+			give {_Player} itemGenerator(Wooden Sword, ("Starter Sword"), (1), (0.5), (""), (1), ("Use this weapon to start getting" and "better gear!"), ("Warrior"), (1))
+			set {_item} to enchanted book named "&bSlam" with lore "&9Tier: I" and "&7Class: Warrior" and "&6Launches you into the air doing area damage" and "&bMana: 40 ♤" with nbt "{Class:Warrior}"
+			add "{Price:0}" to nbt of {_item}
+			give {_Player} {_item}
+		else if {_Class} contains "Archer":
+			give {_Player} itemGenerator(Bow, ("Starter Bow"), (1), (0.5), (""), (1), ("Use this weapon to start getting" and "better gear!"), ("Archer"), (1))
+			set {_item} to enchanted book named "&bSniper" with lore "&9Tier: I" and "&7Class: Archer" and "&6Arrow with no gravity" and "&bMana: 40 ♤" with nbt "{Class:Archer}"
+			add "{Price:0}" to nbt of {_item}
+			give {_Player} {_item}
+		else if {_Class} contains "Mage":
+			give {_Player} itemGenerator(Stick, ("Starter Wand"), (1), (0.5), (""), (1), ("Use this weapon to start getting" and "better gear!"), ("Mage"), (1))
+			set {_item} to enchanted book named "&bPyro-Dancer" with lore "&9Tier: I" and "&7Class: Mage" and "&6Trail of fire" and "&bMana: 40 ♤" with nbt "{Class:Mage}"
+			add "{Price:0}" to nbt of {_item}
+			give {_Player} {_item}
+		else if {_Class} contains "Shaman":
+			give {_Player} itemGenerator(Wooden Axe, ("Starter Axe"), (1), (0.5), (""), (1), ("Use this weapon to start getting" and "better gear!"), ("Shaman"), (1))
+			set {_item} to enchanted book named "&bRejuvenize" with lore "&9Tier: I" and "&7Class: Shaman" and "&6Healing circle" and "&bMana: 30 ♤" with nbt "{Class:Shaman}"
+			add "{Price:0}" to nbt of {_item}
+			give {_Player} {_item}
+		hotbarItems({_player})
+		armor({_player}, {_profile})
