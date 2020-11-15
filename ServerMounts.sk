@@ -1,39 +1,28 @@
 command /slime:
+	permission: op
 	trigger:
-		summon squid
-		set {_Squid} to last spawned mob
-		make player ride {_Squid}
-		while vehicle of player is {_Squid}:
-			wait 1 ticks
-			add "{Rotation:[%player's yaw%f, 0.0f]}" to {_Squid}'s nbt
-			add "{Invulnerable:1b}" to {_Squid}'s nbt
-			set {_loc} to location in front of {_Squid}
-			set {_locblock} to block at {_loc}
-			if {_locblock} is air:
-				push {_Squid} (direction from {_Squid} to {_loc}) at speed 1
+		loop 3 times:
+			if loop-value is 1:
+				spawn slime with nbt "{Size:2,Invulnerable:1,Paper.canWander:0b,Bukkit.Aware:0b}"
 			else:
-				dismount any passengers from {_Squid} 
-				kill {_Squid}
-				create a fake explosion at {_loc}
-				set {_hit} to true
-		kill {_Squid}
-		if {_hit} is true:
-			set {_hit} to false
-			set {_spawnid} to {_loc}
-			set {_spawnid} to "%{_spawnid}%"
-			message "%{_spawnid}%"
-			drawRings particle "explosionhuge", center location of {_loc}, id "%{_spawnid}%", rainbowMode true, randomRotation true, animated true, radius 1, ringCount 1, ringDensity 3, visibleRange 32, pulseDelay 1
-			loop all players in radius 4 of {_loc}:
-				loop-player is not player
-				set {_dmg} to a random integer between 15 and 25
-				damage loop-player by {_dmg}
-			wait 5 tick
-			stopEffect id "%{_spawnid}%"
+				spawn slime (loop-value) meters behind {_slime::1} with nbt "{Size:1,Invulnerable:1,Paper.canWander:0b,Bukkit.Aware:0b}"
+			set {_slime::%loop-value%} to last spawned slime
+			wait 1 tick
+		make player ride {_slime::1}
+		while vehicle of player is {_slime::1}:
+			loop 3 times:
+				add "{Rotation:[%player's yaw%f, 0.0f]}" to {_slime::%loop-value%}'s nbt
+				push {_slime::%loop-value%} in direction of player at speed 1
+				teleport {_slime::%loop-value + 1%} 1.5 meters behind {_slime::%loop-value%}
+				if block below {_slime::%loop-value%} is air:
+					push {_slime::%loop-value%} downwards at speed 0.65
+			wait 5 ticks
+		kill {_slime::*}
 
 
 
 on left click:
-	location of target block is (location -21.5, 17.5, 203.5 in world "spawn"):
+	if {listcrates::*} contains location of target block:
 		cancel event
 		MountGui(player)
 
@@ -118,17 +107,19 @@ on inventory click:
 		cancel event
 
 
+on load:
+	delete {PlayerAtBox}
 
-
-on right click holding a player head:
-	tool is player head named "&5Mount Loot Crate"
-	cancel event
-	if location of target block is not (location -21.5, 17.5, 203.5 in world "spawn") or (location -20.5, 16.5, 203.5 in world "spawn") or (location -21.5, 16.5, 202.5 in world "spawn") or (location -22.5, 16.5, 203.5 in world "spawn") or (location -21.5, 16.5, 204.5 in world "spawn"):
-		message "&cPlease Use This At The Mount Crate!"
-		stop
-	else:
+on right click:
+	if {listcrates::*} does not contain location of target block:
+		if player's tool is player head named "&5Mount Loot Crate":
+			message "&cPlease use this at a mount crate!"
+			cancel event
+			stop
+	else if player's tool is player head named "&5Mount Loot Crate":
+		cancel event
 		if {PlayerAtBox} is true:
-			message "&cPlease wait, somone is using the crate!" to player
+			message "&cPlease wait, someone is using this crate!" to player
 			stop
 		set {_uuid} to player's uuid
 		set {_profile} to metadata tag "profile" of player
@@ -136,10 +127,8 @@ on right click holding a player head:
 		set {PlayerAtBox} to true
 		set metadata tag "NoMove" of player to true
 		set metadata tag "AtBox" of player to true
-		set {_Common} to location -19.5, 16, 203.5 in world "spawn"
-		set {_chest} to location -21.5, 17, 203.5 in world "spawn"
-		set yaw of {_Common} to 90
-		set pitch of {_Common} to 0
+
+		set {_chest} to location of player's target block
 		set metadata tag "NoMove" of player to true
 		set {_temp} to block below {_chest}
 		set {_temp2} to block below {_temp}
@@ -154,13 +143,13 @@ on right click holding a player head:
 		set {x.cord} to {_fallingChest}'s x-coordinate
 		set {y.cord} to {_fallingChest}'s y-coordinate
 		set {z.cord} to {_fallingChest}'s z-coordinate
-		set {_fallingChestup} to location({x.cord}, ({y.cord}+.35), {z.cord}, world "spawn")
+		set {_fallingChestup} to location({x.cord}, ({y.cord}+.35), {z.cord}, world "Hilly_Woods")
 		teleport {_fallingChest} to {_fallingChestup}
 		add "{ArmorItems:[{},{},{},{id:""minecraft:player_head"",Count:1b,tag:{SkullOwner:{Id:[I;1049324767,745688397,-1636073904,-1503116338],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiY2E0YjY5ZWFmOGRjYjdhYzM3MjgyMjhkZThhNjQ0NDA3ODcwMTMzNDJkZGFhYmMxYjAwZWViOGVlYzFlMiJ9fX0=""}]}}}}]}"  to NBT of {_fallingChest}
 		add "{CustomNameVisible:1b}" to NBT of {_fallingChest}
 		loop 90 times:
 			wait 1 tick
-			play sound "block.note_block.harp" with volume .5 and pitch loop-value/50+.2 at player for all players
+			play sound "block.note_block.harp" with volume .5 and pitch loop-value/50+.2 at {_chest} for all players
 			add 7 to {_yaw}
 			set {_pitch} to 0
 			push {_fallingChest} up at speed 1
@@ -168,10 +157,10 @@ on right click holding a player head:
 			set {y.cord} to {_fallingChest}'s y-coordinate
 			set {z.cord} to {_fallingChest}'s z-coordinate
 			add .012 to {y.cord}
-			set {_fallingChestup} to location({x.cord}, ({y.cord}), {z.cord}, world "spawn")
+			set {_fallingChestup} to location({x.cord}, ({y.cord}), {z.cord}, world "Hilly_Woods")
 			teleport {_fallingChest} to {_fallingChestup}
-			set {_fallingChestupz} to location({x.cord}, ({y.cord}+1.5), {z.cord}, world "spawn")
-			set {_fallingChestupzz} to location({x.cord}, ({y.cord}+.9), {z.cord}, world "spawn")
+			set {_fallingChestupz} to location({x.cord}, ({y.cord}+1.5), {z.cord}, world "Hilly_Woods")
+			set {_fallingChestupzz} to location({x.cord}, ({y.cord}+.9), {z.cord}, world "Hilly_Woods")
 			drawDot count 1, particle "redstone", RGB 128, 0, 128, center location of {_fallingChestupz}, visibleRange 32, pulseDelay 0, keepFor 10 ticks
 			drawDot count 1, particle "fireworkspark", center location of {_fallingChestupz}, visibleRange 32, pulseDelay 0, keepFor 5 ticks
 			add "{Rotation:[%{_yaw}%f, %{_pitch}%f]}" to NBT of {_fallingChest}
@@ -179,12 +168,12 @@ on right click holding a player head:
 		drawRings particle "portal", center location of {_fallingChestupzz}, id "%player%4", rainbowMode true, randomRotation true, animated true, radius 1, ringCount 1, ringDensity 20, visibleRange 32, pulseDelay 1
 		loop 30 times:
 			wait 1 tick
-			play sound "block.beacon.activate" with volume 2 and pitch loop-value/20+.8 at player for  all players
+			play sound "block.beacon.activate" with volume 2 and pitch loop-value/20+.8 at {_chest} for  all players
 		stopEffect id "%player%3"
 		stopEffect id "%player%4"
 		set {_loc} to location of {_fallingChest}
 		wait 10 ticks
-		play sound "entity.generic.explode" with volume 2 and pitch 1.3 at player for  all players
+		play sound "entity.generic.explode" with volume 2 and pitch 1.3 at {_chest} for  all players
 		drawDot count 1, particle "explosionlarge", center location of {_fallingChestupz}, visibleRange 32, pulseDelay 0, keepFor 10 ticks
 		message "&6You Won:"
 		add enderman spawn egg named "&6[&eEndermen&6]" to {_CMounts::*}
@@ -230,7 +219,7 @@ on right click holding a player head:
 			message "&e+ &6%{_raindome3}%&6 Coins"
 			add {_raindome3} to {_totalCoinsToGive}
 			set {Balance::%{_uuid}%::%{_profile}%} to {Balance::%{_uuid}%::%{_profile}%}+{_raindome3}
-		set {_fallingChestupzz} to location(({x.cord}+.5), ({y.cord}-.3), {z.cord}, world "spawn")
+		set {_fallingChestupzz} to location(({x.cord}+.5), ({y.cord}-.3), {z.cord}, world "Hilly_Woods")
 		teleport {_fallingChest} to {_fallingChestupzz}
 		add "{Rotation:[%{_yaw}%f, %{_pitch}%f]}" to NBT of {_fallingChest}
 		set helmet slot of {_fallingChest} to {_mount}
@@ -241,6 +230,8 @@ on right click holding a player head:
 		wait 50 ticks
 		kill {_fallingChest}
 		set {PlayerAtBox} to false
+	else:
+		message "&cYou need a mount crate in order to open this crate."
 		
 
 
@@ -256,6 +247,8 @@ on sneak toggle:
 on right click holding spawn egg:
 	set {_name} to uncolored name of player's tool
 	{_name} is set
+	if {_name} is "Hungry Caterpillar":
+		stop
 	cancel event
 	set {_name} to uncolored name of player's tool
 	set {_name::*} to {_name} split at "["
@@ -271,6 +264,7 @@ On Target:
 		cancel event
 
 command /mounts [<text>]:
+	permission: op
 	trigger:
 		set {_mount} to player's vehicle
 		if {_mount} is set:
@@ -308,7 +302,7 @@ function mountmob(player: player,mount: text):
 	set {_mana} to metadata tag "mana" of {_player}
 	set {_mountplayer} to {_player}'s vehicle
 	if {_mountplayer} is set:
-		message "&cYou can not use this well on another mount!" to {_player}
+		message "&cYou can not use this while on another mount!" to {_player}
 		stop
 	if {_mana} < 50:
 		message "&bYou Need 50 ♤ to spawn a mount!" to {_player}
@@ -326,6 +320,7 @@ function mountmob(player: player,mount: text):
 		set {_mount} to "silverfish"
 	set {_mount} to {_mount} parsed as entitytype
 	summon {_mount} at {_player}
+	add "{Mount:1}" to nbt of last spawned entity
 	set {_entity} to last spawned mob
 	add "{Invulnerable:1b}" to nbt of last spawned mob
 	add "{Attributes:[{Name:generic.attack_damage,Base:0}]}" to nbt of last spawned mob
@@ -343,6 +338,7 @@ function mountmob(player: player,mount: text):
 		add "{NoGravity:1b}" to nbt of {_RockMob}
 		add "{Time:1}" to nbt of {_RockMob}
 		make {_player} ride {_RockMob}
+		set {_RockMob}'s name to "Mount"
 	else:
 		make {_player} ride {_entity}
 	wait 10 ticks
@@ -356,6 +352,7 @@ function mountmob(player: player,mount: text):
 			summon sheep at {_player}
 			add "{Invulnerable:1b}" to nbt of last spawned mob
 			set {_sheepClone.%loop-value%} to last spawned mob
+			add "{Mount:True}" to nbt of last spawned entity
 			wait 10 ticks
 			set name of {_sheepClone.%loop-value%} to "Sheep Train"
 			loop all mobs in radius 1 of {_sheepClone.%loop-value%}:
@@ -404,18 +401,14 @@ function mountmob(player: player,mount: text):
 		add "{Rotation:[%{_player}'s yaw%f, 0.0f]}" to {_entity}'s nbt
 	wait 1 tick
 	set {_loc} to location of {_entity}
-	teleport {_entity} to location(0, -10, 0, world "spawn")
+	teleport {_entity} to location(0, -10, 0, world "hub")
 	if distance between {_entity} and {_player} > 2:
 		set {_tptrue} to true
 	kill {_entity}
 	kill {_RockMob}
 	if {_train} is true:
 		loop 5 times:
-			teleport {_sheepClone.%loop-value%} to location(0, -10, 0, world "spawn")
+			teleport {_sheepClone.%loop-value%} to location(0, -10, 0, world "hub")
 			kill {_sheepClone.%loop-value%}
 	if {_tptrue} is true:
 		teleport {_player} to {_loc}
-
-
-
-
