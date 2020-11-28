@@ -11,15 +11,15 @@ on right click holding Lime Stained Glass Pane:
 	{_name} is set
 	set {_skill::*} to {_name} split at " ["
 	set {_skill2::*} to {_skill::2} split at "]"
-	if "%uncolored {_skill2::1}%" is "I":
+	if uncolored {_skill2::1} is "I":
 		set {_level} to 1
-	if "%uncolored {_skill2::1}%" is "II":
+	if uncolored {_skill2::1} is "II":
 		set {_level} to 2
-	if "%uncolored {_skill2::1}%" is "III":
+	if uncolored {_skill2::1} is "III":
 		set {_level} to 3
-	if "%uncolored {_skill2::1}%" is "IV":
+	if uncolored {_skill2::1} is "IV":
 		set {_level} to 4
-	if "%uncolored {_skill2::1}%" is "V":
+	if uncolored {_skill2::1} is "V":
 		set {_level} to 5
 	{_level} is set
 	set {_cooldownspeed} to cooldownSpeedStat(player)
@@ -27,7 +27,7 @@ on right click holding Lime Stained Glass Pane:
 	if {_cooldownspeed} is not set:
 		set {_cooldownspeed} to 0
 	set {_mana} to metadata tag "mana" of player
-	if "%uncolored {_skill::1}%" is "Meteor":
+	if uncolored {_skill::1} is "Meteor":
 		if player's target block is set:
 			if {_mana} < 60:
 				message "&bYou Need 60 ♤ to use this skill!" to player
@@ -37,7 +37,7 @@ on right click holding Lime Stained Glass Pane:
 			set {_cooldownspeed} to 45*{_cooldownspeed}
 			CoolDown(player, {_name2}, 45-{_cooldownspeed}, "false")
 		stop
-	if "%uncolored {_skill::1}%" is "Bash":
+	if uncolored {_skill::1} is "Bash":
 		if {_mana} < 30:
 			message "&bYou Need 30 ♤ to use this skill!" to player
 			stop
@@ -46,7 +46,7 @@ on right click holding Lime Stained Glass Pane:
 		set {_cooldownspeed} to 20*{_cooldownspeed}
 		CoolDown(player, {_name2}, 20-{_cooldownspeed}, "false")
 		stop
-	if "%uncolored {_skill::1}%" is "Slam":
+	if uncolored {_skill::1} is "Slam":
 		if {_mana} < 40:
 			message "&bYou Need 40 ♤ to use this skill!" to player
 			stop
@@ -55,7 +55,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
 		Slam(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Berserker":
+	if uncolored {_skill::1} is "Berserker":
 		if {_mana} < 30:
 			message "&bYou Need 30 ♤ to use this skill!" to player
 			stop
@@ -64,7 +64,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 25-{_cooldownspeed}, "false")
 		Berserker(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Blood Lust":
+	if uncolored {_skill::1} is "Blood Lust":
 		if {_mana} < 45:
 			message "&bYou Need 45 ♤ to use this skill!" to player
 			stop
@@ -73,7 +73,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
 		BloodLust(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Satanic Taunt":
+	if uncolored {_skill::1} is "Satanic Taunt":
 		if {_mana} < 35:
 			message "&bYou Need 35 ♤ to use this skill!" to player
 			stop
@@ -82,7 +82,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 25-{_cooldownspeed}, "false")
 		SatanicTaunt(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Sugar High":
+	if uncolored {_skill::1} is "Sugar High":
 		if {_mana} < 25:
 			message "&bYou Need 25 ♤ to use this skill!" to player
 			stop
@@ -91,7 +91,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 15-{_cooldownspeed}, "false")
 		SugarHigh(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Dash":
+	if uncolored {_skill::1} is "Dash":
 		if {_mana} < 25:
 			message "&bYou Need 25 ♤ to use this skill!" to player
 			stop
@@ -100,7 +100,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 15-{_cooldownspeed}, "false")
 		Dash(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Serpentine":
+	if uncolored {_skill::1} is "Serpentine":
 		if {_mana} < 50:
 			message "&bYou Need 50 ♤ to use this skill!" to player
 			stop
@@ -109,7 +109,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 45-{_cooldownspeed}, "false")
 		Serpentine(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Black Hole":
+	if uncolored {_skill::1} is "Black Hole":
 		if {_mana} < 60:
 			message "&bYou Need 60 ♤ to use this skill!" to player
 			stop
@@ -118,7 +118,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 35-{_cooldownspeed}, "false")
 		BlackHole(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Sniper":
+	if uncolored {_skill::1} is "Sniper":
 		if {_mana} < 40:
 			message "&bYou Need 40 ♤ to use this skill!" to player
 			stop
@@ -127,7 +127,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
 		Sniper(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Poison Arrows":
+	if uncolored {_skill::1} is "Poison Arrows":
 		if {_mana} < 30:
 			message "&bYou Need 30 ♤ to use this skill!" to player
 			stop
@@ -136,7 +136,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 25-{_cooldownspeed}, "false")
 		PoisonArrows(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Flash":
+	if uncolored {_skill::1} is "Flash":
 		if {_mana} < 40:
 			message "&bYou Need 40 ♤ to use this skill!" to player
 			stop
@@ -145,7 +145,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 35-{_cooldownspeed}, "false")
 		Flash(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Gust":
+	if uncolored {_skill::1} is "Gust":
 		if {_mana} < 25:
 			message "&bYou Need 25 ♤ to use this skill!" to player
 			stop
@@ -154,7 +154,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 15-{_cooldownspeed}, "false")
 		Gust(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Jet Stream":
+	if uncolored {_skill::1} is "Jet Stream":
 		if {_mana} < 35:
 			message "&bYou Need 35 ♤ to use this skill!" to player
 			stop
@@ -163,7 +163,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 25-{_cooldownspeed}, "false")
 		Jetstream(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Pyro-Dancer":
+	if uncolored {_skill::1} is "Pyro-Dancer":
 		if {_mana} < 40:
 			message "&bYou Need 40 ♤ to use this skill!" to player
 			stop
@@ -172,7 +172,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 45-{_cooldownspeed}, "false")
 		PyroDancer(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Heat Stroke":
+	if uncolored {_skill::1} is "Heat Stroke":
 		if {_mana} < 50:
 			message "&bYou Need 50 ♤ to use this skill!" to player
 			stop
@@ -181,7 +181,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
 		HeatStroke(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Brilliant Light":
+	if uncolored {_skill::1} is "Brilliant Light":
 		if {_mana} < 40:
 			message "&bYou Need 40 ♤ to use this skill!" to player
 			stop
@@ -190,7 +190,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 35-{_cooldownspeed}, "false")
 		BrilliantLight(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Necrosis":
+	if uncolored {_skill::1} is "Necrosis":
 		if {_mana} < 30:
 			message "&bYou Need 30 ♤ to use this skill!" to player
 			stop
@@ -199,25 +199,25 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 30-{_cooldownspeed}, "false")
 		Necrosis(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Bubonic Plague":
+	if uncolored {_skill::1} is "Bubonic Plague":
 		if {_mana} < 100:
 			message "&bYou Need 100 ♤ to use this skill!" to player
 			stop
 		set metadata tag "mana" of player to (metadata tag "mana" of player)-100
-		set {_cooldownspeed} to 200*{_cooldownspeed}
-		CoolDown(player, {_name2}, 200-{_cooldownspeed}, "false")
+		set {_cooldownspeed} to 90*{_cooldownspeed}
+		CoolDown(player, {_name2}, 90-{_cooldownspeed}, "false")
 		BubonicPlague(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Summon":
+	if uncolored {_skill::1} is "Summon":
 		if {_mana} < 100:
 			message "&bYou Need 100 ♤ to use this skill!" to player
 			stop
 		set metadata tag "mana" of player to (metadata tag "mana" of player)-100
-		set {_cooldownspeed} to 320*{_cooldownspeed}
-		CoolDown(player, {_name2}, 320-{_cooldownspeed}, "false")
+		set {_cooldownspeed} to 120*{_cooldownspeed}
+		CoolDown(player, {_name2}, 120-{_cooldownspeed}, "false")
 		Summon(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Rejuvenize":
+	if uncolored {_skill::1} is "Rejuvenize":
 		if {_mana} < 30:
 			message "&bYou Need 30 ♤ to use this skill!" to player
 			stop
@@ -226,7 +226,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 50-{_cooldownspeed}, "false")
 		Rejuvenize(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Totem of Undying":
+	if uncolored {_skill::1} is "Totem of Undying":
 		if {_mana} < 80:
 			message "&bYou Need 80 ♤ to use this skill!" to player
 			stop
@@ -235,7 +235,7 @@ on right click holding Lime Stained Glass Pane:
 		CoolDown(player, {_name2}, 70-{_cooldownspeed}, "false")
 		TotemofUndying(player, {_level})
 		stop
-	if "%uncolored {_skill::1}%" is "Necromancy":
+	if uncolored {_skill::1} is "Necromancy":
 		if {_mana} < 150:
 			message "&bYou Need 150 ♤ to use this skill!" to player
 			stop
@@ -261,76 +261,76 @@ function CoolDownGet(Item: Item) :: number:
 	set {_cooldownspeed} to {_cooldownspeed}/100
 	if {_cooldownspeed} is not set:
 		set {_cooldownspeed} to 0
-	if "%uncolored {_skill::1}%" is "Meteor":
+	if uncolored {_skill::1} is "Meteor":
 		set {_cooldownspeed} to 45*{_cooldownspeed}
 		set {_CoolDown} to 45-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Bash":
+	if uncolored {_skill::1} is "Bash":
 		set {_cooldownspeed} to 20*{_cooldownspeed}
 		set {_CoolDown} to 20-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Slam":
+	if uncolored {_skill::1} is "Slam":
 		set {_cooldownspeed} to 30*{_cooldownspeed}
 		set {_CoolDown} to 30-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Berserker":
+	if uncolored {_skill::1} is "Berserker":
 		set {_cooldownspeed} to 25*{_cooldownspeed}
 		set {_CoolDown} to 25-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Blood Lust":
+	if uncolored {_skill::1} is "Blood Lust":
 		set {_cooldownspeed} to 30*{_cooldownspeed}
 		set {_CoolDown} to 30-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Satanic Taunt":
+	if uncolored {_skill::1} is "Satanic Taunt":
 		set {_cooldownspeed} to 25*{_cooldownspeed}
 		set {_CoolDown} to 25-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Sugar High":
+	if uncolored {_skill::1} is "Sugar High":
 		set {_cooldownspeed} to 15*{_cooldownspeed}
 		set {_CoolDown} to 15-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Dash":
+	if uncolored {_skill::1} is "Dash":
 		set {_cooldownspeed} to 15*{_cooldownspeed}
 		set {_CoolDown} to 15-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Serpentine":
+	if uncolored {_skill::1} is "Serpentine":
 		set {_cooldownspeed} to 45*{_cooldownspeed}
 		set {_CoolDown} to 45-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Black Hole":
+	if uncolored {_skill::1} is "Black Hole":
 		set {_cooldownspeed} to 35*{_cooldownspeed}
 		set {_CoolDown} to 35-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Sniper":
+	if uncolored {_skill::1} is "Sniper":
 		set {_cooldownspeed} to 30*{_cooldownspeed}
 		set {_CoolDown} to 30-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Poison Arrows":
+	if uncolored {_skill::1} is "Poison Arrows":
 		set {_cooldownspeed} to 25*{_cooldownspeed}
 		set {_CoolDown} to 25-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Flash":
+	if uncolored {_skill::1} is "Flash":
 		set {_cooldownspeed} to 35*{_cooldownspeed}
 		set {_CoolDown} to 35-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Gust":
+	if uncolored {_skill::1} is "Gust":
 		set {_cooldownspeed} to 15*{_cooldownspeed}
 		set {_CoolDown} to 15-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Jet Stream":
+	if uncolored {_skill::1} is "Jet Stream":
 		set {_cooldownspeed} to 25*{_cooldownspeed}
 		set {_CoolDown} to 25-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Pyro-Dancer":
+	if uncolored {_skill::1} is "Pyro-Dancer":
 		set {_cooldownspeed} to 45*{_cooldownspeed}
 		set {_CoolDown} to 45-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Heat Stroke":
+	if uncolored {_skill::1} is "Heat Stroke":
 		set {_cooldownspeed} to 30*{_cooldownspeed}
 		set {_CoolDown} to 30-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Brilliant Light":
+	if uncolored {_skill::1} is "Brilliant Light":
 		set {_cooldownspeed} to 35*{_cooldownspeed}
 		set {_CoolDown} to 35-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Necrosis":
+	if uncolored {_skill::1} is "Necrosis":
 		set {_cooldownspeed} to 30*{_cooldownspeed}
 		set {_CoolDown} to 30-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Bubonic Plague":
-		set {_cooldownspeed} to 200*{_cooldownspeed}
-		set {_CoolDown} to 200-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Summon":
-		set {_cooldownspeed} to 320*{_cooldownspeed}
-		set {_CoolDown} to 320-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Rejuvenize":
+	if uncolored {_skill::1} is "Bubonic Plague":
+		set {_cooldownspeed} to 90*{_cooldownspeed}
+		set {_CoolDown} to 90-{_cooldownspeed}
+	if uncolored {_skill::1} is "Summon":
+		set {_cooldownspeed} to 120*{_cooldownspeed}
+		set {_CoolDown} to 120-{_cooldownspeed}
+	if uncolored {_skill::1} is "Rejuvenize":
 		set {_cooldownspeed} to 50*{_cooldownspeed}
 		set {_CoolDown} to 50-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Totem of Undying":
+	if uncolored {_skill::1} is "Totem of Undying":
 		set {_cooldownspeed} to 70*{_cooldownspeed}
 		set {_CoolDown} to 70-{_cooldownspeed}
-	if "%uncolored {_skill::1}%" is "Necromancy":
+	if uncolored {_skill::1} is "Necromancy":
 		set {_cooldownspeed} to 120*{_cooldownspeed}
 		set {_CoolDown} to 120-{_cooldownspeed}
 	return ({_CoolDown})
@@ -347,6 +347,8 @@ function CoolDown(player: player, name: item, Cooldown: number, AllSlots: text):
 	set {_time} to "%{_time}% seconds" parsed as a timespan
 	set {_lore::*} to lore of {_name}
 	set {_name} to name of {_name}
+	if {_lore::*} contains "<none>":
+		set slot ({_player}'s selected hotbar slot) of {_player}'s inventory to green stained glass pane named "%{_name}%"
 	wait 1 tick
 	if {_AllSlots} is "false":
 		set {_slot} to {_player}'s selected hotbar slot
@@ -406,27 +408,27 @@ on right click with enchanted book:
 	{_lore::2} is set
 	loop 6 times:
 		set {_nametest::*} to name of {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%} split at " ["
-		if "%uncolored {_name}%" is "%uncolored {_nametest::1}%":
-			if "%uncolored {_lore::2}%]" is not "%uncolored {_nametest::2}%":
-				if "%uncolored {_lore::2}%" is "I":
+		if uncolored {_name} is uncolored {_nametest::1}:
+			if "%uncolored {_lore::2}%]" is not uncolored {_nametest::2}:
+				if uncolored {_lore::2} is "I":
 					set {_clickTier} to 1
-				if "%uncolored {_lore::2}%" is "II":
+				if uncolored {_lore::2} is "II":
 					set {_clickTier} to 2
-				if "%uncolored {_lore::2}%" is "III":
+				if uncolored {_lore::2} is "III":
 					set {_clickTier} to 3
-				if "%uncolored {_lore::2}%" is "IV":
+				if uncolored {_lore::2} is "IV":
 					set {_clickTier} to 4
-				if "%uncolored {_lore::2}%" is "V":
+				if uncolored {_lore::2} is "V":
 					set {_clickTier} to 5
-				if "%uncolored {_nametest::2}%" is "I]":
+				if uncolored {_nametest::2} is "I]":
 					set {_clickTier2} to 1
-				if "%uncolored {_nametest::2}%" is "II]":
+				if uncolored {_nametest::2} is "II]":
 					set {_clickTier2} to 2
-				if "%uncolored {_nametest::2}%" is "III]":
+				if uncolored {_nametest::2} is "III]":
 					set {_clickTier2} to 3
-				if "%uncolored {_nametest::2}%" is "IV]":
+				if uncolored {_nametest::2} is "IV]":
 					set {_clickTier2} to 4
-				if "%uncolored {_nametest::2}%" is "V]":
+				if uncolored {_nametest::2} is "V]":
 					set {_clickTier2} to 5
 				if {_clickTier} > {_clickTier2}:
 					if {_clickTier}-{_clickTier2} is 1:
@@ -447,10 +449,10 @@ on right click with enchanted book:
 	if {savedSkills::%{_uuid}%::%{_profile}%::6} is set:
 		message "&cYou are at max skills!"
 		stop
-	if "%uncolored {_lore::2}%" is "I":
+	if uncolored {_lore::2} is "I":
 		remove 1 of held item from player
 		message "&6Claimed &a[%{_Lore}%&a]&6 &a%{_name}%&7!"
-		add lime stained glass pane named "&a%{_name}% [&9%{_lore::2}%&a]" with lore "%3rd line of the lore of {_item}%" and "%4th line of the lore of {_item} ? ""&cUnknown""%" to {savedSkills::%{_uuid}%::%{_profile}%::*}
+		add lime stained glass pane named "&a%{_name}% [&9%{_lore::2}%&a]" with lore 3rd line of the lore of {_item} and 4th line of the lore of {_item} ? "&cUnknown" to {savedSkills::%{_uuid}%::%{_profile}%::*}
 		hotbarItems({_player})
 	else:
 		message "&cYou need to unlock the previous skill!"
@@ -473,7 +475,7 @@ function SkillGui(player: player, ClickedSlot.1: integer, ClickedSlot.2: integer
 			if {_skillslot1} or {_skillslot2} is loop-value:
 				set slot loop-value of metadata tag "SkillGUI" of {_player} to lime stained glass pane named "%name of {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%}%" with lore "&7[Selected]" with nbt "{HideFlags:63}"
 			else:
-				set slot loop-value of metadata tag "SkillGUI" of {_player} to lime stained glass pane named "%name of {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%}%" with nbt "{HideFlags:63}"
+				set slot loop-value of metadata tag "SkillGUI" of {_player} to lime stained glass pane named name of {savedSkills::%{_uuid}%::%{_profile}%::%loop-value%} with nbt "{HideFlags:63}"
 		else:
 			if {_skillslot1} or {_skillslot2} is loop-value:
 				set slot loop-value of metadata tag "SkillGUI" of {_player} to green stained glass pane named "&cLocked" with lore "&7[Selected]" with nbt "{HideFlags:63}"
@@ -577,9 +579,9 @@ function NecromancyZombie(player: player,loc: location):
 			damage {_zombie} by hpStat({_player})/100
 		loop all mobs and players in radius 2.5 of {_zombie}:
 			{_player} is online
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			metadata value "OwnerZ" of {_zombie} is not metadata value "OwnerZ" of loop-entity
-			make {_zombie} damage loop-entity by attackStat({_player})/5
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				metadata value "OwnerZ" of {_zombie} is not metadata value "OwnerZ" of loop-entity
+				make {_zombie} damage loop-entity by attackStat({_player})/5
 		if {_zombie}'s health < {_zombie}'s max health/2:
 			loop all armor stands in radius 35 of {_zombie}:
 				if {_player} is online:
@@ -588,21 +590,20 @@ function NecromancyZombie(player: player,loc: location):
 					{_TotemOwner} is set
 					set {_TotemOwner} to {_TotemOwner} parsed as player
 					{_TotemOwner} is set
-					"%GetTeam({_player})%" is "%GetTeam({_TotemOwner})%"
-					make {_zombie} pathfind to loop-entity with speed 1.4
+					if GetTeam({_player}) != GetTeam({_TotemOwner}):
+						make {_zombie} pathfind to loop-entity with speed 1.4
 			{_Checking} is not set
 			loop all mobs and players in radius 15 of {_zombie}:
 				if {_player} is online:
 					loop-entity is mob or player
 					loop-entity is not a villager
 					loop-entity's gamemode is not creative
-					"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-					metadata value "OwnerZ" of {_zombie} is not metadata value "OwnerZ" of loop-entity
-					metadata tag "name" of loop-entity is not ""
-					if nbt of loop-entity contains "{Invulnerable:1b}":
-					else:
-						make {_zombie} pathfind to loop-entity with speed 1.3
-					exit 1 loop
+					if GetTeam({_player}) != GetTeam(loop-entity):
+						metadata value "OwnerZ" of {_zombie} is not metadata value "OwnerZ" of loop-entity
+						metadata tag "name" of loop-entity is not ""
+						if nbt of loop-entity does not contain "{Invulnerable:1b}":
+							make {_zombie} pathfind to loop-entity with speed 1.3
+						exit 1 loop
 		else:
 			delete {_Checking}
 			loop all mobs and players in radius 15 of {_zombie}:
@@ -610,26 +611,21 @@ function NecromancyZombie(player: player,loc: location):
 					loop-entity is mob or player
 					loop-entity is not a villager
 					loop-entity's gamemode is not creative
-					"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-					metadata value "OwnerZ" of {_zombie} is not metadata value "OwnerZ" of loop-entity
-					metadata tag "name" of loop-entity is not ""
-					if nbt of loop-entity contains "{Invulnerable:1b}":
-					else:
-						make {_zombie} pathfind to loop-entity with speed 1.3
-					exit 1 loop
+					if GetTeam({_player}) != GetTeam(loop-entity):
+						metadata value "OwnerZ" of {_zombie} is not metadata value "OwnerZ" of loop-entity
+						metadata tag "name" of loop-entity is not ""
+						if nbt of loop-entity does not contain "{Invulnerable:1b}":
+							make {_zombie} pathfind to loop-entity with speed 1.3
+						exit 1 loop
 	kill {_zombie}
 
 on target:
 	set {_owner} to metadata value "OwnerZ" of event-entity
 	set {_ownerx} to metadata value "OwnerZ" of target
 	set {_owner} to {_owner} parsed as player
-	if "%GetTeam({_owner})%" is "%GetTeam(target)%":
+	if GetTeam({_owner}) is GetTeam(target):
 		cancel event
 	if {_ownerx} is set:
-		cancel event
-
-on target:
-	if name of event-entity contains "Bird":
 		cancel event
 
 function Necromancy(player: player,level: number):
@@ -712,7 +708,7 @@ function TotemofUndying(player: player,level: number):
 		set {_hp} to item amount of {_armor}'s tool
 		set {_armor}'s display name to "&eTotem of Undying &4[&c%{_hp}%&4/&c%{_maxhp}%&4]"
 		loop all mobs and players in radius 4 of {_loc}:
-			if "%GetTeam({_player})%" is "%GetTeam(loop-entity)%":
+			if GetTeam({_player}) is GetTeam(loop-entity):
 				set metadata tag "health" of loop-entity to (metadata tag "health" of loop-entity)+25+{_level}
 				if metadata tag "health" of loop-entity > hpStat(loop-entity):
 					set metadata tag "health" of loop-entity to hpStat(loop-entity)
@@ -722,7 +718,7 @@ function TotemofUndying(player: player,level: number):
 				set {_owner} to {_owner} parsed as player
 				{_owner} is set
 				metadata tag "health" of loop-entity is set
-				if "%GetTeam({_player})%" is "%GetTeam({_owner})%":
+				if GetTeam({_player}) is GetTeam({_owner}):
 					set metadata tag "currentDamaged" of loop-entity to (metadata tag "currentDamaged" of loop-entity)-(25+{_level})
 					if metadata tag "currentDamaged" of loop-entity < 0:
 						set metadata tag "currentDamaged" of loop-entity to 0
@@ -732,10 +728,6 @@ function TotemofUndying(player: player,level: number):
 		wait 1 second
 	stopEffect id "TotemofUndying%{_player}%"
 	#kill {_armor2}
-
-on click on armor stand:
-	player's gamemode is not creative
-	cancel event
 
 
 on damage:
@@ -769,7 +761,7 @@ function Rejuvenize(player: player,level: number):
 	drawWarpRings style 2, particle "redstone", RGB 255, 0, 100, center {_hol}, id "Rejuvenize%{_player}%", rainbowMode false, scan false, height 0, radius 4, ringCount 1, ringDensity 35, visibleRange 100
 	while difference between {_startime} and now is less than {_lasts}:
 		loop all players in radius 4 of {_loc}:
-			if "%GetTeam({_player})%" is "%GetTeam(loop-player)%":
+			if GetTeam({_player}) is GetTeam(loop-player):
 				set metadata tag "health" of loop-player to (metadata tag "health" of loop-player)+20
 				if metadata tag "health" of loop-player > hpStat(loop-player):
 					set metadata tag "health" of loop-entity to hpStat(loop-player)
@@ -790,7 +782,7 @@ function Summon(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
 	loop all players:
-		if "%GetTeam({_player})%" is "%GetTeam(loop-player)%":
+		if GetTeam({_player}) is GetTeam(loop-player):
 			if {_player} is loop-player:
 				message "&aSent teleportation request to all teammates" to loop-player
 			else:
@@ -810,68 +802,60 @@ command /sommontp [<player>]:
 		else:
 			message "&cThis player has not sent a teleport request to you!"
 
-
-
 function BubonicPlague(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " " #EX. Red Mage, Blue Knight
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
+	
 	loop 5 times:
-		summon silverfish at {_player}
-		set {_silver} to last spawned mob
-		add {_silver} to {_silverFish::*}
-		set metadata value "Rat" of {_silver} to true
-		set metadata value "Owner" of {_silver} to "%{_player}%"
-		set metadata tag "MobLevel" of {_silver} to 95
-		wait 3 ticks
-		set {_silver}'s display name to "&4Bubonic Plague Rat &4[%GetTeam({_player})%&4]"
-		drawDot count 1, particle "redstone", RGB 1, 0, 0, center {_silver}, rainbowMode false, visibleRange 64, pulseDelay 0, keepFor 1 second
-	while {_silverFish::*} is alive:
+		spawn silverfish at {_player}
+		set {_rat} to last spawned silverfish
+		add {_rat} to {_infected::*}
+	set metadata tag "health" of {_infected::*} to 20
+	set metadata tag "name" of {_infected::*} to "%GetTeam({_player})% Rat&a"	
+	apply wither to {_infected::*} for 1 day
+	
+	while (size of {_infected::*}) > 0:
 		wait 1 second
-		loop living mobs in radius 10 of random element out of {_silverFish::*}:
-			set {_target} to loop-entity
-			while {_target} is alive:
-				make {_silverFish::*} pathfind to {_target} at speed 1
-				if (distance between {_target} and {_silverFish::*}) <= 4:
-					BubonicPlagueEffect({_player}, "%{_player}%")
-				wait 1 second
-			exit loop
+		add 1 to {_count}
+		if {_count} >= (15*{_level}):
+			loop {_infected::*}:
+				if loop-value is a silverfish:
+					kill loop-value
+					continue
+				make loop-value pathfind to loop-value at speed 1
+			delete {_infected::*}
+			stop
 
-
-function BubonicPlagueEffect(player: player, Owner: text):
-	set {_PlayerOwner} to {_Owner} parsed as player
-	{_PlayerOwner} is set
-	set {_uuid} to uuid of {_player}
-	metadata value "Infected" of {_player} is not true
-	set metadata value "Infected" of {_player} to true
-	apply potion of Wither of tier 1 to {_player} for 50 seconds
-	message "&7You were infected by the &cBubonic Plague&8! (%{_PlayerOwner}%&8)" to {_player}
-	loop 200 times:
-		if metadata value "Infected" of {_player} is not true:
-			exit 1 loop
-		wait 5 ticks
-		drawDot count 1, particle "redstone", RGB 1, 0, 0, center {_player}, rainbowMode false, visibleRange 64, pulseDelay 0, keepFor 6 ticks
-		set {_dmg} to attackStat({_PlayerOwner})
-		set {_dmg} to {_dmg}/20
-		damage {_player} by {_dmg}
-		loop all living mobs in radius 3 of {_player}:
-			set {_Check} to metadata value "Infected" of loop-player
-			{_Check} is not true
-			"%GetTeam({_player})%" is not "%GetTeam(loop-player)%"
-			loop-player's gamemode is not creative
-			"%loop-player%" is not "%{_Owner}%"
-			chance of 10%
-			BubonicPlagueEffect(loop-entity, "%{_Owner}%")
-	clear metadata value "Infected" of {_player}
-
-on death of player:
-	clear metadata value "Infected" of player
+		loop {_infected::*}:
+			if loop-value-1 is alive:
+				if loop-value-1 has potion wither:
+					if loop-value-1 is not a silverfish:
+						damage loop-value-1 by (5*{_level})
+					loop mobs and players in radius 15 of loop-value-1 where [display name of input does not contain ("%{_color}%" and ("Guard" or "King"))]: #prevent affecting of team guards/king
+						if {_infected::*} does not contain loop-value-2: #if the looped entity is not infected
+							if loop-value-2's display name does not contain "&6":
+								if loop-value-2 is a player or villager:
+									set {_uuidPlayer} to uuid of loop-value-2
+									set {_profilePlayer} to metadata tag "profile" of loop-value-2
+									if {profiles::%{_uuidPlayer}%::%{_profilePlayer}%} contains GetTeam({_player}): #prevents affecting players of the same team
+										continue
+								make {_infected::*} pathfind to loop-value-2 at speed 1
+								if (distance between loop-value-1 and loop-value-2) <= 4:
+									add loop-value-2 to {_infected::*}
+									apply wither to loop-value-2 for 10 seconds
+				else:
+					remove loop-value-1 from {_infected::*}
+			else:
+				remove loop-value-1 from {_infected::*}
 
 
 
 function BrilliantLight(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
-	loop all entities in radius 10 of {_player}:
+	loop all entities in radius 15 of {_player}:
 		loop-entity is not {_player}
 		if loop-entity is armor stand:
 			loop-entity's helmet is beacon
@@ -880,11 +864,11 @@ function BrilliantLight(player: player,level: number):
 			loop-entity is a mob or a player
 			loop-entity's gamemode is not creative
 			add loop-entity to {_mobs::*}
-	set {_loop} to 5+{_level}
+	set {_loop} to 2+{_level}
 	loop {_loop} times:
 		set {_mob} to random element of {_mobs::*}
 		strike lightning effect at {_mob}
-		if "%GetTeam({_player})%" is not "%GetTeam({_mob})%":
+		if GetTeam({_player}) is not GetTeam({_mob}):
 			make {_player} damage {_mob} by 1
 		else:
 			set metadata tag "health" of {_mob} to metadata tag "health" of {_mob}+attackStat({_player})
@@ -892,20 +876,11 @@ function BrilliantLight(player: player,level: number):
 				set metadata tag "health" of {_mob} to hpStat({_mob})
 		wait 1 tick
 
-on target:
-	if metadata value "Owner" of event-entity is "%target%":
-		cancel event
-	if metadata value "Rat" of event-entity is true:
-		set {_owner} to metadata value "Owner" of event-entity
-		set {_owner} to {_owner} parsed as player
-		if metadata value "Infected" of target is true:
-			cancel event
-		if "%GetTeam({_owner})%" is "%GetTeam(target)%":
-			cancel event
-
 function Necrosis(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	set {_loc} to location of {_player}
 	set {_pos2} to location 1 meter below {_loc}
 	set {_pos2}'s yaw to {_player}'s yaw
@@ -922,10 +897,10 @@ function Necrosis(player: player,level: number):
 	loop 50 times:
 		push {_Magma2} forward at speed .1
 		wait 2 ticks
-		loop all entities in radius 1.5 of {_Magma2}:
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			loop-entity's gamemode is not creative
-			damage loop-entity by attackStat({_player})
+		loop all entities in radius 1.5 of {_Magma2} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				loop-entity's gamemode is not creative
+				damage loop-entity by attackStat({_player})
 	kill {_Magma2}
 	kill {_armor}
 
@@ -934,6 +909,8 @@ function Necrosis(player: player,level: number):
 function HeatStroke(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	set {_loc} to location of {_player}
 	set {_pos1} to {_loc}
 	set {_pos2} to location above {_pos1}
@@ -985,11 +962,14 @@ function HeatStroke(player: player,level: number):
 	push {_Magma6} forward at speed 1
 	loop 200 times:
 		wait 2 ticks
-		loop all entities in radius 3 of {_Magma4}:
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			loop-entity's gamemode is not creative
-			damage loop-entity by attackStat({_player})
-			
+		loop all entities in radius 3 of {_Magma4} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				loop-entity's gamemode is not creative
+				loop-entity is alive
+				add 1 to {_timer}
+				damage loop-entity by attackStat({_player})
+		if {_timer} > 40:
+			exit 1 loop
 	kill {_Magma1}
 	kill {_Magma2}
 	kill {_Magma3}
@@ -1007,17 +987,19 @@ function PlaceTempFire(loc: location, player: player):
 	loop 4 times:
 		wait 10 ticks
 		loop all entities in radius 1.5 of {_loc}:
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			loop-entity's gamemode is not creative
-			loop-entity is not armor stand
-			ignite loop-entity
-			damage loop-entity by .5
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				loop-entity's gamemode is not creative
+				loop-entity is not armor stand
+				ignite loop-entity
+				damage loop-entity by .5
 	stopEffect id "Fire%{_loc}%"
 
 
 function PyroDancer(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	set {_player}'s walk speed to .4
 	set {_loop} to (200+({_level}*30))/2
 	apply potion of Fire Resistance of tier 1 without particles to {_player} for 330 ticks
@@ -1030,52 +1012,74 @@ function PyroDancer(player: player,level: number):
 function Bash(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	set {_loc} to location infront of {_player}
 	set {_loc}'s y-coordinate to ({_player}'s y-coordinate+.05)
 	push {_Player} (direction from {_Player} to {_loc}) at speed 5
 	set {_time} to ({_level}*.5)+.5
 	set {_time} to "%{_time}% seconds" parsed as a timespan
-	wait 10 ticks
-	while block below {_player} is air:
-		wait 2 ticks
-	loop all mobs and players in radius 4 of {_player}:
-		loop-entity is not {_player}
-		loop-entity's gamemode is not creative
-		make {_player} damage loop-entity by 1
-		set {_savespeed} to loop-entity's walk speed
-		set loop-entity's walk speed to 0
-		message "&bYou Were Stuned for %{_time}%" to loop-entity 
-		wait {_time}
-		set loop-entity's walk speed to .3
+	loop 10 times:
+		wait 10 ticks
+		loop all mobs and players in radius 4 of {_player} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
+			loop-entity is not {_player}
+			loop-entity's gamemode is not creative
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				make {_player} damage loop-entity by 1
+				set {_savespeed} to loop-entity's walk speed
+				set loop-entity's walk speed to 0
+				message "&bYou Were Stuned for %{_time}%" to loop-entity 
+				wait {_time}
+				set loop-entity's walk speed to .3
 
 
 function Slam(player: player,level: number):
 	block below {_player} is not air
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
-	push {_player} up at speed 1.5
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
+	push {_player} up at speed 1
 	wait 10 ticks
 	push {_player} down at speed 2
 	while block below {_player} is air:
 		wait 2 ticks
-	loop all entities in radius 5 of {_player}:
+	loop all entities in radius 5 of {_player} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 		loop-entity's gamemode is not creative
 		loop-entity is not {_player}
-		damage loop-entity by 30+{_level}*10
+		if GetTeam({_player}) != GetTeam(loop-entity):
+			damage loop-entity by 30+{_level}*10
 
 
 function Berserker(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
-	set {_player}'s walk speed to .5
-	set {_wait} to 5+{_level}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
+	set {_player}'s walk speed to .4
+	set {_wait} to (2*{_level})+5
 	loop {_wait} times:
 		wait 1 second
+		loop mobs and players in radius 5 of {_player} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
+			loop-entity is not {_player}
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				apply wither without particles to loop-entity for 1 second
+				apply poison without particles to loop-entity for 1 second
+				ignite loop-entity for 1 second
+				damage loop-entity by 5*{_level}
+				set metadata "health" of {_player} to (metadata tag "health" of {_player}) + ((5*{_level})/2)
+				if metadata "health" of {_player} > hpStat({_player}):
+					set metadata tag "health" of {_player} to hpStat({_player})
+				set {_player}'s health to (10*(metadata tag "health" of {_player}))/(hpStat({_player}))
 		drawSpiral particle "redstone", RGB 0, 255, 150, center {_player}, id "Berserker%{_player}%", rainbowMode false, clockwise true, scan true, radius 1.5, density 3, height 20, effectMod 100, start 1, visibleRange 10
 	set {_player}'s walk speed to .3
 	stopEffect id "Berserker%{_player}%"
 	
 function BloodLust(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	if "%id names%" contains "BloodLust%{_player}%":
 		stop
 	set {_lasts} to {_level}+10
@@ -1087,7 +1091,7 @@ function BloodLust(player: player,level: number):
 	wait 1 tick
 	drawWarpRings style 2, particle "redstone", RGB 140, 0, 0, center {_hol}, id "BloodLust%{_player}%", rainbowMode false, scan false, height 0, radius 4, ringCount 1, ringDensity 35, visibleRange 100
 	while difference between {_startime} and now is less than {_lasts}:
-		loop all entities in radius 4 of {_loc}:
+		loop all entities in radius 4 of {_loc} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 			loop-entity's gamemode is not creative
 			set {_uuid} to uuid of {_player}
 			set {_profile} to metadata tag "profile" of {_player}
@@ -1109,6 +1113,10 @@ function BloodLust(player: player,level: number):
 	stopEffect id "BloodLust%{_player}%"
 	
 function SatanicTaunt(player: player,level: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	set {_lasts} to {_level}+3
 	set {_lasts} to "%{_lasts}% seconds" parsed as a timespan
 	set {_startime} to now
@@ -1118,7 +1126,7 @@ function SatanicTaunt(player: player,level: number):
 	drawSpiral particle "redstone", RGB 175, 50, 180, center {_player}, id "SatanicTaunt2%{_player}%", rainbowMode false, clockwise false, scan true, radius 4, density 20, height 3, effectMod 0, start 1, visibleRange 20
 	drawWarpRings style 2, particle "redstone", RGB 175, 0, 180, center {_player}, id "SatanicTaunt3%{_player}%", rainbowMode false, scan false, height 0, radius 0.3, ringCount 1, ringDensity 3, visibleRange 80
 	while difference between {_startime} and now is less than {_lasts}:
-		loop all entities in radius 4 of location at {_player}:
+		loop all entities in radius 4 of location at {_player} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 			loop-entity's gamemode is not creative
 			set {_profile} to metadata tag "profile" of {_player}
 			set {_uuid} to uuid of {_player}
@@ -1144,7 +1152,7 @@ function SatanicTaunt(player: player,level: number):
 function SugarHigh(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
-	set {_player}'s walk speed to .5
+	set {_player}'s walk speed to .6
 	set {_wait} to 6+{_level}
 	loop {_wait} times:
 		wait 1 second
@@ -1192,7 +1200,7 @@ on right click with stick or sunflower:
 	else:
 		set metadata tag "AttackCooldown" of player to now
 		set {_loc} to location above (location infront of player)
-		loop 40 times:
+		loop 12 times:
 			wait 1 tick
 			drawDot count 1, particle "redstone", RGB 255, 180, 0, center {_loc}, rainbowMode false, visibleRange 30, pulseDelay 0, keepFor 10 ticks
 			#drawDot count 1, particle "redstone", RGB 0, 0, 0, center {_loc}, rainbowMode true, visibleRange 30, pulseDelay 0, keepFor 20 ticks
@@ -1239,19 +1247,23 @@ on right click with bow:
 		message "&cYou are not a high enough level to use this!" to player
 		stop
 	set {_cool} to metadata tag "AttackCooldown" of player
-	if (difference between {_cool} and now) <= 1 seconds:
+	if (difference between {_cool} and now) <= 15 ticks:
 		stop
 	else:
 		make the player shoot a arrow at speed 3
+		set {_arrow} to last spawned arrow
 		set metadata tag "AttackCooldown" of player to now
 		set {_tool} to player's selected hotbar slot
 		add "{Unbreakable:0b}" to slot {_tool} of player
-		add "{BowCooldown:2}" to nbt of slot {_tool} of player
 		damage slot {_tool} of player by 383
+		while {_arrow} is alive:
+			wait 1 tick
+			loop all mobs and players in radius 1 of {_arrow} where [input != player]:
+				make player damage loop-entity by 1
+				kill {_arrow}
 		loop (1*20) times: #durability amount of a default minecraft bow
 			wait 1 tick
 			repair slot {_tool} of player by (384/(1*20))
-		add "{BowCooldown:1}" to nbt of slot {_tool} of player
 		add "{Unbreakable:1b}" to slot {_tool} of player
 
 on inventory click:
@@ -1286,6 +1298,10 @@ function Serpentine(player: player, level: number):
 	#	SerpentineArrow({_player}, 1000)
 
 function SerpentineArrow(player: entity, value: number):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	if {_player} is a player:
 		make {_player} shoot a arrow at speed 3
 	else:
@@ -1301,11 +1317,11 @@ function SerpentineArrow(player: entity, value: number):
 	set {_loc} to location infront of {_loc}
 	set {_loc} to location above {_loc}
 	set {_loc} to location of {_arrow}
-	loop all mobs and players in radius 20 of {_player}:
+	loop all mobs and players in radius 20 of {_player} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 		loop-entity's gamemode is not creative
 		if loop-entity is a player:
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			add loop-entity to {_targets::*}
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				add loop-entity to {_targets::*}
 		else:
 			add loop-entity to {_targets::*}
 	remove {_player} from {_targets::*}
@@ -1361,6 +1377,8 @@ function GetTeam(player: player) :: text:
 function BlackHole(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	summon an arrow infront of (location above {_player})
 	set {_arrow} to spawned entity
 	set metadata tag "NoDamage" of {_arrow} to "True"
@@ -1396,21 +1414,21 @@ function BlackHole(player: player,level: number):
 	clear metadata value "NoDamage" of {_arrow}
 	kill {_arrow}
 	loop (3+({_level}*2)) times:
-		loop all entities in radius 5 of {_loc}:
+		loop all entities in radius 5 of {_loc} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 			loop-entity is not a npc
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			loop-entity's gamemode is not creative
-			loop-entity is alive
-			push loop-entity (direction from loop-entity to {_loc}) at speed 1.5
-			damage loop-entity by attackStat({_player})
-		loop all mobs and players in radius 15 of {_loc}:
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				loop-entity's gamemode is not creative
+				loop-entity is alive
+				push loop-entity (direction from loop-entity to {_loc}) at speed 1.5
+				damage loop-entity by attackStat({_player})
+		loop all mobs and players in radius 15 of {_loc} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 			loop-entity is not a npc
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			loop-entity's gamemode is not creative
-			loop-entity is alive
-			distance between the loop-entity and {_loc} is more than 5
-			push loop-entity (direction from loop-entity to {_loc}) at speed 1.3
-			push loop-entity up at speed .2
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				loop-entity's gamemode is not creative
+				loop-entity is alive
+				distance between the loop-entity and {_loc} is more than 5
+				push loop-entity (direction from loop-entity to {_loc}) at speed 1.3
+				push loop-entity up at speed .2
 		wait 20 ticks
 	stopEffect id "BlackHole1%{_player}%%{_loc}%"
 	stopEffect id "BlackHole2%{_player}%%{_loc}%"
@@ -1422,7 +1440,9 @@ function BlackHole(player: player,level: number):
 function Sniper(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
-	spawn arrow at (location 1 meter infront of ({_player}'s head)) with nbt "{NoGravity:1b}"
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
+	spawn arrow at (location 1 meter infront of ({_player}'s head)) with nbt "{NoGravity:1b, PierceLevel:5b}"
 	set {_arrow} to last spawned arrow
 	set {_loc} to location of {_player}
 	push {_arrow} in direction of {_player} at speed 2
@@ -1436,7 +1456,7 @@ function Sniper(player: player,level: number):
 			drawDot count 2, particle "redstone", RGB 255, 0, 0, center (location of {_arrow}), rainbowMode false, visibleRange 150, pulseDelay 0, keepFor 20 ticks
 		else:
 			kill {_arrow}
-	loop all mobs and players in radius 2 of {_arrow}:
+	loop all mobs and players in radius 2 of {_arrow} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 		if GetTeam({_player}) != GetTeam(loop-value):
 			if loop-value's gamemode is not creative:
 				damage loop-entity by attackStat({_player})*{_level}+2
@@ -1454,6 +1474,8 @@ on shoot:
 function PoisonArrows(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	summon an arrow infront of (location above {_player})
 	set {_arrow} to spawned entity
 	set metadata tag "NoDamage" of {_arrow} to "True"
@@ -1483,11 +1505,11 @@ function PoisonArrows(player: player,level: number):
 	clear metadata value "NoDamage" of {_arrow}
 	kill {_arrow}
 	loop (20+({_level}*5)) times:
-		loop all entities in radius 4 of {_loc}:
+		loop all entities in radius 4 of {_loc} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 			loop-entity's gamemode is not creative
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			damage loop-entity by (attackStat({_player})/20)
-			apply potion of blindness of tier 1 to loop-entity for 7 ticks
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				damage loop-entity by (attackStat({_player})/20)
+				apply potion of blindness of tier 1 to loop-entity for 7 ticks
 		wait 3 ticks
 	stopEffect id "PosionArrows1%{_player}%%{_loc}%"
 	stopEffect id "PosionArrows2%{_player}%%{_loc}%"
@@ -1535,6 +1557,8 @@ function Meteor(player: player,level: number):
 	{_player}'s target block is set
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	set {_earth::*} to "stone" and "magma block" and "cobblestone" and "stone"
 	chance of 5%:
 		remove "stone" from {_earth::*}
@@ -1576,20 +1600,20 @@ function Meteor(player: player,level: number):
 	drawWarpRings style 2, particle "redstone", RGB 255, 150, 0, center {_s}, id "Meteor1%{_player}%%{_loc}%", rainbowMode false, scan false, height 0, radius 3, ringCount 1, ringDensity 10, visibleRange 50
 	drawWarpRings style 2, particle "redstone", RGB 255, 100, 0, center {_s}, id "Meteor2%{_player}%%{_loc}%", rainbowMode false, scan false, height 0, radius 2, ringCount 1, ringDensity 5, visibleRange 20
 	drawWarpRings style 2, particle "redstone", RGB 255, 50, 0, center {_s}, id "Meteor3%{_player}%%{_loc}%", rainbowMode false, scan false, height 0, radius 1, ringCount 1, ringDensity 3, visibleRange 20
-	loop all mobs and players in radius 3 of {_loc}:
-		"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-		damage loop-entity by attackStat({_player})*2
-		ignite loop-entity
+	loop all mobs and players in radius 3 of {_loc} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
+		if GetTeam({_player}) != GetTeam(loop-entity):
+			damage loop-entity by attackStat({_player})*2
+			ignite loop-entity
 	#SpawnHole({_loc}, 4)
 	loop 25 times:
 		wait 4 tick
-		loop all entities in radius 3 of {_loc}:
+		loop all entities in radius 3 of {_loc} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 			loop-entity's gamemode is not creative
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			set {_attackdmg} to {_level}/2
-			set {_attackdmg} to 5-{_attackdmg}
-			damage loop-entity by attackStat({_player})/{_attackdmg}
-			ignite loop-entity
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				set {_attackdmg} to {_level}/2
+				set {_attackdmg} to 5-{_attackdmg}
+				damage loop-entity by attackStat({_player})/{_attackdmg}
+				ignite loop-entity
 	stopEffect id "Meteor1%{_player}%%{_loc}%"
 	stopEffect id "Meteor2%{_player}%%{_loc}%"
 	stopEffect id "Meteor3%{_player}%%{_loc}%"
@@ -1600,6 +1624,8 @@ function Meteor(player: player,level: number):
 function Gust(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	set {_push} to ({_level}/2)+1
 	push {_player} forwards with speed {_push}*2
 	push {_player} up with speed {_push}/2
@@ -1619,6 +1645,8 @@ function Jetstream(player: player,level: number):
 function JetstreamPart(player: player,level: number):
 	set {_uuid} to uuid of {_player}
 	set {_profile} to metadata tag "profile" of {_player}
+	set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+	set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
 	if {_player} is set:
 		set {_x} to x-coordinate of {_player}
 		set {_y} to y-coordinate of {_player}
@@ -1637,13 +1665,13 @@ function JetstreamPart(player: player,level: number):
 		push {_spawn} forwards at speed 1.5
 		wait 1 tick
 		while {_spawn} is alive: 
-			loop entities in radius 2.5 of {_spawn}:
+			loop entities in radius 2.5 of {_spawn} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
 				loop-entity's gamemode is not creative
-				"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-				"%loop-entity%" is not "Falling block" or "Armor stand" or "dropped item"
-				set {_dmgV} to 15-{_level}
-				set {_dmgV} to attackStat({_player})/{_dmgV}
-				make {_player} damage loop-entity by 1
+				if GetTeam({_player}) != GetTeam(loop-entity):
+					"%loop-entity%" is not "Falling block" or "Armor stand" or "dropped item"
+					set {_dmgV} to 15-{_level}
+					set {_dmgV} to attackStat({_player})/{_dmgV}
+					make {_player} damage loop-entity by 1
 			wait 1 tick
 			add 1 to {_timer}
 			push {_spawn} down with speed .05
@@ -1651,10 +1679,10 @@ function JetstreamPart(player: player,level: number):
 				kill {_spawn}
 		create a fake explosion at location of {_spawn}
 		kill {_spawn}
-		loop all entities in radius 3 of {_spawn}:
-			"%GetTeam({_player})%" is not "%GetTeam(loop-entity)%"
-			loop-entity's gamemode is not creative
-			set {_dmgV} to 15-{_level}
-			set {_dmgV} to attackStat({_player})/{_dmgV}
-			"%loop-entity%" is not "Falling block" or "Armor stand" or "dropped item"
-			make {_player} damage loop-entity by 1
+		loop all entities in radius 3 of {_spawn} where [display name of input does not contain "%{_color}%" and ("Guard" or "King")]:
+			if GetTeam({_player}) != GetTeam(loop-entity):
+				loop-entity's gamemode is not creative
+				set {_dmgV} to 15-{_level}
+				set {_dmgV} to attackStat({_player})/{_dmgV}
+				"%loop-entity%" is not "Falling block" or "Armor stand" or "dropped item"
+				make {_player} damage loop-entity by 1

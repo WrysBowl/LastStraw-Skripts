@@ -16,7 +16,11 @@ on player drop:
 on swap item:
     if player's gamemode is not creative:
         cancel event
-		
+
+on damage of armor stand:
+	attacker's gamemode is not creative
+	cancel event
+	
 on anvil damage:
 	cancel event
 	
@@ -25,6 +29,10 @@ on craft:
     
 on exp spawn:
     cancel event
+
+on right click on armor stand:
+	player's gamemode is not creative
+	cancel event
 	
 on entity target:
 	if target is a player:
@@ -38,9 +46,15 @@ on entity target:
 on inventory click:
 	if metadata tag "inventoryOpened" of player is true:
 		cancel event
+	else if event-slot is player's helmet or player's chestplate or player's leggings or player's boots:
+		if "%event-inventory%" contains "%player%":
+			cancel event
 
 on inventory close:
 	clear metadata tag "inventoryOpened" of player
+
+on inventory open:
+	set player's helmet to player's helmet
 	
 on fade:
     cancel event
@@ -70,7 +84,31 @@ on damage:
 
 on right click:
 	player's gamemode is not creative
-	if event-block is chest or hopper or dispenser or dropper or trapped chest or barrel or trapdoor or cauldron or campfire:
+	if event-block is chest or hopper or dispenser or dropper or trapped chest or barrel or trapdoor or cauldron or campfire or armor stand:
+		cancel event
+
+on pickup:
+	set {_player} to player
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set player's helmet to player's helmet
+	if player's gamemode is not creative:
+		if name of event-item is not set:
+			cancel event
+			stop
+	if {profiles::%{_uuid}%::%{_profile}%} is not set:
+		cancel event
+		
+on drop:
+	set {_player} to player
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	if player's gamemode is not creative:
+		if name of event-item is not set:
+			message "&cYou can't drop glitched items!" to player
+			cancel event
+			stop
+	if {profiles::%{_uuid}%::%{_profile}%} is not set:
 		cancel event
 
 on right click:
@@ -82,3 +120,10 @@ on right click:
 on right click with armor:
 	cancel event
 	send title "&cError" with subtitle "&7Click on your helmet to access the armor editor" to player for 1 second
+	
+	
+	
+on target:
+	if name of event-entity contains "bird":
+		cancel event
+		wait 1 tick

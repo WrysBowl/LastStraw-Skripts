@@ -1,10 +1,3 @@
-on skript stop:
-	log "Server Stoped!" to "log.log"
-
-on skript start:
-	log "Server Started!" to "log.log"
-
-	
 command /saveitems [<text>] [<text>]:
 	permission: test
 	trigger:
@@ -141,10 +134,107 @@ command /key [<text>] [<text>]:
 						stop
 			message "&cKey Is Invalid"
 			
+command /tp [<player>]:
+	trigger:
+		if player's group does not contain "owner", "developer", "admin" or "moderator":
+			send "&cThis is a high-staff only command!"
+			stop
+		teleport player to arg-1
+			
+command /tphere [<player>]:
+	trigger:
+		if player's group does not contain "owner", "developer", "admin" or "moderator":
+			send "&cThis is a high-staff only command!"
+			stop
+		teleport arg-1 to player
 
+command /invsee <player>:
+	trigger:
+		if player's group does not contain "owner", "developer", "admin" or "moderator":
+			send "&cThis is a high-staff only command!"
+			stop
+		open arg-1's inventory to player
+
+command /echest <player>:
+	trigger:
+		if player's group does not contain "owner", "developer", "admin" or "moderator":
+			send "&cThis is a high-staff only command!"
+			stop
+		open arg-1's ender chest to player
+
+command /vanish:
+	trigger:
+		if player's group does not contain "owner", "developer", "admin" or "moderator":
+			send "&cThis is a high-staff only command!"
+			stop
+		if metadata tag "vanish" of player is not set:
+			hide player from all players where [input does not have permission "staff"]
+			set metadata tag "vanish" of player to true
+			set {VanishList} to size of all players where [metadata tag "vanish" of input is true]
+			broadcast "&8[&c-&8]&c %player%"
+			stop
+		else:
+			reveal player to all players
+			clear metadata tag "vanish" of player
+			set {VanishList} to size of all players where [metadata tag "vanish" of input is true]
+			broadcast "&8[&a+&8]&a %player%"
+
+on quit:
+	if metadata tag "vanish" of player is true:
+		wait 5 tick
+		set {VanishList} to size of all players where [metadata tag "vanish" of input is true]
+
+
+
+command /xp <text> <player> [<integer>]:
+	trigger:
+		if player's group does not contain "owner", "developer" or "admin":
+			send "&cThis is a high-staff only command!"
+			stop
+		if arg-1 is "set":
+			set {_uuid} to arg-2's uuid
+			set {_profile} to metadata tag "profile" of arg-2
+			set {level::%{_uuid}%::%{_profile}%} to arg-3
+			set arg-2's level to arg-3
+			set {exp::%{_uuid}%::%{_profile}%} to 1
+			set {statPoints::%{_uuid}%::%{_profile}%} to (arg-3)*3
+			delete {strengthStat::%{_uuid}%::%{_profile}%}
+			delete {dexterityStat::%{_uuid}%::%{_profile}%}
+			delete {intelligenceStat::%{_uuid}%::%{_profile}%}
+			delete {wisdomStat::%{_uuid}%::%{_profile}%}
+			delete {staminaStat::%{_uuid}%::%{_profile}%}
+		else if arg-1 is "reset":
+			set {_uuid} to arg-2's uuid
+			set {_profile} to metadata tag "profile" of arg-2
+			set {level::%{_uuid}%::%{_profile}%} to 1
+			set {exp::%{_uuid}%::%{_profile}%} to 1
+			delete {statPoints::%{_uuid}%::%{_profile}%}
+			delete {strengthStat::%{_uuid}%::%{_profile}%}
+			delete {dexterityStat::%{_uuid}%::%{_profile}%}
+			delete {intelligenceStat::%{_uuid}%::%{_profile}%}
+			delete {wisdomStat::%{_uuid}%::%{_profile}%}
+			delete {staminaStat::%{_uuid}%::%{_profile}%}
 on join:
 	set player's display name to "%player's group% %player%"
-	set player's tablist name to "%colored player's group% &f%player%"
+	set player's tablist name to "%colored player's group% &7%player%"
+	wait 2 seconds
+	if player's group contains "owner", "developer", "admin","builder", "writer", "moderator" or "helper":
+		set metadata tag "staff" of player to false
+		send "&6&lSiege &eHey there! You have been identified as a staff member. If you are not, please report this to an actual staff member! Otherwise, you may use /sc to toggle the staff chat on and off, or if you simply want to send a few staff messages you can just type /sc <your_text>"
+
+on join: 
+	if {bantime::%player's uuid%} is set:
+		if {bantime::%player's uuid%} <= now:
+			delete {bantime::%player's uuid%}
+			delete {banreason::%player's uuid%}
+		else:
+			kick player due to "You are banned for %difference between {bantime::%player's uuid%} and now% for the reason: %{banreason::%player's uuid%}%"
+	else if {mutetime::%player's uuid%} is set:
+		if {mutetime::%player's uuid%} <= now:
+			delete {mutetime::%player's uuid%}
+			delete {mutereason::%player's uuid%}
+		else:
+			message "%nl%&cYou are muted for %difference between {mutetime::%player's uuid%} and now% &cfor the reason: %{mutereason::%player's uuid%}%%nl%"
 
 command /nick [<player>] [<text>] [<text>]:
 	permission: op
@@ -152,81 +242,88 @@ command /nick [<player>] [<text>] [<text>]:
 		set arg-1's display name to "%arg-3% %arg-2%"
 		set arg-1's tablist name to "%colored arg-3% &f%arg-2%"
 
-command /sc:
-	permission: op
+command /sc [<text>]:
 	trigger:
-		if metadata tag "staff" of player is true:
-			set metadata tag "staff" of player to false
-			message "&bStaff Chat Turned Off"
+		if player's group does not contain "owner", "developer", "admin","builder", "writer", "moderator" or "helper":
+			send "&cThis is a staff only command!"
+			stop
+		if arg-1 is not set:
+			if metadata tag "staff" of player is true:
+				set metadata tag "staff" of player to false
+				message "&bStaff chat turned off, but you will still recieve staff messages!"
+			else:
+				set metadata tag "staff" of player to true
+				message "&bStaff chat turned on. You can now speak in staff chat!"
 		else:
 			set metadata tag "staff" of player to true
-			message "&bStaff Chat Turned On"
-			
-on leftclick:
-	{Reach.%player's uuid%} is true
-	if {ReachValue.%player's uuid%} is not set:
-		set {_reach} to 11
-	else:
-		set {_reach} to {ReachValue.%player's uuid%}+1
-	if distance between player and targeted block < {_reach}:
-		set block at targeted block to air
-		levelIncreaseParty(1, player)
-		levelIncrease(1, player)
+			message "&2[&aSC&2] &b%player%&f: &f%arg-1%" to all players where [input has permission "staff"]
+			set metadata tag "staff" of player to false
 
-on rightclick:
-	{Reach.%player's uuid%} is true
-	if {ReachValue.%player's uuid%} is not set:
-		set {_reach} to 11
-	else:
-		set {_reach} to {ReachValue.%player's uuid%}+1
-	if distance between player and targeted block < {_reach}:
-		set {_tool} to player's tool
-		set {_x} to targeted block's x-coordinate
-		set {_y} to targeted block's y-coordinate
-		set {_z} to targeted block's z-coordinate
-		set {_yaw} to yaw of player
-		set {_pitch} to pitch of player
-		if {_pitch} > -35:
-			if {_pitch} > 35:
-				add 1 to {_y}
-			else:
-				if player's facing is north:
-					add 1 to {_z}
-				if player's facing is east:
-					remove 1 from {_x}
-				if player's facing is south:
-					remove 1 from {_z}
-				if player's facing is west:
-					add 1 to {_x}
-		else:
-			remove 1 from {_y}
-		set {_loc} to location({_x}, {_y}, {_z}, (player's world))
-		set {_dis} to distance between {_loc} and player
-		{_dis} > 1
-		set {_loc2} to location({_x}, {_y}+-1, {_z}, (player's world))
-		set {_dis} to distance between {_loc2} and player
-		{_dis} > 1
-		block at {_loc} is air
-		set block at {_loc} to {_tool}
-
-command /Reach [<text>]:
-	permission: op
+command /kick [<offline player>] [<text>]:
+	permission: kick
+	usage: /kick <player> <reason>
 	trigger:
-		if arg-1 is "on":
-			message "&6Reach Turned On!"
-			set {Reach.%player's uuid%} to true
-		else if arg-1 is "off":
-			message "&6Reach Turned Off!"
-			set {Reach.%player's uuid%} to false
-		else:
-			message "&6Reach Value Set To: %arg-1%&6!"
-			set {ReachValue.%player's uuid%} to arg-1 parsed as number
+		kick arg-1 due to "You were kicked for: %arg-2%"
+		message "&6%player%&6 kicked &e%arg-1%&6 for: &e%arg-2%" to all players where [input has permission "staff"]
+
+command /ban [<offline player>] [<text>] [<timespan>]:
+	permission: ban
+	usage: /ban <player> <Reason> <Second/Minute/Hour/Day>
+	trigger:
+		message "&6You banned &e%arg-1%&6 for &e%arg-3%&6 with the reason: &e%arg-2%"
+		set {bantime::%arg-1's uuid%} to now
+		add arg-3 to {bantime::%Arg-1's uuid%}
+		set {banreason::%arg-1's uuid%} to arg-2
+		kick arg-1 due to "You are banned for %difference between {bantime::%arg-1's uuid%} and now% for the reason: %{banreason::%arg-1's uuid%}%"
+		message "&6%player%&6 banned &e%arg-1%&6 for &e%arg-3%&6 with the reason: &e%arg-2%" to all players where [input has permission "staff"]
 
 
-on block place:
-	if {Reach.%player's uuid%} is true:
-		cancel event
+command /unban [<offline player>]:
+	permission: ban
+	trigger:
+		delete {banreason::%arg-1's uuid%}
+		delete {bantime::%arg-1's uuid%}
+		message "&6Unbanned %arg-1's uuid%&6!"
+		message "&6%player%&6 unbanned: &e%arg-1%" to all players where [input has permission "staff"]
 
-on block break:
-	if {Reach.%player's uuid%} is true:
-		cancel event
+command /mute [<offline player>] [<text>] [<timespan>]:
+	permission: mute
+	usage: /mute <player> <Reason> <Second/Minute/Hour/Day>
+	trigger:
+		message "&6You muted &e%arg-1%&6 for &e%arg-3%&6 with the reason: &e%arg-2%"
+		set {mutetime::%arg-1's uuid%} to now
+		add arg-3 to {mutetime::%Arg-1's uuid%}
+		set {mutereason::%arg-1's uuid%} to arg-2
+		message "&6%player%&6 muted &e%arg-1%&6 for &e%arg-3%&6 with the reason: &e%arg-2%" to all players where [input has permission "staff"]
+
+command /unmute [<offline player>]:
+	permission: mute
+	trigger:
+		delete {mutereason::%arg-1's uuid%}
+		delete {mutetime::%arg-1's uuid%}
+		message "&6Unmuted %arg-1%&6!"
+		message "&6%player%&6 unmuted: &e%arg-1%" to all players where [input has permission "staff"]
+
+command /banlist:
+	permission: ban
+	trigger:
+		send "%nl%%nl%"
+		loop {banreason::*}:
+			add 1 to {_count}
+			set {_name} to loop-index parsed as a player
+			send "&e%{_count}%&e. %{_name}% &ewas banned for %{banreason::%loop-index%}% &efor the duration of %difference between {bantime::%loop-index%} and now%"
+		if {_count} is not set:
+			send "&aNo one is banned, yay!"
+		send "%nl%%nl%"
+
+command /mutelist:
+	permission: mute
+	trigger:
+		send "%nl%%nl%"
+		loop {mutereason::*}:
+			add 1 to {_count}
+			set {_name} to loop-index parsed as a player
+			send "&e%{_count}%&e. %{_name}% &ewas muted for %{mutereason::%loop-index%}% &efor the duration of %difference between {mutetime::%loop-index%} and now%"
+		if {_count} is not set:
+			send "&aNo one is muted, yay!"
+		send "%nl%%nl%"

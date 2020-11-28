@@ -1,0 +1,1146 @@
+#command /buy [<text>]:
+#    aliases: /store
+#    trigger:
+#        send "%nl%%nl%&6&lSIEGE &7➙ <link:https://siegerpg.craftingstore.net/>Click Here!<reset>%nl%%nl%"
+
+command /bal [<text>]:
+	trigger:
+		if arg-1 is set:
+			send "&cThis feature is disabled."
+		else:
+			set {_profile} to metadata tag "profile" of player
+			set {_uuid} to uuid of player
+			send "%nl%%nl%"
+			send "&6Current Accounts"
+			send "&e&lBank &eYou have %moneyComma({VaultBal::%{_uuid}%::%{_profile}%})%&e coins in your bank account."
+			send "&e&lBalance &eYou have %moneyComma({Balance::%{_uuid}%::%{_profile}%})%&e coins in your balance."
+			send "%nl%&aDeposit your balance into your bank account so you don't lose 25%% of it if you die!"
+			send "%nl%%nl%"
+
+command /pay <player> <integer>:
+	trigger:
+		set {_profileP} to metadata tag "profile" of player
+		set {_profileA} to metadata tag "profile" of arg-1
+		if arg-2 <= {Balance::%player's uuid%::%{_profileP}%}:
+			add arg-2 to {Balance::%arg-1's uuid%::%{_profileA}%}
+			remove arg-2 from {Balance::%player's uuid%::%{_profileP}%}
+			send "&aYou have sent $%arg-2%&a to %arg-1%" to player
+			send "&aYou have received $%arg-2%&a from %player%" to player
+		else:
+			send "&cYou don't have enough money to pay this amount!"
+
+command /balancetop:
+	trigger:
+		send "&cThis feature is disabled."
+
+command /baltop:
+	trigger:
+		send "&cThis feature is disabled."
+
+function moneyComma(n: object) :: text:
+    if "%{_n}%" contains ".":
+        set {_s::*} to split "%{_n}%" at "."
+        set {_n} to "%a({_s::1})%.%last 2 characters of {_s::2}%"
+        return "%{_n}%"
+    else:
+        set {_n} to a("%{_n}%")
+        return "%{_n} ? 0%"
+
+function a(b: text) :: text:
+    if length of {_b} > 3:
+        return "%a(first length of {_b} - 3 characters of {_b})%,%last 3 characters of {_b}%"
+    return {_b}
+	
+on pickup:
+	if metadata tag "SellGUI" of player is set:
+		cancel event
+		
+on inventory click:
+	if player's current inventory is (metadata tag "SellGUI" of player):
+		loop 53 times:
+			set {_showslot} to slot loop-value of metadata tag "SellGUI" of player
+			{_showslot} is not yellow stained glass pane named "&a"
+			{_showslot} is not hopper
+			{_showslot} is not compass
+			{_showslot} is not potion
+			{_showslot} is not iron chestplate
+			{_showslot} is not ender chest
+			{_showslot} is not anvil
+			{_showslot} is not air
+			{_showslot} is not sunflower
+			event-slot is 9 or 18 or 27 or 36 or 45
+			"%event-inventory%" contains "<none>"
+			cancel event
+			stop
+	set {_Timer} to difference between {Shop.Timer} and now
+	if event-inventory = (metadata tag "SellGUI" of player):
+		SellGUIIndexSlot(player, index of event-slot)
+		if event-slot is (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52 or 53):
+			cancel event
+		set slot 8 of metadata tag "SellGUI" of player to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+	if event-inventory = (metadata tag "MusicGUI" of player):
+		MusicGUIIndexSlot(player, index of event-slot, click type)
+	if event-inventory = (metadata tag "VaultGUI" of player):
+		VaultGUIIndexSlot(player, index of event-slot, click type)
+	if event-inventory = (metadata tag "VaultGUIAdd" of player):
+		VaultAddGUIIndexSlot(player, index of event-slot, click type)
+	if event-inventory = (metadata tag "VaultGUIRemove" of player):
+		VaultRemoveGUIIndexSlot(player, index of event-slot, click type)
+#
+	if event-inventory = (metadata tag "VaultPGUIAdd" of player):
+		VaultPAddGUIIndexSlot(player, index of event-slot, click type)
+	if event-inventory = (metadata tag "VaultPGUIRemove" of player):
+		VaultPRemoveGUIIndexSlot(player, index of event-slot, click type)
+	if event-inventory = (metadata tag "SkillShopGui" of player):
+		SkillShopGUIIndexSlot(player, index of event-slot)
+		set slot 8 of metadata tag "SkillShopGui" of player to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+	if event-inventory = (metadata tag "SkillShopGearGui" of player):
+		SkillShopGearGUIIndexSlot(player, index of event-slot)
+		set slot 8 of metadata tag "SkillShopGearGui" of player to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+	if event-inventory = (metadata tag "SkillShopPotionGui" of player):
+		SkillShopPotionGUIIndexSlot(player, index of event-slot)
+		set slot 8 of metadata tag "SkillShopPotionGui" of player to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+	if event-inventory = (metadata tag "SkillShopMiscGui" of player):
+		SkillShopMiscGUIIndexSlot(player, index of event-slot)
+		set slot 8 of metadata tag "SkillShopMiscGui" of player to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+
+
+on inventory open:
+	wait 1 tick
+	while player's current inventory is (metadata tag "SkillShopMiscGui" of player) or (metadata tag "SkillShopPotionGui" of player) or (metadata tag "SkillShopGearGui" of player) or (metadata tag "SkillShopGui" of player) or (metadata tag "SellGUI" of player):
+		set {_Timer} to difference between {Shop.Timer} and now
+		set {_Timer2} to "%{_Timer}%"
+		set {_Timer2::*} to {_Timer2} split at "."
+		set {_Timer2} to "%{_Timer2::1}% seconds"
+		set slot 8 of player's current inventory to compass named "&eShop Reload Timer:" with lore "&e%{_Timer2} ? ""Unknown""%" and "&8[Click To Update]"
+		wait 1 second
+
+
+
+
+function CoinRed(entity: item):
+	wait 5 ticks
+	set display name of {_item} to "&4[&cRed&4]&e&l Gold Coin"
+
+function CoinBlue(entity: item):
+	wait 5 ticks
+	set display name of {_item} to "&1[&9Blue&1]&e&l Gold Coin"
+	
+on inventory close:
+	wait 1 tick
+	if metadata tag "SellGUI" of player is set:
+		name of player's current inventory is not "&6Shop - Sell"
+		set metadata tag "SellGUI2" of player to metadata tag "SellGUI" of player
+		clear metadata tag "SellGUI" of player
+		wait 5 ticks
+		loop 53 times:
+			set {_showslot} to slot loop-value of metadata tag "SellGUI2" of player
+			{_showslot} is not yellow stained glass pane named "&a"
+			{_showslot} is not hopper
+			{_showslot} is not compass
+			{_showslot} is not air
+			if name of {_showslot} does not contain "Skills" or "Gear" or "Potions" or "Misc" or "Sell":
+				if player has enough space for {_showslot}:
+					give player {_showslot}
+				else:
+					drop {_showslot} at player
+		clear metadata tag "SellGUI2" of player
+
+
+on right click with jukebox:
+	name of tool of player is "&3[&bJukebox&3]"
+	cancel event
+	MusicGui(player)
+
+
+function MusicGui(player: player):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set metadata tag "MusicGUI" of {_player} to chest inventory with 3 rows named "&aJukebox"
+	set slot ((integers between 0 and 9), 17 and (integers between 18 and 26)) of metadata tag "MusicGUI" of {_player} to stained glass pane named "&a"
+	set slot 22 of metadata tag "MusicGUI" of {_player} to Jukebox named "&aJukebox" with lore "&cClick To Stop Song"
+	set slot 10 of metadata tag "MusicGUI" of {_player} to music disc strad named "&cCredits" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 11 of metadata tag "MusicGUI" of {_player} to music disc far named "&cBasalt Delta" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 12 of metadata tag "MusicGUI" of {_player} to music disc 11 named "&cSoul Sand" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 13 of metadata tag "MusicGUI" of {_player} to music disc mellohi named "&cDragon" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 14 of metadata tag "MusicGUI" of {_player} to music disc cat named "&cMenu" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 15 of metadata tag "MusicGUI" of {_player} to music disc chirp named "&cCrimson Forest" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	set slot 16 of metadata tag "MusicGUI" of {_player} to music disc wait named "&cUnder Water" with lore "&aClick To Play Song" and "&aMiddle Click To Play Song With Pitch 2"
+	open (metadata tag "MusicGUI" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+function MusicGUIIndexSlot(player: player, slot: object, clicktype: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_clicktype} to "%{_clicktype}%"
+	if {_slot} is 22:
+		stop sound "music.credits" and "music.nether.basalt_deltas" and "music.nether.soul_sand_valley" and "music.dragon" and "music.menu" and "music.nether.nether_wastes" and "music.under_water" for {_player}
+	if {_slot} is 10:
+		if {_clicktype} contains "middle":
+			play sound "music.credits" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.credits" with volume 2 to {_player}
+	if {_slot} is 11:
+		if {_clicktype} contains "middle":
+			play sound "music.nether.basalt_deltas" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.nether.basalt_deltas" with volume 2 to {_player}
+	if {_slot} is 12:
+		if {_clicktype} contains "middle":
+			play sound "music.nether.soul_sand_valley" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.nether.soul_sand_valley" with volume 2 to {_player}
+	if {_slot} is 13:
+		if {_clicktype} contains "middle":
+			play sound "music.dragon" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.dragon" with volume 2 to {_player}
+	if {_slot} is 14:
+		if {_clicktype} contains "middle":
+			play sound "music.menu" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.menu" with volume 2 to {_player}
+	if {_slot} is 15:
+		if {_clicktype} contains "middle":
+			play sound "music.nether.nether_wastes" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.nether.nether_wastes" with volume 2 to {_player}
+	if {_slot} is 16:
+		if {_clicktype} contains "middle":
+			play sound "music.under_water" with volume 2 and pitch 2 to {_player}
+		else:
+			play sound "music.under_water" with volume 2 to {_player}
+
+
+
+
+
+
+
+function SellGui(player: player):
+	clear metadata tag "SellGUI" of {_player}
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_Timer} to difference between {Shop.Timer} and now
+	set metadata tag "SellGUI" of {_player} to chest inventory with 6 rows named "&6Shop - Sell"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "SellGUI" of {_player} to yellow stained glass pane named "&a"
+	set slot 8 of metadata tag "SellGUI" of {_player} to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+	set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%{_itemValues} ? 0%" with lore "&aClick To Sell 0 Items!"
+	set slot 9 of metadata tag "SellGUI" of {_player} to anvil named "&9Skills"
+	set slot 18 of metadata tag "SellGUI" of {_player} to iron chestplate named "&9Gear" with nbt "{HideFlags:63}"
+	set slot 27 of metadata tag "SellGUI" of {_player} to Potion named "&9Potions" with nbt "{HideFlags:63}"
+	set slot 36 of metadata tag "SellGUI" of {_player} to ender chest named "&9Misc"
+	set slot 45 of metadata tag "SellGUI" of {_player} to sunflower named "&9Sell"
+	open (metadata tag "SellGUI" of {_player}) to {_player}
+	#set metadata tag "inventoryOpened" of {_player} to true
+	while metadata tag "SellGUI" of {_player} is set:
+		wait 20 ticks
+		delete {_NumberOfSells}
+		loop 53 times:
+			delete {_AddPrice}
+			set {_showslot} to slot loop-value of metadata tag "SellGUI" of {_player}
+			{_showslot} is not yellow stained glass pane named "&a"
+			{_showslot} is not hopper
+			{_showslot} is not air
+			add "Price" tag of nbt of {_showslot} to {_AddPrice}
+			if {_showslot} is enchanted book:
+				"Price" tag of nbt of {_showslot} is not 0
+				set {_tier} to uncolored 1st line of the lore of {_showslot}
+				if {_tier} is "Tier: I":
+					add 100 to {_AddPrice}
+				if {_tier} is "Tier: II":
+					add 300 to {_AddPrice}
+				if {_tier} is "Tier: III":
+					add 500 to {_AddPrice}
+				if {_tier} is "Tier: IV":
+					add 750 to {_AddPrice}
+				if {_tier} is "Tier: V":
+					add 1000 to {_AddPrice}
+			if {_showslot} is potion:
+				set {_amount::*} to (split {_showslot}'s name by " ")
+				set {_amount::3} to uncolored "%{_amount::3}%" parsed as an integer
+				add {_amount::3}*25 to {_AddPrice}
+				add {_amount::3}-1 to {_NumberOfSells}
+			if {_showslot} is set:
+				set {_item} to {_showslot}
+				set {_name} to name of {_item}
+				set {_lore::*} to lore of {_item}
+				set {_heal::*} to {_lore::1} split at "+"
+				set {_heal} to {_heal::2}
+				set {_heal::*} to {_heal} split at " "
+				set {_heal} to {_heal::1}
+				set {_heal} to {_heal} parsed as number
+				if {_heal} is "∞":
+					set {_heal} to "INF"
+				if {_heal} is "INF":
+					set {_heal} to 5000
+				set {_heal} to {_heal}*2
+				add {_heal} to {_AddPrice}
+			if {_showslot} is spawn egg:
+				add 500 to {_AddPrice}
+			if "BackPackLevel" tag of nbt of {_showslot} is set:
+				set {_id} to "BackPackId" tag of nbt of {_showslot}
+				set {_loopze} to "BackPackLevel" tag of nbt of {_showslot}
+				set {_loopze} to {_loopze}*9
+				set {_bagcount} to -1
+				loop {_loopze} times:
+					add 1 to {_bagcount}
+					set {_bagitem} to {BackPack::%{_id}%::%{_bagcount}%}
+					add "Price" tag of nbt of {_bagitem} to {_AddPrice}
+					if {_bagitem} is enchanted book:
+						"Price" tag of nbt of {_bagitem} is not 0
+						set {_tier} to uncolored 1st line of the lore of {_bagitem}
+						if {_tier} is "Tier: I":
+							add 100 to {_AddPrice}
+						if {_tier} is "Tier: II":
+							add 300 to {_AddPrice}
+						if {_tier} is "Tier: III":
+							add 500 to {_AddPrice}
+						if {_tier} is "Tier: IV":
+							add 750 to {_AddPrice}
+						if {_tier} is "Tier: V":
+							add 1000 to {_AddPrice}
+					if {_bagitem} is potion:
+						set {_amount::*} to (split {_bagitem}'s name by " ")
+						set {_amount::3} to uncolored "%{_amount::3}%" parsed as an integer
+						add {_amount::3}*25 to {_AddPrice}
+						add {_amount::3}-1 to {_NumberOfSells}
+					if {_bagitem} is spawn egg:
+						add 500 to {_AddPrice}
+					set {_AddPrice} to {_AddPrice}*item amount of {_bagitem}
+			else:
+				set {_AddPrice} to {_AddPrice}*item amount of {_showslot}
+			if name of {_showslot} does not contain "Skills" or "Gear" or "Potions" or "Misc" or "Sell":
+				add item amount of {_showslot} to {_NumberOfSells}
+				add {_AddPrice} to {_itemValues}
+		if {_NumberOfSells} is not 1:
+			set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%moneyComma({_itemValues}) ? 0%" with lore "&aClick To Sell %moneyComma({_NumberOfSells}) ? 0% Items!"
+		else:
+			set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%moneyComma({_itemValues}) ? 0%" with lore "&aClick To Sell %moneyComma({_NumberOfSells}) ? 0% Item!"
+		delete {_itemValues}
+
+on inventory click:
+	if metadata tag "SellGUI" of player is set:
+		if name of event-item contains "Starter":
+			cancel event
+			message "&cYou can't sell starter weapons!"
+		if "Price" tag of nbt of event-item is 0:
+			event-item is enchanted book
+			cancel event
+			message "&cYou can't sell starter skills!"
+
+function SellGUIIndexSlot(player: player, slot: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	if {_slot} is (0, 1, 2, 3, 5, 6, 7, 8, 17, 26, 35, 44, 46, 47, 48, 49, 50, 51, 52 or 53):
+		stop
+	else:
+		wait 1 tick
+		delete {_NumberOfSells}
+		loop 53 times:
+			delete {_AddPrice}
+			set {_showslot} to slot loop-value of metadata tag "SellGUI" of {_player}
+			{_showslot} is not yellow stained glass pane named "&a"
+			{_showslot} is not hopper
+			{_showslot} is not air
+			add "Price" tag of nbt of {_showslot} to {_AddPrice}
+			if {_showslot} is enchanted book:
+				"Price" tag of nbt of {_showslot} is not 0
+				set {_tier} to uncolored 1st line of the lore of {_showslot}
+				if {_tier} is "Tier: I":
+					add 100 to {_AddPrice}
+				if {_tier} is "Tier: II":
+					add 300 to {_AddPrice}
+				if {_tier} is "Tier: III":
+					add 500 to {_AddPrice}
+				if {_tier} is "Tier: IV":
+					add 750 to {_AddPrice}
+				if {_tier} is "Tier: V":
+					add 1000 to {_AddPrice}
+			if {_showslot} is potion:
+				set {_amount::*} to (split {_showslot}'s name by " ")
+				set {_amount::3} to uncolored "%{_amount::3}%" parsed as an integer
+				add {_amount::3}*25 to {_AddPrice}
+				add {_amount::3}-1 to {_NumberOfSells}
+			if {_showslot} is set:
+				set {_item} to {_showslot}
+				set {_name} to name of {_item}
+				set {_lore::*} to lore of {_item}
+				set {_heal::*} to {_lore::1} split at "+"
+				set {_heal} to {_heal::2}
+				set {_heal::*} to {_heal} split at " "
+				set {_heal} to {_heal::1}
+				set {_heal} to {_heal} parsed as number
+				if {_heal} is "∞":
+					set {_heal} to "INF"
+				if {_heal} is "INF":
+					set {_heal} to 5000
+				set {_heal} to {_heal}*2
+				add {_heal} to {_AddPrice}
+			if {_showslot} is spawn egg:
+				add 500 to {_AddPrice}
+			if "BackPackLevel" tag of nbt of {_showslot} is set:
+				set {_id} to "BackPackId" tag of nbt of {_showslot}
+				set {_loopze} to "BackPackLevel" tag of nbt of {_showslot}
+				set {_loopze} to {_loopze}*9
+				set {_bagcount} to -1
+				loop {_loopze} times:
+					add 1 to {_bagcount}
+					set {_bagitem} to {BackPack::%{_id}%::%{_bagcount}%}
+					add "Price" tag of nbt of {_bagitem} to {_AddPrice}
+					if {_bagitem} is enchanted book:
+						"Price" tag of nbt of {_bagitem} is not 0
+						set {_tier} to uncolored 1st line of the lore of {_bagitem}
+						if {_tier} is "Tier: I":
+							add 100 to {_AddPrice}
+						if {_tier} is "Tier: II":
+							add 300 to {_AddPrice}
+						if {_tier} is "Tier: III":
+							add 500 to {_AddPrice}
+						if {_tier} is "Tier: IV":
+							add 750 to {_AddPrice}
+						if {_tier} is "Tier: V":
+							add 1000 to {_AddPrice}
+					if {_bagitem} is potion:
+						set {_amount::*} to (split {_bagitem}'s name by " ")
+						set {_amount::3} to uncolored "%{_amount::3}%" parsed as an integer
+						add {_amount::3}*25 to {_AddPrice}
+						add {_amount::3}-1 to {_NumberOfSells}
+					if {_bagitem} is spawn egg:
+						add 500 to {_AddPrice}
+					set {_AddPrice} to {_AddPrice}*item amount of {_bagitem}
+					if {_slot} is 4:
+						delete {BackPack::%{_id}%::%{_bagcount}%}
+			else:
+				set {_AddPrice} to {_AddPrice}*item amount of {_showslot}
+			if name of {_showslot} does not contain "Skills" or "Gear" or "Potions" or "Misc" or "Sell":
+				add item amount of {_showslot} to {_NumberOfSells}
+				add {_AddPrice} to {_itemValues}
+		wait 1 tick
+		set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%moneyComma({_itemValues}) ? 0%" with lore "&aClick To Sell %moneyComma({_NumberOfSells}) ? 0% Items!"
+		if {_slot} is 4:
+			if {_NumberOfSells} is not 1:
+				message "&eSold %moneyComma({_NumberOfSells}) ? 0%&e Items For $%moneyComma({_itemValues}) ? 0%&e!" to {_player}
+			else:
+				message "&eSold %moneyComma({_NumberOfSells}) ? 0%&e Item For $%moneyComma({_itemValues}) ? 0%&e!" to {_player}
+			set {Balance::%{_uuid}%::%{_profile}%} to {Balance::%{_uuid}%::%{_profile}%}+{_itemValues}
+			delete {_itemValues}
+			loop 53 times:
+				delete {_bagid}
+				set {_bagid} to "BackPackLevel" tag of nbt of slot loop-value of metadata tag "SellGUI" of {_player}
+				{_bagid} is set
+				give {_player} slot loop-value of metadata tag "SellGUI" of {_player}
+			clear metadata tag "SellGUI" of {_player}
+			SellGui({_player})
+		set slot 4 of metadata tag "SellGUI" of {_player} to hopper named "&eSell: $%moneyComma({_itemValues}) ? 0%" with lore "&aClick To Sell %moneyComma({_NumberOfSells}) ? 0% Items!"
+	if {_slot} is 9:
+		SkillShopGui({_player})
+	if {_slot} is 18:
+		SkillShopGearGui({_player})
+	if {_slot} is 27:
+		SkillShopPotionGui({_player})
+	if {_slot} is 36:
+		SkillShopMiscGui({_player})
+	if {_slot} is 45:
+		SellGui({_player})
+		
+function SkillShopGUIIndexSlot(player: player, slot: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_item} to slot {_slot} of metadata tag "SkillShopGui" of {_player}
+	{_item} is not yellow stained glass pane
+	set {_lore} to 1st line of lore of {_item}
+	set {_lore::*} to uncolored lore of {_item}
+	loop {_lore::*}:
+		add 1 to {_lorelines}
+	delete line {_lorelines} of lore of {_item}
+	if uncolored {_lore} is "Tier: I":
+		set {_Tier} to 500
+	if uncolored {_lore} is "Tier: II":
+		set {_Tier} to 3000
+	if uncolored {_lore} is "Tier: III":
+		set {_Tier} to 10000
+	if {Balance::%{_uuid}%::%{_profile}%} >= {_Tier}:
+		remove {_Tier} from {Balance::%{_uuid}%::%{_profile}%}
+		message "&ePurchased %name of {_item}%&e For %{_Tier}%&e Coins!" to {_player}
+		give {_player} {_item}
+	else:
+		{_Tier} is set
+		message "&cYou Need %moneyComma({_Tier})%&c Coins To Buy This!" to {_player}
+	if {_slot} is 9:
+		SkillShopGui({_player})
+	if {_slot} is 18:
+		SkillShopGearGui({_player})
+	if {_slot} is 27:
+		SkillShopPotionGui({_player})
+	if {_slot} is 36:
+		SkillShopMiscGui({_player})
+	if {_slot} is 45:
+		SellGui({_player})
+
+
+function SkillShopGearGUIIndexSlot(player: player, slot: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_item} to slot {_slot} of metadata tag "SkillShopGearGui" of {_player}
+	{_item} is not yellow stained glass pane
+	{_item} is not compass
+	set {_lore::*} to uncolored lore of {_item}
+	loop {_lore::*}:
+		add 1 to {_lorelines}
+	set {_lore} to line {_lorelines} of lore of {_item}
+	delete line {_lorelines} of lore of {_item}
+	set {_GetSellPrice::*} to uncolored {_lore} split at ""
+	replace all "," with "" in {_GetSellPrice::*}
+	replace all " " with "" in {_GetSellPrice::*}
+	replace all "Price: " with "" in {_GetSellPrice::*}
+	replace all "P" with "" in {_GetSellPrice::*}
+	replace all "r" with "" in {_GetSellPrice::*}
+	replace all "i" with "" in {_GetSellPrice::*}
+	replace all "c" with "" in {_GetSellPrice::*}
+	replace all "e" with "" in {_GetSellPrice::*}
+	replace all ":" with "" in {_GetSellPrice::*}
+	replace all "$" with "" in {_GetSellPrice::*}
+	loop {_GetSellPrice::*}:
+		if {_Tier} is set:
+			set {_Tier} to "%{_Tier}%%loop-value%"
+		else:
+			set {_Tier} to loop-value
+	set {_Tier} to {_Tier} parsed as number
+	if {Balance::%{_uuid}%::%{_profile}%} >= {_Tier}:
+		remove {_Tier} from {Balance::%{_uuid}%::%{_profile}%}
+		message "&ePurchased %name of {_item}%&e For %moneyComma({_Tier})%&e Coins!" to {_player}
+		give {_player} {_item}
+	else:
+		{_Tier} is set
+		message "&cYou Need %{_Tier}%&c Coins To Buy This!" to {_player}
+	if {_slot} is 9:
+		SkillShopGui({_player})
+	if {_slot} is 18:
+		SkillShopGearGui({_player})
+	if {_slot} is 27:
+		SkillShopPotionGui({_player})
+	if {_slot} is 36:
+		SkillShopMiscGui({_player})
+	if {_slot} is 45:
+		SellGui({_player})
+
+
+function SkillShopPotionGUIIndexSlot(player: player, slot: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_item} to slot {_slot} of metadata tag "SkillShopPotionGui" of {_player}
+	{_item} is not yellow stained glass pane
+	set {_lore} to name of {_item}
+	set {_lore::*} to uncolored lore of {_item}
+	loop {_lore::*}:
+		add 1 to {_lorelines}
+	delete line {_lorelines} of lore of {_item}
+	if name of {_item} is "&cHealing Potion":
+		set {_Type} to true
+		set {_Tier} to 100
+	if name of {_item} is "&bMana Potion":
+		set {_Type} to false
+		set {_Tier} to 100
+	if {Balance::%{_uuid}%::%{_profile}%} >= {_Tier}:
+		if {_Type} is true:
+			remove {_Tier} from {Balance::%{_uuid}%::%{_profile}%}
+			message "&ePurchased %name of {_item}%&e For %{_Tier}%&e Coins!" to {_player}
+			GivePotion({_player}, "Heal")
+		else if {_Type} is false:
+			remove {_Tier} from {Balance::%{_uuid}%::%{_profile}%}
+			message "&ePurchased %name of {_item}%&e For %{_Tier}%&e Coins!" to {_player}
+			GivePotion({_player}, "Mana")
+	else:
+		{_Tier} is set
+		message "&cYou Need %moneyComma({_Tier})%&c Coins To Buy This!" to {_player}
+	if {_slot} is 9:
+		SkillShopGui({_player})
+	if {_slot} is 18:
+		SkillShopGearGui({_player})
+	if {_slot} is 27:
+		SkillShopPotionGui({_player})
+	if {_slot} is 36:
+		SkillShopMiscGui({_player})
+	if {_slot} is 45:
+		SellGui({_player})
+		
+function SkillShopMiscGUIIndexSlot(player: player, slot: object):
+	set {_uuid} to {_player}'s uuid
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_item} to slot {_slot} of metadata tag "SkillShopMiscGui" of {_player}
+	if {_item} is not yellow stained glass pane:
+		if {_item}'s name contains "BackPack":
+			set {_lore::1} to line 1 of {_item}'s lore
+			if {_lore::1} contains "1":
+				set {_Tier} to 3000
+			else if {_lore::1} contains "2":
+				set {_Tier} to 6000
+			else if {_lore::1} contains "3":
+				set {_Tier} to 9000
+		else if uncolored {_item}'s name contains "Mount Loot Crate":
+			set {_Tier} to 5000
+		else if uncolored {_item}'s name contains "Personal bank":
+			set {_Tier} to 25000
+		else if uncolored {_item}'s name contains "[Jukebox]":
+			set {_Tier} to 20000
+		else if uncolored {_item}'s name contains "Grappling Hook":
+			set {_Tier} to 6000
+		else if uncolored {_item}'s name contains "Fishing Rod":
+			set {_Tier} to 1500
+		else if uncolored {_item}'s name contains "Night Vision Helmet":
+			set {_Tier} to 2500
+		else if uncolored {_item}'s name contains "Speed Chestplate":
+			set {_Tier} to 3000
+		else if uncolored {_item}'s name contains "Jump Boost Leggings":
+			set {_Tier} to 3500
+		else if uncolored {_item}'s name contains "Water Boots":
+			set {_Tier} to 5000
+		set {_item} to {_item} named {_item}'s name
+		if {Balance::%{_uuid}%::%{_profile}%} >= {_Tier}:
+			remove {_Tier} from {Balance::%{_uuid}%::%{_profile}%}
+			message "&ePurchased %name of {_item}%&e For %{_Tier}%&e Coins!" to {_player}
+			if {_lore::1} is set:
+				give {_player} BackPack(({_Tier}/3000))
+			else:
+				give {_player} {_item}
+		else:
+			{_Tier} is set
+			message "&cYou Need %moneyComma({_Tier})%&c Coins To Buy This!" to {_player}
+	if {_slot} is 9:
+		SkillShopGui({_player})
+	if {_slot} is 18:
+		SkillShopGearGui({_player})
+	if {_slot} is 27:
+		SkillShopPotionGui({_player})
+	if {_slot} is 36:
+		SkillShopMiscGui({_player})
+	if {_slot} is 45:
+		SellGui({_player})
+
+function SkillShopGui(player: player):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_Timer} to difference between {Shop.Timer} and now
+	set metadata tag "SkillShopGui" of {_player} to chest inventory with 6 rows named "&6Shop - Skills"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "SkillShopGui" of {_player} to yellow stained glass pane named "&a"
+	set slot 9 of metadata tag "SkillShopGui" of {_player} to anvil named "&9Skills"
+	set slot 8 of metadata tag "SkillShopGui" of {_player} to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+	set slot 18 of metadata tag "SkillShopGui" of {_player} to iron chestplate named "&9Gear"
+	set slot 27 of metadata tag "SkillShopGui" of {_player} to Potion named "&9Potions"
+	set slot 36 of metadata tag "SkillShopGui" of {_player} to ender chest named "&9Misc"
+	set slot 45 of metadata tag "SkillShopGui" of {_player} to sunflower named "&9Sell"
+	loop (integers between 10 and 16):
+		set {_item} to {SkillShopGui::%loop-value-9%}
+		set slot loop-value of metadata tag "SkillShopGui" of {_player} to {_item}
+	loop (integers between 19 and 25):
+		set {_item} to {SkillShopGui::%loop-value-12%}
+		set slot loop-value of metadata tag "SkillShopGui" of {_player} to {_item}
+	loop (integers between 28 and 34):
+		set {_item} to {SkillShopGui::%loop-value-21%}
+		set slot loop-value of metadata tag "SkillShopGui" of {_player} to {_item}
+	loop (integers between 37 and 43):
+		set {_item} to {SkillShopGui::%loop-value-24%}
+		set slot loop-value of metadata tag "SkillShopGui" of {_player} to {_item}
+	open (metadata tag "SkillShopGui" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+function SkillShopGearGui(player: player):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_Timer} to difference between {Shop.Timer} and now
+	set metadata tag "SkillShopGearGui" of {_player} to chest inventory with 6 rows named "&6Shop - Gear"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "SkillShopGearGui" of {_player} to yellow stained glass pane named "&a"
+	set slot 9 of metadata tag "SkillShopGearGui" of {_player} to anvil named "&9Skills"
+	set slot 8 of metadata tag "SkillShopGearGui" of {_player} to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+	set slot 18 of metadata tag "SkillShopGearGui" of {_player} to iron chestplate named "&9Gear"
+	set slot 27 of metadata tag "SkillShopGearGui" of {_player} to Potion named "&9Potions"
+	set slot 36 of metadata tag "SkillShopGearGui" of {_player} to ender chest named "&9Misc"
+	set slot 45 of metadata tag "SkillShopGearGui" of {_player} to sunflower named "&9Sell"
+	loop (integers between 10 and 16):
+		set {_item} to {GearShopGui::%loop-value-9%}
+		{GearShopGui::%loop-value-9%} is set
+		set slot loop-value of metadata tag "SkillShopGearGui" of {_player} to {_item}
+	loop (integers between 19 and 25):
+		{GearShopGui::%loop-value-11%} is set
+		set {_item} to {GearShopGui::%loop-value-11%}
+		set slot loop-value of metadata tag "SkillShopGearGui" of {_player} to {_item}
+	loop (integers between 28 and 34):
+		{GearShopGui::%loop-value-13%} is set
+		set {_item} to {GearShopGui::%loop-value-13%}
+		set slot loop-value of metadata tag "SkillShopGearGui" of {_player} to {_item}
+	loop (integers between 37 and 43):
+		{GearShopGui::%loop-value-15%} is set
+		set {_item} to {GearShopGui::%loop-value-15%}
+		set slot loop-value of metadata tag "SkillShopGearGui" of {_player} to {_item}
+	open (metadata tag "SkillShopGearGui" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+function SkillShopPotionGui(player: player):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_Timer} to difference between {Shop.Timer} and now
+	set metadata tag "SkillShopPotionGui" of {_player} to chest inventory with 6 rows named "&6Shop - Potions"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "SkillShopPotionGui" of {_player} to yellow stained glass pane named "&a"
+	set slot 9 of metadata tag "SkillShopPotionGui" of {_player} to anvil named "&9Skills"
+	set slot 8 of metadata tag "SkillShopPotionGui" of {_player} to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+	set slot 18 of metadata tag "SkillShopPotionGui" of {_player} to iron chestplate named "&9Gear"
+	set slot 27 of metadata tag "SkillShopPotionGui" of {_player} to Potion named "&9Potions"
+	set slot 36 of metadata tag "SkillShopPotionGui" of {_player} to ender chest named "&9Misc"
+	set slot 45 of metadata tag "SkillShopPotionGui" of {_player} to sunflower named "&9Sell"
+	set slot 10 of metadata tag "SkillShopPotionGui" of {_player} to {PotionShopGui::1}
+	set slot 11 of metadata tag "SkillShopPotionGui" of {_player} to {PotionShopGui::2}
+	open (metadata tag "SkillShopPotionGui" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+
+function SkillShopMiscGui(player: player):
+	set {_uuid} to uuid of {_player}
+	set {_profile} to metadata tag "profile" of {_player}
+	set {_Timer} to difference between {Shop.Timer} and now
+	set metadata tag "SkillShopMiscGui" of {_player} to chest inventory with 6 rows named "&6Shop - Misc"
+	set slot ((integers between 0 and 9), 17, 18, 26, 27, 35, 36, 44 and (integers between 45 and 53)) of metadata tag "SkillShopMiscGui" of {_player} to yellow stained glass pane named "&a"
+	set slot 9 of metadata tag "SkillShopMiscGui" of {_player} to anvil named "&9Skills"
+	set slot 8 of metadata tag "SkillShopMiscGui" of {_player} to compass named "&eShop Reload Timer:" with lore "&e%{_Timer} ? ""Unknown""%" and "&8[Click To Update]"
+	set slot 18 of metadata tag "SkillShopMiscGui" of {_player} to iron chestplate named "&9Gear"
+	set slot 27 of metadata tag "SkillShopMiscGui" of {_player} to Potion named "&9Potions"
+	set slot 36 of metadata tag "SkillShopMiscGui" of {_player} to ender chest named "&9Misc"
+	set slot 45 of metadata tag "SkillShopMiscGui" of {_player} to sunflower named "&9Sell"
+	loop size of {MiscShopGui::*} times:
+		set slot 9+loop-value of metadata tag "SkillShopMiscGui" of {_player} to {MiscShopGui::%loop-value%}
+	open (metadata tag "SkillShopMiscGui" of {_player}) to {_player}
+	set metadata tag "inventoryOpened" of {_player} to true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+on right click on villager:
+	name of event-entity is "&6Shop"
+	SkillShopGui(player)
+
+command /shopreload:
+	permission: staff
+	trigger:
+		ShopUpdateItemsReload()
+
+every 1 hour:
+	if (size of online players) >= 1:
+		ShopUpdateItemsReload()
+
+function ShopUpdateItemsReload():
+	ShopUpdateItems()
+	wait 2 seconds
+	delete {SkillShopGui::*}
+	delete {MiscShopGui::*}
+	delete {PotionShopGui::*}
+	delete {GearShopGui::*}
+	
+	loop 28 times:
+		wait 1 tick
+		chance of 10%:
+			set {_item} to random element of {Books3::*}
+			add "&ePrice: $10,000" to lore of {_item}
+		else:
+			chance of 40%:
+				set {_item} to random element of {Books2::*}
+				add "&ePrice: $3,000" to lore of {_item}
+			else:
+				set {_item} to random element of {Books1::*}
+				add "&ePrice: $500" to lore of {_item}
+		add {_item} to {SkillShopGui::*}
+
+	chance of 10%:
+		set {_item} to jukebox named "&3[&bJukeBox&3]"
+		add "&ePrice: $20,000" to lore of {_item}
+		add {_item} to {MiscShopGui::*}
+	chance of 40%:
+		set {_item} to player head named "&5Mount Loot Crate"
+		add "{SkullOwner:{Id:[I;1049324767,745688397,-1636073904,-1503116338],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiY2E0YjY5ZWFmOGRjYjdhYzM3MjgyMjhkZThhNjQ0NDA3ODcwMTMzNDJkZGFhYmMxYjAwZWViOGVlYzFlMiJ9fX0=""}]}}}" to NBT of {_Item}
+		add "&ePrice: $5,000" to lore of {_item}
+		add {_item} to {MiscShopGui::*}
+	chance of 60%:
+		set {_item} to ender chest named "&6Personal Bank"
+		add "&ePrice: $25,000" to lore of {_item}
+		add {_item} to {MiscShopGui::*}
+	chance of 40%:
+		set {_item} to BackPack(2)
+		add "&ePrice: $6,000" to lore of {_item}
+		add {_item} to {MiscShopGui::*}
+	chance of 70%:
+		set {_item} to Fishing Rod named "&bFishing Rod"
+		add "{Unbreakable:1b}" to nbt of {_item}
+		add "{HideFlags:63}" to nbt of {_item}
+		add "&ePrice: $1,500" to lore of {_item}
+		add {_item} to {MiscShopGui::*}
+	chance of 10%:
+		set {_item} to shiny Fishing Rod named "&bGrappling Hook"
+		add "{Unbreakable:1b}" to nbt of {_item}
+		add "{HideFlags:63}" to nbt of {_item}
+		add "&ePrice: $6,000" to lore of {_item}
+		add {_item} to {MiscShopGui::*}
+	chance of 50%:
+		set {_item} to leather helmet named "&5Night Vision Helmet"
+		dye {_item} purple
+		add "{Unbreakable:1b}" to nbt of {_item}
+		add "{HideFlags:63}" to nbt of {_item}
+		add "&ePrice: $2,500" to lore of {_item}
+		set {_item} to {_item} with all flags hidden
+		add {_item} to {MiscShopGui::*}
+	chance of 60%:
+		set {_item} to leather chestplate named "&fSpeed Chestplate"
+		dye {_item} white
+		add "{Unbreakable:1b}" to nbt of {_item}
+		add "{HideFlags:63}" to nbt of {_item}
+		add "&ePrice: $3,000" to lore of {_item}
+		set {_item} to {_item} with all flags hidden
+		add {_item} to {MiscShopGui::*}
+	chance of 50%:
+		set {_item} to leather leggings named "&aJump Boost Leggings"
+		dye {_item} green
+		add "{Unbreakable:1b}" to nbt of {_item}
+		add "{HideFlags:63}" to nbt of {_item}
+		add "&ePrice: $3,500" to lore of {_item}
+		set {_item} to {_item} with all flags hidden
+		add {_item} to {MiscShopGui::*}
+	chance of 40%:
+		set {_item} to leather boots named "&3Water Boots"
+		dye {_item} cyan
+		add "{Unbreakable:1b}" to nbt of {_item}
+		add "{HideFlags:63}" to nbt of {_item}
+		add "&ePrice: $5,000" to lore of {_item}
+		set {_item} to {_item} with all flags hidden
+		add {_item} to {MiscShopGui::*}
+	chance of 30%:
+		set {_item} to BackPack(1)
+		add "&ePrice: $3,000" to lore of {_item}
+		add {_item} to {MiscShopGui::*}
+	add potion of healing named "&cHealing Potion" with lore "&c+50 HP &7when used" with nbt "{HideFlags:63}" to {PotionShopGui::*}
+	add "&ePrice: $50" to lore of {PotionShopGui::1}
+	add potion of water breathing named "&bMana Potion" with lore "&b+50 MP &7when used" with nbt "{HideFlags:63}" to {PotionShopGui::*}
+	add "&ePrice: $50" to lore of {PotionShopGui::2}
+	delete {_item}
+
+	loop 28 times:
+		chance of .5%:
+			set {_item} to random element of {Gear5ShopGui::*}
+			remove {_item} from {Gear5ShopGui::*}
+			set {_price} to "Price" tag of nbt of {_item}
+			add "&ePrice: $%moneyComma({_price}*5)%" to lore of {_item}
+		else if chance of 1%:
+			set {_item} to random element of {Gear4ShopGui::*}
+			remove {_item} from {Gear4ShopGui::*}
+			set {_price} to "Price" tag of nbt of {_item}
+			add "&ePrice: $%moneyComma({_price}*5)%" to lore of {_item}
+		else if chance of 3%:
+			set {_item} to random element of {Gear3ShopGui::*}
+			remove {_item} from {Gear3ShopGui::*}
+			set {_price} to "Price" tag of nbt of {_item}
+			add "&ePrice: $%moneyComma({_price}*5)%" to lore of {_item}
+		else if chance of 10%:
+			set {_item} to random element of {Gear2ShopGui::*}
+			remove {_item} from {Gear2ShopGui::*}
+			set {_price} to "Price" tag of nbt of {_item}
+			add "&ePrice: $%moneyComma({_price}*5)%" to lore of {_item}
+		else:
+			set {_item} to random element of {Gear1ShopGui::*}
+			remove {_item} from {Gear1ShopGui::*}
+			set {_price} to "Price" tag of nbt of {_item}
+			add "&ePrice: $%moneyComma({_price}*5)%" to lore of {_item}
+		add {_item} to {GearShopGui::*}	
+
+function ShopUpdateItems():
+	set {Shop.Timer} to now
+	add 1 hour to {Shop.Timer}
+	delete {Gear1ShopGui::*}
+	delete {Gear2ShopGui::*}
+	delete {Gear3ShopGui::*}
+	delete {Gear4ShopGui::*}
+	delete {Gear5ShopGui::*}
+	set {Gear1ShopGui::*} to {gearDrops1::*}
+	set {Gear2ShopGui::*} to {gearDrops2::*}
+	set {Gear3ShopGui::*} to {gearDrops3::*}
+	set {Gear4ShopGui::*} to {gearDrops4::*}
+	set {Gear5ShopGui::*} to {gearDrops5::*}
+	
+on load:
+	ShopUpdateItems()
+	add itemGenerator(Wooden Sword, ("Fractured Sword"), (1), (0.5), (""), (1), ("Almost in 2 Pieces"), ("Warrior"), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Bow, ("Flimsy Bow"), (1), (0.5), (""), (1), ("Crafted with twine"), ("Archer"), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Stick, ("Splintered Wand"), (1), (0.5), (""), (1), ("Don't poke yourself!"), ("Mage"), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Wooden Axe, ("Cracked Axe"), (1), (0.5), (""), (1), ("It's not broken yet"), ("Shaman"), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Leather Helmet, ("Ripped Hood"), (1), (0.5), (""), (1), ("Just to be safe"), (""), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Leather Chestplate, ("Tattered Cloth"), (1), (0.5), (""), (1), ("Anything to cover up"), (""), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Leather Leggings, ("Torn Leggings"), (1), (0.5), (""), (1), ("They look like jeans"), (""), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Leather Boots, ("Broken Sandals"), (1), (0.5), (""), (1), ("Just go barefoot"), (""), (random integer between 1 and 8)) to {gearDrops1::*}
+	wait 1 tick
+	add itemGenerator(Wooden Sword, ("Blade Fragment"), (1), (0.5), (""), (1), ("Once a sword, always a sword"), ("Warrior"), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Bow, ("Worn Bow"), (1), (0.5), (""), (1), ("Ask your Granddad about the manufacturers "), ("Archer"), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Stick, ("Broken Staff"), (1), (0.5), (""), (1), ("Basically just a wand"), ("Mage"), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Wooden Axe, ("DIY Hatchet"), (1), (0.5), (""), (1), ("It's automatically a broken tool"), ("Shaman"), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Leather Helmet, ("Twine Cap"), (1), (0.5), (""), (1), ("Adam and Eve's fine craftsmanship"), (""), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Leather Chestplate, ("Cloth Rags"), (1), (0.5), (""), (1), ("The raincoat of the old days"), (""), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Leather Leggings, ("Snapped Splints"), (1), (0.5), (""), (1), ("Time to revisit the doctor"), (""), (random integer between 1 and 8)) to {gearDrops1::*}
+	add itemGenerator(Leather Boots, ("Brown Crocs"), (1), (0.5), (""), (1), ("Good luck walking across the barn"), (""), (random integer between 1 and 8)) to {gearDrops1::*}
+	
+	
+	add itemGenerator(Wooden Sword, ("Fractured Sword"), (1), (1), (""), (1), ("Almost in 2 Pieces"), ("Warrior"), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Bow, ("Flimsy Bow"), (1), (1), (""), (1), ("Crafted with twine"), ("Archer"), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Stick, ("Splintered Wand"), (1), (1), (""), (1), ("Don't poke yourself!"), ("Mage"), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Wooden Axe, ("Cracked Axe"), (1), (1), (""), (1), ("It's not broken yet"), ("Shaman"), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Leather Helmet, ("Ripped Hood"), (1), (1), (""), (1), ("Just to be safe"), (""), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Leather Chestplate, ("Tattered Cloth"), (1), (1), (""), (1), ("Anything to cover up"), (""), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Leather Leggings, ("Torn Leggings"), (1), (1), (""), (1), ("They look like jeans"), (""), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Leather Boots, ("Broken Sandals"), (1), (1), (""), (1), ("Just go barefoot"), (""), (random integer between 1 and 14)) to {gearDrops2::*}
+	wait 1 tick
+	add itemGenerator(Wooden Sword, ("Blade Fragment"), (1), (1), (""), (1), ("Once a sword, always a sword"), ("Warrior"), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Bow, ("Worn Bow"), (1), (1), (""), (1), ("Ask your Granddad about the manufacturers "), ("Archer"), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Stick, ("Broken Staff"), (1), (1), (""), (1), ("Basically just a wand"), ("Mage"), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Wooden Axe, ("DIY Hatchet"), (1), (1), (""), (1), ("It's automatically a broken tool"), ("Shaman"), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Leather Helmet, ("Twine Cap"), (1), (1), (""), (1), ("Adam and Eve's fine craftsmanship"), (""), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Leather Chestplate, ("Cloth Rags"), (1), (1), (""), (1), ("The raincoat of the old days"), (""), (random integer between 1 and 14)) to {gearDrops2::*}
+	add itemGenerator(Leather Leggings, ("Snapped Splints"), (1), (1), (""), (1), ("Time to revisit the doctor"), (""), (random integer between 1 and 14)) to {gearDrops2::*}
+	
+	
+	add itemGenerator(Wooden Sword, ("Dull Sword"), (1), (2), (""), (1), ("Almost child friendly"), ("Warrior"), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Bow, ("Used Bow"), (1), (2), (""), (1), ("Years of string pulling"), ("Archer"), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Stick, ("Smooth Wand"), (1), (2), (""), (1), ("Sweaty hands"), ("Mage"), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Wooden Axe, ("Blunt Axe"), (1), (2), (""), (1), ("It's still usable"), ("Shaman"), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Leather Helmet, ("Old Cap"), (1), (2), (""), (1), ("For the 90's kids"), (""), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Leather Chestplate, ("Faded Garment"), (1), (2), (""), (1), ("Next level peasantry"), (""), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Leather Leggings, ("Gray Slacks"), (1), (2), (""), (1), ("Is the color right?"), (""), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Leather Boots, ("Old Boots"), (1), (2), (""), (1), ("It's humid in here"), (""), (random integer between 16 and 24)) to {gearDrops3::*}
+	wait 1 tick
+	add itemGenerator(Wooden Sword, ("Battle-worn Sword"), (1), (2), (""), (1), ("Worn down through many wars"), ("Warrior"), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Bow, ("Old Piercer"), (1), (2), (""), (1), ("A common gangster name for it's day"), ("Archer"), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Stick, ("Dead-Man's Staff"), (1), (2), (""), (1), ("They said it would be difficult to pry it away"), ("Mage"), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Wooden Axe, ("Peasant's Hatchet"), (1), (2), (""), (1), ("Ol' reliable"), ("Shaman"), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Leather Helmet, ("Old Man's Beret"), (1), (2), (""), (1), ("My grandfather wore this"), (""), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Leather Chestplate, ("Leather Jerkin"), (1), (2), (""), (1), ("Fashionable for the elderly"), (""), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Leather Leggings, ("Brown Trowsers"), (1), (2), (""), (1), ("Quite snazzy!"), (""), (random integer between 16 and 24)) to {gearDrops3::*}
+	add itemGenerator(Leather Boots, ("Leather Trekkers"), (1), (2), (""), (1), ("For the toughest travellers"), (""), (random integer between 16 and 24)) to {gearDrops3::*}
+	
+	
+	add itemGenerator(Wooden Sword, ("Whiddled Cedar"), (1), (3), (""), (1), ("Outdoor wood!"), ("Warrior"), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Bow, ("Wooden Bow"), (1), (3), (""), (1), ("A proper bow"), ("Archer"), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Stick, ("Oak Staff"), (1), (3), (""), (1), ("Put the stick back!"), ("Mage"), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Wooden Axe, ("Wooden Club"), (1), (3), (""), (1), ("OOGA BOOGA"), ("Shaman"), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Leather Helmet, ("Wolf Scalp"), (1), (3), (""), (1), ("I smell something"), (""), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Leather Chestplate, ("Deer Pelt"), (1), (3), (""), (1), ("Haven't cleaned it"), (""), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Leather Leggings, ("Hide Leggings"), (1), (3), (""), (1), ("I feel like a deer"), (""), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Leather Boots, ("Cloth Trackers"), (1), (3), (""), (1), ("Nice and comfy"), (""), (random integer between 24 and 34)) to {gearDrops4::*}
+	wait 1 tick
+	add itemGenerator(Wooden Sword, ("Sharpened Dagger"), (1), (3), (""), (1), ("Small stabby stabby"), ("Warrior"), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Bow, ("Sideways Crossbow"), (1), (3), (""), (1), ("Isn't this just a regular bow?"), ("Archer"), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Stick , ("Dark Oak Staff "), (1), (3), (""), (1), ("Slightly sturdier than the other one! "), ("Mage"), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Stone Shovel , ("Big Rock on a Stick "), (1), (3), (""), (1), ("Uhh, it could work as a mace? "), ("Shaman"), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Leather Helmet , ("Cloth Hood "), (1), (3), (""), (1), ("A very basic hood "), (""), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Leather Chestplate , ("Cloth Cape"), (1), (3), (""), (1), ("No need for armor!"), (""), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Leather Leggings, ("Toughened Legskins"), (1), (3), (""), (1), ("What did you kill?"), (""), (random integer between 24 and 34)) to {gearDrops4::*}
+	add itemGenerator(Leather Boots, ("Deer Hooves"), (1), (1), (""), (3), ("Run like a deer :D"), (""), (random integer between 24 and 34)) to {gearDrops4::*}
+	
+	
+	add itemGenerator(Iron Sword, ("Scottish Claymore"), (1), (4), (""), (1), ("The classic sword"), ("Warrior"), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Bow, ("Long Bow"), (1), (4), (""), (1), ("How do I carry this?"), ("Archer"), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Stick, ("Iron-Head Staff"), (1), (4), (""), (1), ("It's like a heavy club"), ("Mage"), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Iron Shovel, ("Iron Mace"), (1), (4), (""), (1), ("This deals damage!"), ("Shaman"), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Iron Helmet, ("Iron Helmet"), (1), (4), (""), (1), ("It gets stuffy in here"), (""), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Chainmail Chestplate, ("Chainmail"), (1), (4), (""), (1), ("All linked up"), (""), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Iron Leggings, ("Steel Greeves"), (1), (4), (""), (1), ("No one can hurt me!"), (""), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Iron Boots, ("Clunky Sabatons"), (1), (4), (""), (1), ("Clonk Clonk Clonk"), (""), (random integer between 34 and 46)) to {gearDrops5::*}
+	wait 1 tick
+	add itemGenerator(Iron Sword , ("Long Sword "), (1), (4), (""), (1), ("That one the knights always use "), ("Warrior"), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Bow, ("Reinforced Bow"), (1), (4), (""), (1), ("Pierce through thick armor"), ("Archer"), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Stick, ("Ember Scepter"), (1), (4), (""), (1), ("The flames burn bright!"), ("Mage"), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Iron Axe, ("Copper Axe"), (1), (4), (""), (1), ("Cut your enemies to pieces"), ("Shaman"), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Iron Helmet, ("Panoply Topper"), (1), (4), (""), (1), ("Hard to get out"), (""), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Iron Chestplate, ("Panoply Plate"), (1), (4), (""), (1), ("Stronger then ever"), (""), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Iron Leggings, ("Panoply Stockings"), (1), (4), (""), (1), ("Knights protection"), (""), (random integer between 34 and 46)) to {gearDrops5::*}
+	add itemGenerator(Iron Boots, ("Panoply Boot"), (1), (4), (""), (1), ("Protect and serve!"), (""), (random integer between 34 and 46)) to {gearDrops5::*}
+
+
+	add itemGenerator(Iron Sword, ("Glowing Molten Sword"), (1), (5), (""), (1), ("The sword glows with the ambience of burning heat"), ("Warrior"), (random integer between 46 and 54)) to {gearDrops6::*}
+	add itemGenerator(Bow, ("Napalm Arrows"), (1), (5), (""), (1), ("The arrows flown by this bow ignite with" and "the psychotic fire of Napalm"), ("Archer"), (random integer between 46 and 54)) to {gearDrops6::*}
+	add itemGenerator(Stick, ("Fireball Flinger"), (1), (5), (""), (1), ("Shooting star? No, that's just me my bad"), ("Mage"), (random integer between 46 and 54)) to {gearDrops6::*}
+	add itemGenerator(Wooden Axe, ("Spirit Chastiefol"), (1), (5), (""), (1), ("Gifted by the fairies of the forest," and "this weapon grants the user incredible magic power"), ("Shaman"), (random integer between 46 and 54)) to {gearDrops6::*}
+	add itemGenerator(skull of ("apexwolf98" parsed as an offline player), ("Helm of the Flame Spirits"), (1), (5), (""), (1), ("This helmet was forged with the cremated remains of once vibrant forests"), (""), (random integer between 46 and 54)) to {gearDrops6::*}
+	wait 1 tick
+	set {_item} to itemGenerator(Leather Chestplate, ("Garment of the Flame Spirits"), (1), (5), (""), (1), ("In a ritual, flame spirits gathered in a circle" and "and poured their life force into the making of this garment"), (""), (random integer between 46 and 54))
+	dye {_item} red
+	add {_item} to {gearDrops6::*}
+	
+	set {_item} to itemGenerator(Leather Leggings, ("Platelegs of the Flame Spirits"), (1), (5), (""), (1), ("Forged with living fire, and fueled" and "by torrent hatred"), (""), (random integer between 46 and 54))
+	dye {_item} red
+	add {_item} to {gearDrops6::*}
+	
+	set {_item} to itemGenerator(Leather Boots, ("Sabatons of the Flame Spirits"), (1), (5), (""), (1), ("You will feel the curl of withering plants under" and "your feet as they burn"), (""), (random integer between 46 and 54))
+	dye {_item} red
+	add {_item} to {gearDrops6::*}
+
+		
+	add itemGenerator(Iron Sword , ("Frost-Bit Blade"), (1), (5), (""), (1), ("Drops the temperature of the air" and "everywhere you go"), ("Warrior"), (random integer between 46 and 54)) to {gearDrops6::*}
+	add itemGenerator(Bow , ("Bow of Cryogenesis"), (1), (5), (""), (1), ("Birds will freeze and drop like flies" and "as the arrows fly by"), ("Archer"), (random integer between 46 and 54)) to {gearDrops6::*}
+	add itemGenerator(Stick , ("Shard of Glaciers"), (1), (5), (""), (1), ("The power of a mountain slide is on your side"), ("Mage"), (random integer between 46 and 54)) to {gearDrops6::*}
+	add itemGenerator(Wooden Axe, ("Nature's Wrath"), (1), (5), (""), (1), ("Oh that person doesn't recycle?" and "Just use this"), ("Shaman"), (random integer between 46 and 54)) to {gearDrops6::*}
+	add itemGenerator(skull of ("Icewavezero" parsed as an offline player), ("Freezing Shroud of Giants"), (1), (1), (""), (1), ("The giants of the nordic realm crafted this shroud with shards of ice magic"), (""), (random integer between 46 and 54)) to {gearDrops6::*}
+	wait 1 tick
+	set {_item} to itemGenerator(Leather Chestplate, ("Freezing Plates of Giants"), (1), (5), (""), (1), ("The ring of hammers pounding on these frost-crusted" and "plates can still be felt"), (""), (random integer between 46 and 54))
+	dye {_item} blue
+	add {_item} to {gearDrops6::*}
+	
+	set {_item} to itemGenerator(Leather Leggings, ("Freezing Platelegs of Giants"), (1), (5), (""), (1), ("The frost giants blessed these sheets" and "of metal with sub-zero frost"), (""), (random integer between 46 and 54))
+	dye {_item} blue
+	add {_item} to {gearDrops6::*}
+	
+	set {_item} to itemGenerator(Leather Boots, ("Freezing Sabatons of Giants"), (1), (5), (""), (1), ("Did somethnig shatter? Oh, it's" and "just the concrete under you"), (""), (random integer between 46 and 54))
+	dye {_item} blue
+	add {_item} to {gearDrops6::*}
+
+
+	add itemGenerator(Wooden Sword, ("Imbued Blade"), (1), (6), (""), (1), ("The last thing they'll see"), ("Warrior"), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Bow, ("Enchanted Bow"), (1), (6), (""), (1), ("Glowing purple with power"), ("Archer"), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Stick, ("Grimwood Wand"), (1), (6), (""), (1), ("From the depths of the dark forests"), ("Mage"), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Axe, ("Blood Bone Axe"), (1), (6), (""), (1), ("Imbued with the blood of victims"), ("Shaman"), (random integer between 54 and 64)) to {gearDrops7::*}
+	wait 1 tick
+	set {_item} to itemGenerator(Leather Helmet, ("Bone Crest"), (1), (6), (""), (1), ("Ancient DNA flows through you"), (""), (random integer between 54 and 64))
+	dye {_item} white
+	add {_item} to {gearDrops7::*}
+	
+	set {_item} to itemGenerator(Leather Chestplate, ("Exoskeleton"), (1), (6), (""), (1), ("I'm just big-boned"), (""), (random integer between 54 and 64))
+	dye {_item} white
+	add {_item} to {gearDrops7::*}
+	
+	set {_item} to itemGenerator(Leather Leggings, ("Mammoth Bones"), (1), (6), (""), (1), ("Manny was the last mammoth"), (""), (random integer between 54 and 64))
+	dye {_item} white
+	add {_item} to {gearDrops7::*}
+	
+	set {_item} to itemGenerator(Leather Boots, ("Bone Clackers"), (1), (6), (""), (1), ("Protect your actual bones"), (""), (random integer between 54 and 64))
+	dye {_item} white
+	add {_item} to {gearDrops7::*}
+
+	
+	add itemGenerator(Stone Sword, ("Charming Sword"), (1), (6), (""), (1), ("Created from pure magic"), ("Warrior"), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Bow, ("Warsong"), (1), (6), (""), (1), ("Do I hear music? Oh, it's just the arrows"), ("Archer"), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Stick, ("Branch of the World Tree"), (1), (6), (""), (1), ("When the world tree started dying, a branch broke off." and "It's raw power still swims inside"), ("Mage"), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Blaze Rod, ("Hellfire Mace"), (1), (6), (""), (1), ("Glowing with power!"), ("Shaman"), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Leather Helmet, ("Aegis Head Gear"), (1), (6), (""), (1), ("Quite small for a human, but then again it" and "wasn't designed for one"), (""), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Iron Chestplate, ("Aegis Chestplate"), (1), (6), (""), (1), ("Magically sealed by wizards from the sky" and "villages to be unscratchable"), (""), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Iron Leggings, ("Aegis Platelegs"), (1), (6), (""), (1), ("One day, bulk of this armor fell from" and "the skies. They glow bright yellow"), (""), (random integer between 54 and 64)) to {gearDrops7::*}
+	add itemGenerator(Gold Boots, ("Aegis Plated Boots"), (1), (6), (""), (1), ("Surprisingly light, but as hard as" and "the wizards willed it to be"), (""), (random integer between 54 and 64)) to {gearDrops7::*}
+
+
+	add itemGenerator(Gold Sword, ("Baptized Blade"), (1), (7), (""), (1), ("Cooled in Holy Water"), ("Warrior"), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Bow , ("Sun Rays"), (1), (7), (""), (1), ("The arrows penetrate the clouds above, allowing light to break through"), ("Archer"), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Stick, ("Lightbringer"), (1), (7), (""), (1), ("A glorified sparkler, if you may"), ("Mage"), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Golden Axe, ("Paladins Pounder"), (1), (7), (""), (1), ("A relic of the Earth and Sky realm's alliance." and "A powerful force to be reckoned with"), ("Shaman"), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Gold Helmet, ("Angel Hair"), (1), (7), (""), (1), ("No, not the pasta"), (""), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Gold Chestplate, ("Angel Wings"), (1), (7), (""), (1), ("Who said something about an airplane?"), (""), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Gold Leggings, ("Battle Angel Leggings"), (1), (7), (""), (1), ("These pants are never coming off"), (""), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Gold Boots, ("Angel Sandals"), (1), (7), (""), (1), ("The cleanest shoes on the market"), (""), (random integer between 64 and 74)) to {gearDrops8::*}
+	wait 1 tick
+	add itemGenerator(iron sword, ("Charlemagne�s Durandal"), (1), (7), (""), (1), ("Given to him by an Angel"), ("Warrior"), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Bow , ("Dawn"), (1), (7), (""), (1), ("It was said that the arrows fired from this bow" and "are our sunsets and day breaks"), ("Archer"), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Stick, ("Staff of Saints"), (1), (7), (""), (1), ("Saints did not belong to any of the four" and "known realms. It was never explained"), ("Mage"), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Golden shovel, ("Cleaver of Yang"), (1), (7), (""), (1), ("The good of the universe"), ("Shaman"), (68)) to {gearDrops8::*}
+	add itemGenerator(Gold Helmet, ("Deity's Visionaries"), (1), (7), (""), (1), ("The foresight of a god!"), (""), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Gold Chestplate, ("Deity's Prescence"), (1), (7), (""), (1), ("Don't come too close, I'm hot"), (""), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Gold Leggings, ("Deity's White Cloth"), (1), (7), (""), (1), ("The clean white cloth of greek gods"), (""), (random integer between 64 and 74)) to {gearDrops8::*}
+	add itemGenerator(Gold Boots, ("Sunwalkers"), (1), (7), (""), (1), ("Feet burning? Unheard of!"), (""), (random integer between 64 and 74)) to {gearDrops8::*}
+				
+				
+	add itemGenerator(Stone Sword, ("Demon Dagger"), (1), (8), (""), (1), ("A dagger that sends all victims to the depths of Hell"), ("Warrior"), (random integer between 74 and 84)) to {gearDrops9::*}
+	add itemGenerator(Bow, ("Devil's Cross"), (1), (8), (""), (1), ("Satin's pride and joy"), ("Archer"), (random integer between 74 and 84)) to {gearDrops9::*}
+	add itemGenerator(Stick, ("Shadow Weaver"), (1), (8), (""), (1), ("Are you scared of Aracnids? They're everywhere"), ("Mage"), (random integer between 74 and 84)) to {gearDrops9::*}
+	add itemGenerator(Stone Sword, ("Shadow-Forged Battleaxe"), (1), (8), (""), (1), ("Cut Light Into Pieces"), ("Shaman"), (random integer between 74 and 84)) to {gearDrops9::*}
+	wait 1 tick
+	set {_item} to itemGenerator(Leather Cap, ("Corrupt Casque "), (1), (8), (""), (1), ("Keeps You Hiden"), (""), (random integer between 74 and 84))
+	dye {_item} black
+	add {_item} to {gearDrops9::*}
+	
+	set {_item} to itemGenerator(Leather Chestplate, ("Corrupted Plate"), (1), (8), (""), (1), ("Wear it to harness catastrophic power, don't worry"), (""), (random integer between 74 and 84))
+	dye {_item} black
+	add {_item} to {gearDrops9::*}
+	
+	set {_item} to itemGenerator(Leather Leggings, ("Corrupted Leggings"), (1), (8), (""), (1), ("Leggings of the corrupted souls"), (""), (random integer between 74 and 84))
+	dye {_item} black
+	add {_item} to {gearDrops9::*}
+	
+	set {_item} to itemGenerator(Leather Boots, ("Corrupted Boots"), (1), (8), (""), (1), ("With each step, you kill a life"), (""), (random integer between 74 and 84))
+	dye {_item} black
+	add {_item} to {gearDrops9::*}
+
+	
+	add itemGenerator(Stone Sword, ("Soul Reaper"), (1), (8), (""), (1), ("Passed down through millenia of death and despair"), ("Warrior"), (random integer between 74 and 84)) to {gearDrops9::*}
+	add itemGenerator(Bow, ("Eternal Flames"), (1), (8), (""), (1), ("You should never have wished to meet me"), ("Archer"), (random integer between 74 and 84)) to {gearDrops9::*}
+	add itemGenerator(Stick, ("Staff of Devils"), (1), (8), (""), (1), ("The devils originated from the depths of the Fire Realm." and "They were so evil that the menacing fire realm itself" and "had to part ways"), ("Mage"), (random integer between 74 and 84)) to {gearDrops9::*}
+	add itemGenerator(Stone Axe, ("Hatchet of Yin"), (1), (8), (""), (1), ("The evil of the universe"), ("Shaman"), (random integer between 74 and 84)) to {gearDrops9::*}
+	wait 1 tick
+	set {_item} to itemGenerator(Leather Cap, ("Devil's Horns"), (1), (8), (""), (1), ("Pure hatred glows within it's core"), (""), (random integer between 74 and 84))
+	dye {_item} black
+	add {_item} to {gearDrops9::*}
+	
+	set {_item} to itemGenerator(Leather Chestplate, ("Reaper's Plate"), (1), (8), (""), (1), ("A forged masterpiece of the Reaper's cloaks." and "It lacks only it's cold touch"), (""), (random integer between 74 and 84))
+	dye {_item} black
+	add {_item} to {gearDrops9::*}
+	
+	set {_item} to itemGenerator(Leather Leggings, ("Reaper's Cloak"), (1), (8), (""), (1), ("The Reaper is known to be one of the most brutal" and "murderers of the old Fire Realm"), (""), (random integer between 74 and 84))
+	dye {_item} black
+	add {_item} to {gearDrops9::*}
+	
+	set {_item} to itemGenerator(Leather Boots, ("Dead Weights"), (1), (8), (""), (1), ("Teeming with power, yet heavy with miserable souls" and "it's creators forced into"), (""), (random integer between 74 and 84))
+	dye {_item} black
+	add {_item} to {gearDrops9::*}
+	
+	
+	add itemGenerator(Diamond Sword, ("Light Saber"), (1), (9), (""), (1), ("A beam of intense light, totally original"), ("Warrior"), (random integer between 84 and 94)) to {gearDrops10::*}
+	add itemGenerator(Bow, ("Omega Blaster Rifle"), (1), (9), (""), (1), ("You can't miss with this thing"), ("Archer"), (random integer between 84 and 94)) to {gearDrops10::*}
+	add itemGenerator(Stick, ("High Skies Staff"), (1), (9), (""), (1), ("The Sky Village used this staff to intercept the great" and "comet sent from the Saints in an effort to" and "erase the Devils"), ("Mage"), (random integer between 84 and 94)) to {gearDrops10::*}
+	add itemGenerator(Iron Axe, ("Stormbreaker"), (1), (9), (""), (1), ("Made in a furnace powered by a neutron star"), ("Shaman"), (random integer between 84 and 94)) to {gearDrops10::*}
+	wait 1 tick
+	set {_item} to itemGenerator(Leather Cap, ("Nebula Helm"), (1), (9), (""), (1), ("Don't I look fabulous?"), (""), (random integer between 84 and 94))
+	dye {_item} purple
+	add {_item} to {gearDrops10::*}
+	
+	set {_item} to itemGenerator(Leather Chestplate, ("Nebula Plates"), (1), (9), (""), (1), ("How did I manage to get my hands on this?"), (""), (random integer between 84 and 94))
+	dye {_item} purple
+	add {_item} to {gearDrops10::*}
+	
+	set {_item} to itemGenerator(Leather Leggings, ("Nebula Greaves"), (1), (9), (""), (1), ("Shin protection, is the best protection." and "Especially when it's made of star dust"), (""), (random integer between 84 and 94))
+	dye {_item} purple
+	add {_item} to {gearDrops10::*}
+	
+	set {_item} to itemGenerator(Leather Boots, ("Nebula Boots"), (1), (9), (""), (1), ("Step on stars with every step"), (""), (random integer between 84 and 94))
+	dye {_item} purple
+	add {_item} to {gearDrops10::*}
+	
+	add itemGenerator(Netherite Sword, ("Blade of Dark Matter"), (1), (9), (""), (1), ("Only the wielder is protected, anything else" and "this blade touches materializes to atoms"), ("Warrior"), (random integer between 84 and 94)) to {gearDrops10::*}
+	add itemGenerator(Bow, ("Omega Ray"), (1), (9), (""), (1), ("Death laser, you know the meme"), ("Archer"), (random integer between 84 and 94)) to {gearDrops10::*}
+	add itemGenerator(Stick, ("Tiny Dipper"), (1), (9), (""), (1), ("There is big dipper, little dipper, but no one" and "knows about tiny dipper"), ("Mage"), (random integer between 84 and 94)) to {gearDrops10::*}
+	add itemGenerator(Diamond axe, ("Cosmic Catastrophy"), (1), (9), (""), (1), ("A vial of gaseous chaos brewed from" and "the explosion of a star"), ("Shaman"), (random integer between 84 and 94)) to {gearDrops10::*}
+	wait 1 tick
+	set {_item} to itemGenerator(Leather Helmet, ("Celestial Headdress"), (1), (9), (""), (1), ("You're now a god amongst gods"), (""), (random integer between 84 and 94))
+	dye {_item} cyan
+	add {_item} to {gearDrops10::*}
+	
+	set {_item} to itemGenerator(Leather Chestplate, ("Celestial Aura"), (1), (9), (""), (1), ("Feast your eyes on my brilliance!"), (""), (random integer between 84 and 94))
+	dye {_item} cyan
+	add {_item} to {gearDrops10::*}
+	
+	set {_item} to itemGenerator(Leather Leggings, ("Ceslestial Stallions"), (1), (9), (""), (1), ("Why ride a horse when you can become one"), (""), (random integer between 84 and 94))
+	dye {_item} cyan
+	add {_item} to {gearDrops10::*}
+	
+	set {_item} to itemGenerator(Leather Boots, ("Celestial Hooves"), (1), (9), (""), (1), ("It's like walking on stars"), (""), (random integer between 84 and 94))
+	dye {_item} cyan
+	add {_item} to {gearDrops10::*}

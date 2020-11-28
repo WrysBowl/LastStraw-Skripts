@@ -167,27 +167,27 @@ function itemGenerator(item: item, name: string, basePercent: number, baseMultip
 					set {_critical} to 100
 		if {_luck} is set:
 			add 1 to {_loreLine}
-			set {_value} to ({_luck}/10)
+			set {_value} to ({_luck}/25)
 			set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%   &7%{_value}%%% &7Luck &a♧ +"
 			add "{Luck:%{_value}%}" to {_itemDrop}'s nbt
 		else if {_HPRegen} is set:
 			add 1 to {_loreLine}
-			set {_value} to ({_HPRegen}/20)
+			set {_value} to ({_HPRegen}/30)
 			set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%   &7%{_value}% &7HP/5 sec &c❣ +"
 			add "{HPRegen:%{_value}%}" to {_itemDrop}'s nbt
 		else if {_MPRegen} is set:
 			add 1 to {_loreLine}
-			set {_value} to ({_MPRegen}/20)
+			set {_value} to ({_MPRegen}/30)
 			set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%   &7%{_value}% &7MP/5 sec &b☼ +"
 			add "{MPRegen:%{_value}%}" to {_itemDrop}'s nbt
 		else if {_block} is set:
 			add 1 to {_loreLine}
-			set {_value} to ({_block}/20)
+			set {_value} to ({_block}/30)
 			set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%   &7%{_value}%%% &7Block &9🛡 +"
 			add "{Block:%{_value}%}" to {_itemDrop}'s nbt
 		else if {_critical} is set:
 			add 1 to {_loreLine}
-			set {_value} to ({_critical}/20)
+			set {_value} to ({_critical}/25)
 			set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%   &7%{_value}%%% &7Crit Chance &9✸ +"
 			add "{Critical:%{_value}%}" to {_itemDrop}'s nbt
 	if {_stats::*} is not "":
@@ -214,7 +214,7 @@ function itemGenerator(item: item, name: string, basePercent: number, baseMultip
 	add 1 to {_loreLine}
 	#set line {_loreLine} of {_itemDrop}'s lore to "%{_prefixColor}%&8———————————————"
 	add 1 to {_loreLine}
-	set {_PickPrice} to round(({_levelReq}*{_randomPercentage})/5)
+	set {_PickPrice} to rounded up (({_levelReq}*{_randomPercentage})/5)
 	set line {_loreLine} of {_itemDrop}'s lore to "&e %{_PickPrice}% ⛃"
 	add 1 to {_loreLine}
 	set {_type::*} to ("%{_item}'s type%") split at " "

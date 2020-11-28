@@ -1,17 +1,18 @@
 command /earth:
+	permission: op
 	trigger:
 		loop blocks in radius 3 of player where [(input != air)]:
 			spawn falling block of loop-block at block 4 meters above loop-block where [input = air]
 			set {_s} to last spawned falling block
 			add "{DropItem:0b}" to {_s}'s nbt
 			push {_s} in direction of player at speed 2
-			
-		
+
 on block land:
 	cancel event
 	kill event-entity
 	
 command /slimeMobs:
+	permission: op
 	trigger:
 		loop 3 times:
 			if loop-value is 1:
@@ -332,28 +333,6 @@ on inventory click:
 		TradeGUIIndexSlot(player, index of event-slot, click type)
 
 
-command /lava [<item>]:
-	trigger:
-		set {SmartTestingLEL} to false
-		loop 100 times:
-			if {SmartTestingLEL} is true:
-				exit 1 loop
-			loop blocks in radius 3 of player where [(input != air)]:
-				make player see loop-block as arg-1
-			wait 3 ticks
-
-
-command /lava2 [<item>]:
-	trigger:
-		loop blocks in radius 10 of player where [(input != air)]:
-			make player see loop-block as arg-1
-
 
 on load:
 	set {SmartTestingLEL} to true
-
-
-
-
-
-

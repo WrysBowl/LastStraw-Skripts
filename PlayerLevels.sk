@@ -16,6 +16,7 @@ function levelIncrease(exp: number, player: player):
 	if ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
 		while ({exp::%{_uuid}%::%{_profile}%}+{_exp}) >= {_levelCeiling}:
 			set {exp::%{_uuid}%::%{_profile}%} to (({_exp}+{exp::%{_uuid}%::%{_profile}%}) - {_levelCeiling})
+			set {_exp} to (({exp::%{_uuid}%::%{_profile}%}-{_exp}) - {_levelCeiling})
 			add 1 to {level::%{_uuid}%::%{_profile}%}
 			add 3 to {statPoints::%{_uuid}%::%{_profile}%}
 			send title "&5Leveled Up!" with subtitle "&dYou are now level %{level::%{_uuid}%::%{_profile}%}%" to {_player} for 1 seconds
@@ -38,6 +39,13 @@ function levelIncrease(exp: number, player: player):
 	else:
 		set {_player}'s level to {level::%{_uuid}%::%{_profile}%}
 		set {_player}'s level progress to ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})
+
+
+command /xpgive [<number>]:
+	permission: staff
+	trigger:
+		levelIncrease(arg-1, player)
+
 	
 command /level:
 	trigger:
@@ -84,12 +92,3 @@ function levelIncreaseParty(exp: number, player: player):
 		set metadata tag "interruptActionBar" of {_player} to true
 		send action bar "&5+ %{_exp}% EXP" to {_player}
 		set {_player}'s level progress to ({exp::%{_uuid}%::%{_profile}%}/{_levelCeiling})
-    
-command /resetEXP:
-	trigger:
-		set {_profile} to (metadata tag "profile" of player)
-		delete {exp::%player's uuid%::%{_profile}%}
-		set {level::%player's uuid%::%{_profile}%} to 1
-		send "&5EXP has been reset"
-		set player's level to 1
-		set player's level progress to 0

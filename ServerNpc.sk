@@ -1,0 +1,217 @@
+on right click on player:
+	if clicked player's name is "&6Charlie":
+		CharlieDialogue(player)
+	else if clicked player's name is "&6Freddy":
+		FreddyDialogue(player)
+	else if clicked player's name is "&6Alfred":
+		AlfredDialogue(player)
+	else if clicked player's name is "&6Devon":
+		DevonDialogue(player)
+	else if clicked player's name is "&6Samuel":
+		SamuelDialogue(player)
+	else if clicked player's name is "&6Selena":
+		SelenaDialogue(player)
+	else if clicked player's name is "&6Tim":
+		TimDialogue(player)
+	else if clicked player's name is "&6Sydney":
+		SydneyDialogue(player)
+
+command /pageNum2 [<integer>] [<text>] [<text>]:
+	trigger:
+		if arg-2 is "SSC": #Code to allow access to changing page number
+			set {_pageNum} to (metadata tag "pageNumber" of player) ? 1
+			set {_page} to {_pageNum}+(arg-1)
+			if {_page} > 0:
+				if arg-3 is "Charlie":
+					if {_page} is between 1 and 6:
+						set metadata tag "pageNumber" of player to {_page}
+						CharlieDialogue(player)
+				else if arg-3 is "Freddy":
+					if {_page} is between 1 and 5:
+						set metadata tag "pageNumber" of player to {_page}
+						FreddyDialogue(player)
+				else if arg-3 is "Alfred":
+					if {_page} is between 1 and 5:
+						set metadata tag "pageNumber" of player to {_page}
+						AlfredDialogue(player)
+				else if arg-3 is "Devon":
+					if {_page} is between 1 and 5:
+						set metadata tag "pageNumber" of player to {_page}
+						DevonDialogue(player)
+				else if arg-3 is "Samuel":
+					if {_page} is between 1 and 5:
+						set metadata tag "pageNumber" of player to {_page}
+						SamuelDialogue(player)
+				else if arg-3 is "Selena":
+					if {_page} is between 1 and 5:
+						set metadata tag "pageNumber" of player to {_page}
+						SelenaDialogue(player)
+				else if arg-3 is "Tim":
+					if {_page} is between 1 and 5:
+						set metadata tag "pageNumber" of player to {_page}
+						TimDialogue(player)
+				else if arg-3 is "Sydney":
+					if {_page} is between 1 and 5:
+						set metadata tag "pageNumber" of player to {_page}
+						SydneyDialogue(player)
+			else:
+				clear metadata tag "pageNumber" of player
+
+function CharlieDialogue(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lCharlie the Peasant" to {_player}
+	if {_page} is 1:
+		send "&6Charlie: &7I didn't ask for much this year." to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum2 1 SSC Charlie>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Charlie: &7Maybe I could do with an extra bag full of bread, maybe less harassment too..." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Charlie>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Charlie>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Charlie: &7The only job around here is to farm, but there are slimes EVERYWHERE." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Charlie>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Charlie>&aNext >><reset>" to {_player}
+	else if {_page} is 4:
+		send "&6Charlie: &7I've been telling people that I CAN help fight them!" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Charlie>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Charlie>&aNext >><reset>" to {_player}
+	else if {_page} is 5:
+		send "&6Charlie: &7We shouldn't need the Knights, we can live without their help!" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Charlie>&c<< Back<reset>          <tooltip:&aFinish><command:/pageNum2 1 SSC Charlie>&aFinish >><reset>" to {_player}
+	else if {_page} is 6:
+		send "&7&oCharlie balls his fists in anger" to {_player}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
+
+function FreddyDialogue(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lFarmer Freddy" to {_player}
+	if {_page} is 1:
+		send "&6Freddy: &7Hey there sir, just taking a break from the fields." to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum2 1 SSC Freddy>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Freddy: &7Oh you're one of them peasants who want to go out and see the big world, eh?" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Freddy>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Freddy>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Freddy: &7Your weapon there will do little to nothing against the knights on the other side of Bandit Hill." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Freddy>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Freddy>&aNext >><reset>" to {_player}
+	else if {_page} is 4:
+		send "&6Freddy: &7Do me a favor and don't get your hands in the mess of this world, stick to farming." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Freddy>&c<< Back<reset>          <tooltip:&aFinish><command:/pageNum2 1 SSC Freddy>&aFinish >><reset>" to {_player}
+	else if {_page} is 5:
+		send "&6Freddy: &7Kapish? I will take it that as a yes." to {_player}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
+	
+function AlfredDialogue(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lElder Alfred" to {_player}
+	if {_page} is 1:
+		send "&6Alfred: &7My oh my, here comes me another bugger." to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum2 1 SSC Alfred>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Alfred: &7I'm an old folk, but I isn't stupid enough to stray from the farming life." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Alfred>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Alfred>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Alfred: &7There's only a few of us left, maybe you could look after the wheat fields when I finally die." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Alfred>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Alfred>&aNext >><reset>" to {_player}
+	else if {_page} is 4:
+		send "&6Alfred: &7I must say, you got the looks of determination in ye, maybe you could expand me farm too!" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Alfred>&c<< Back<reset>          <tooltip:&aFinish><command:/pageNum2 1 SSC Alfred>&aFinish >><reset>" to {_player}
+	else if {_page} is 5:
+		send "&6Alfred: &7Is that a yes? You'll need to speak louder... hello?" to {_player}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
+
+function DevonDialogue(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lDevon the Miner" to {_player}
+	if {_page} is 1:
+		send "&6Devon: &7Don't mind me, I'm new to the job. The name's Devon." to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum2 1 SSC Devon>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Devon: &7The Knights offered a mining job for huge bags of bread. I could feed myself for a winter on that!" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Devon>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Devon>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Devon: &7Yeah, I could be fighting out there like you, but I like the more simple things. Like those Crusaders." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Devon>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Devon>&aNext >><reset>" to {_player}
+	else if {_page} is 4:
+		send "&6Devon: &7They're on the other side of Bandit Hill. And the Knights go in to protect them from the slimes for their bread. How rich is that!" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Devon>&c<< Back<reset>          <tooltip:&aFinish><command:/pageNum2 1 SSC Devon>&aFinish >><reset>" to {_player}
+	else if {_page} is 5:
+		send "&6Devon: &7Well anyways, I need to get back to mining. I'm starting to get hungry and I want my bread soon." to {_player}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
+	
+function SamuelDialogue(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lWarrior Samuel" to {_player}
+	if {_page} is 1:
+		send "&6Samuel: &7Ready for the next looting raid?" to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum2 1 SSC Samuel>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Samuel: &7The Knights and I like to go to the Crusader's farms and get some of their bread. They make a lot of it!" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Samuel>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Samuel>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Samuel: &7It's almost like they think we're just being nice by protecting their fields, but level three slimes are nothing!" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Samuel>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Samuel>&aNext >><reset>" to {_player}
+	else if {_page} is 4:
+		send "&6Samuel: &7Listen here, Crusaders are ugly and disgusting, they smell too." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Samuel>&c<< Back<reset>          <tooltip:&aFinish><command:/pageNum2 1 SSC Samuel>&aFinish >><reset>" to {_player}
+	else if {_page} is 5:
+		send "&6Samuel: &7Don't be like those critters." to {_player}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
+	
+function SelenaDialogue(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lArcher Selena" to {_player}
+	if {_page} is 1:
+		send "&6Selena: &7Hi there! My name's Selena, and you?" to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum2 1 SSC Selena>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Selena: &7What a lovely name. Hey, have you heard of the waterfalls up north?" to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Selena>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Selena>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Selena: &7I went there once with my party, the waters were beautiful." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Selena>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Selena>&aNext >><reset>" to {_player}
+	else if {_page} is 4:
+		send "&6Selena: &7I heard that if you stick around there long enough, you may see a flashy creature move through the waters." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Selena>&c<< Back<reset>          <tooltip:&aFinish><command:/pageNum2 1 SSC Selena>&aFinish >><reset>" to {_player}
+	else if {_page} is 5:
+		send "&6Selena: &7Some call him Squilliams!" to {_player}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
+	
+function TimDialogue(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lWatering Man Tim" to {_player}
+	if {_page} is 1:
+		send "&6Tim: &7I'm just delivering some water to the crusaders." to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum2 1 SSC Tim>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Tim: &7Yeah I'm from Liberty Village it's quiet a nice living." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Tim>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Tim>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Tim: &7You should take a break from the hustle and bustle, come visit the village some time!" to {_player}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}
+
+function SydneyDialogue(player: player):
+	set {_page} to (metadata tag "pageNumber" of {_player}) ? 1
+	send "%nl%%nl%%nl%" to {_player}
+	send "&6&lFisher Sydney" to {_player}
+	if {_page} is 1:
+		send "&6Sydney: &7Hey there! Want to try fishing?" to {_player}
+		send "%nl%<tooltip:&aRead the next page><command:/pageNum2 1 SSC Sydney>&aNext >><reset>" to {_player}
+	else if {_page} is 2:
+		send "&6Sydney: &7Not so fast! That's my fishing rod, you need to buy your own." to {_player}
+		send "%nl%<tooltip:&cRead the last page><command:/pageNum2 -1 SSC Sydney>&c<< Back<reset>          <tooltip:&aRead the next page><command:/pageNum2 1 SSC Sydney>&aNext >><reset>" to {_player}
+	else if {_page} is 3:
+		send "&6Sydney: &7Go to your shop, there's a chance the fishing rod will show up, it a good investment!" to {_player}
+		clear metadata tag "pageNumber" of {_player}
+	send "%nl%%nl%%nl%" to {_player}

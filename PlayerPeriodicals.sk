@@ -54,6 +54,7 @@ on join:
 
 every 10 minutes:
 	send "&6[Broadcast] &eSaved all inventories of players" to all players
+	clear all armor stands
 	loop all players:
 		profileInv(loop-player,"save")
 	
@@ -64,15 +65,15 @@ function tipsAndTricks():
 	add "<link:https://discord.gg/zBfYEUc>&61. &7Click to join the &6discord!<reset>" to {_tips::*}
 	add "&62. &7Mage wand blasts deal area damage" to {_tips::*}
 	add "&63. &7The Shaman's special healing totem ability can survive for up to 10 minutes" to {_tips::*}
-	add "&64. &7Type /stats to spend stat points you gain every time you level up" to {_tips::*}
+	add "&64. &7Type /stats to spend stat points which you gain every time you level up" to {_tips::*}
 	add "&65. &7Type /skills to edit the position of your skills" to {_tips::*}
 	add "&66. &7Bushes offer shelter from slimes" to {_tips::*}
-	add "&67. &7Killing the enemy king gives your whole team a 5%% increase in their bank account (not your scoreboard balance)" to {_tips::*}
-	add "&68. &7Keep your money safe, make sure to drop them into your enderchest bank vault before going out" to {_tips::*}
-	add "&69. &7Need  place to put your items? Put them in your ender chest at your clan's base" to {_tips::*}
+	add "&67. &7Killing the enemy's king gives your whole team a 20%% increase in their bank account (not your scoreboard balance)" to {_tips::*}
+	add "&68. &7To keep your money safe, deposit your balance into your ender chest bank vault" to {_tips::*}
+	add "&69. &7Need a place to put your items? Put them in your ender chest at your clan's base" to {_tips::*}
 	add "&610. &7Too many trash items? Visit your clan's shop and drop the items into the sell menu. Then click the hopper" to {_tips::*}
-	add "&611. &7After death, the king respawns after 10 minutes" to {_tips::*}
-	add "&612. &7Killing a player grants you 25%% of their scoreboard balance!" to {_tips::*}
+	add "&611. &7The king respawns 10 minutes after it dies" to {_tips::*}
+	add "&612. &7Killing a player awards you 25%% of their scoreboard balance!" to {_tips::*}
 	add "&613. &7You lose 25%% of your scoreboard balance when you die" to {_tips::*}
 	add "&614. &7Type /party invite <player> to create a party with a fellow clan member!" to {_tips::*}
 	add "&615. &7Party members share experience with each other" to {_tips::*}

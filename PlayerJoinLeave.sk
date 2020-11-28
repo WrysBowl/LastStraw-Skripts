@@ -173,12 +173,36 @@ function UpdateRanksFix(player: player):
 		set {_perm} to uncolored {profiles::%{_uuid}%::%{_profile}%}
 		set {_perm} to "nte.%{_perm}%"
 		replace " " in {_perm} with ""
+		set {_prefix::*} to {profiles::%{_uuid}%::%{_profile}%} split at " "
+		set {_color} to join (characters at (integers between 0 and 1) in "%{_prefix::1}%")
+		set {_prefix} to join (characters at (integers between 0 and 2) in "%{_prefix::2}%")
 		if {_player} has permission "staff":
 			set {_perm} to "%{_perm}%.Staff"
 			execute console command "lp user %{_player}% permission set %{_perm}% true"
 			set {_player}'s tablist name to "%colored {_player}'s group% &f%{_player}%"
 		else:
 			execute console command "lp user %{_player}% permission set %{_perm}% true"
+			set {_player}'s tablist name to "%{_color}%[%{_prefix} in uppercase%] &7%{_player}%"
+
+on join:
+	wait 10 ticks
+	send "%nl%%nl%%nl%%nl%%nl%%nl%%nl%%nl%%nl%%nl%"
+	send "&6&lWelcome to Siege%nl%"
+	send "&6Demo Release"
+	send "&eThis is the first release of the server and there are bound to be changes, so please understand that there may be major changes from now until beta release. This can include:"
+	send "&c- Varying types of data resets"
+	send "&a- New items"
+	send "&a- New mobs"
+	send "&a- New bosses"
+	send "&a- New worlds"
+	send "&a- Web store products"
+	send "&a- Voting rewards"
+	send "&a- Lag reduction"
+	send "&a- New features"
+	send "&eThanks for understanding!"
+	send "%nl%%nl%"
+
+
 
 on inventory close:
 	set {_player} to player
@@ -246,11 +270,18 @@ function profileGUIIndexSlot(player: player, slot: object):
 			else:
 				execute console command "lp user %{_player}% permission set %{_perm}% true"
 			profileInv({_player}, "load")
+			remove night vision from {_player}
+			remove speed from {_player}
+			remove jump boost from {_player}
 			wait 1 tick
 			armor({_player}, {_profile})
 			hotbarItems({_player})
 			set metadata tag "health" of {_player} to (hpStat({_player}))
 			UpdateRanksFix({_player})
+			UpdateEffect1({_player})
+			UpdateEffect2({_player})
+			UpdateEffect3({_player})
+			UpdateEffect4({_player})
 		levelIncrease(0, {_player})
 
 

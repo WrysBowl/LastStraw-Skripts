@@ -1,4 +1,13 @@
 on chat:
+	cancel event
+	if {mutetime::%player's uuid%} >= now:
+		message "%nl%&cYou are muted for %difference between {mutetime::%player's uuid%} and now% &cfor the reason: %{mutereason::%player's uuid%}%%nl%"
+		stop
+	else:
+		delete {mutetime::%player's uuid%}
+		delete {mutereason::%player's uuid%}
+	if  {stopmsg.%player%} is 1:
+		stop
 	if message contains ("Motherfucker", "Motherfuckers", "Motherfucks", "Fucker", "Fucked", "Fucks", "Fucking", "Fuck", "Fuckin", "Retard", "Retarded", "Retards", "Rape", "Rapes", "Raped", "Rapist", "Raping", "Fag", "Fags", "Faggot", "Faggots", "Nigga", "Niga", "Niggas", "Nigas", "Nigger", "Niger", "Niggers", "Nigers" or "Nick gurr"):
 		message formatted "&c[Chat Filter] &7%player%: &f%message%" to all players where [input has permission "staffchat"]
 		stop
@@ -42,9 +51,16 @@ on chat:
 		send formatted "&9Party > &b%player%: &f%message%" to all players where [(metadata tag "party" of input) = (metadata tag "party" of player)]
 		stop
 	if metadata tag "staff" of player is true:
-		send formatted "&9Staff > &b%player%: &f%message%" to all players where [input has permission "staff"]
+		send formatted "&2[&aSC&2] &b%player%&f: &f%message%" to all players where [input has permission "staff"]
 		stop
 	send formatted "%{_message}%" to all players
 	#send "[%player's level%] %uncolored player's group% %player%: *%message%*" to channel with id "745822837448769668" with "Siege"
 	#if message contains "[item]":
 		#send last created embed to channel with id "745822837448769668" with "Siege"
+
+
+
+command /msg [<player>] [<text>]:
+	trigger:
+		message "&6%player%&6 > &e%arg-1%&e: %arg-2%" to player
+		message "&6%player%&6 > &e%arg-1%&e: %arg-2%" to arg-1

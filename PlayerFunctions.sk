@@ -294,13 +294,13 @@ function attackStat(player: player) :: number:
 				add "Attack" tag of nbt of {_player}'s tool to {_attack}
 	if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Warrior":
 		set {_stat} to strengthStat({_player}) ? 0
-		return sum({_attack}, ({_stat}*0.4))
+		return sum({_attack}+1, ({_stat}*0.4))
 	else if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Mage":
 		set {_stat} to intelligenceStat({_player}) ? 0
-		return sum({_attack}, ({_stat}*0.4))
+		return sum({_attack}+1, ({_stat}*0.4))
 	else if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Archer":
 		set {_stat} to dexterityStat({_player}) ? 0
-		return sum({_attack}, ({_stat}*0.4))
+		return sum({_attack}+1, ({_stat}*0.4))
 	else if "%{profiles::%{_uuid}%::%{_profile}%}%" contains "Shaman":
 		set {_stat} to wisdomStat({_player}) ? 0
 		return sum({_attack}+1, ({_stat}*0.4))

@@ -12,6 +12,7 @@ on damage of player:
 		set {_Damage} to {_Damage::1}
 		set {_Damage} to {_Damage} parsed as number
 		set damage to {_Damage}
+	set {_dd} to damage
 #^ Gets The Damage Of the Attacker so that arrows do not do arrow dmg it dose the damage of the mob its self
 	if GetTeam(victim) is GetTeam(attacker):
 		cancel event
@@ -20,6 +21,7 @@ on damage of player:
 		set damage to 0
 		cancel event
 	if metadata tag "Grappling_Hook" of victim is set:
+		damage cause is fall
 		cancel event
 		stop
 	if metadata value "NoDamage" of event-projectile is true:
@@ -36,7 +38,7 @@ on damage of player:
 		cancel event
 		stop
 	if victim is in world "Tutorial":
-		attacker is a player
+		attacker is not a piglin
 		cancel event
 		stop
 	if attacker's level < 5:
@@ -63,23 +65,6 @@ on damage of player:
 		attacker is a player
 		cancel event
 		stop
-	if metadata value "Rat" of attacker is true:
-		if metadata value "Owner" of attacker is "%victim%":
-			set damage to 0
-			cancel event
-			stop
-		else:
-			if metadata value "Infected" of victim is true:
-				set damage to 0
-				cancel event
-				stop
-			else:
-				set {_owner} to metadata value "Owner" of attacker
-				BubonicPlagueEffect(victim, "%{_owner}%")
-				kill attacker
-				set damage to 0
-				cancel event
-				stop
 	set {_shooter} to "%metadata tag ""Shooter"" of event-projectile%"
 	set {_shooter} to {_shooter} parsed as player
 	if GetTeam({_shooter}) is GetTeam(victim):
@@ -127,8 +112,10 @@ on damage of player:
 			set victim's health to ((10*(metadata tag "health" of victim))/hpStat(victim))
 			if metadata tag "health" of victim <= 0:
 				set damage to victim's health
-				set {_profile} to metadata tag "profile" of attacker
-				set {balance::%attacker's uuid%::%{_profile}%} to {balance::%attacker's uuid%::%{_profile}%}*1.25
+				if victim is a player:
+					set {_profile} to metadata tag "profile" of attacker
+					set {_profileV} to metadata tag "profile" of victim
+					add {balance::%victim's uuid%::%{_profileV}%}*0.25 to {balance::%attacker's uuid%::%{_profile}%}
 		else:
 			cancel event
 			message "&6You can not attack your own party members!" to attacker
@@ -150,7 +137,7 @@ on death:
 				set {_uuid} to uuid of loop-player
 				set {_profile} to metadata tag "profile" of loop-player
 				set {_V} to {VaultBal::%{_uuid}%::%{_profile}%}
-				set {VaultBal::%{_uuid}%::%{_profile}%} to {VaultBal::%{_uuid}%::%{_profile}%}+({VaultBal::%{_uuid}%::%{_profile}%}*.05)
+				set {VaultBal::%{_uuid}%::%{_profile}%} to {VaultBal::%{_uuid}%::%{_profile}%}+({VaultBal::%{_uuid}%::%{_profile}%}*.2)
 				message "&6You earned $%moneyComma({VaultBal::%{_uuid}%::%{_profile}%}-{_V})%&6!" to loop-player
 		loop 200 times:
 			set {_item} to sunflower named "&1[&9Blue&1]&e&l Gold Coin"
@@ -183,7 +170,7 @@ on death:
 				set {_uuid} to uuid of loop-player
 				set {_profile} to metadata tag "profile" of loop-player
 				set {_V} to {VaultBal::%{_uuid}%::%{_profile}%}
-				set {VaultBal::%{_uuid}%::%{_profile}%} to {VaultBal::%{_uuid}%::%{_profile}%}+({VaultBal::%{_uuid}%::%{_profile}%}*.05)
+				set {VaultBal::%{_uuid}%::%{_profile}%} to {VaultBal::%{_uuid}%::%{_profile}%}+({VaultBal::%{_uuid}%::%{_profile}%}*.2)
 				message "&6You earned $%moneyComma({VaultBal::%{_uuid}%::%{_profile}%}-{_V})%&6!" to loop-player
 		loop 200 times:
 			set {_item} to sunflower named "&4[&cRed&4]&e&l Gold Coin"
@@ -355,8 +342,7 @@ on death:
 		set {_I} to 1
 	if {_I} is 1:
 		set metadata tag "NoDropCoins" of player to 2
-		set {balance::%{_uuid}%::%{_profile}%} to {balance::%{_uuid}%::%{_profile}%}*0.75
-		wait 20 ticks
-		message "&eYou lost $%{balance::%{_uuid}%::%{_profile}%}/2%&e from dying!"
+		message "&eYou lost $%{balance::%{_uuid}%::%{_profile}%}*0.25%&e from dying!"
+		remove {balance::%{_uuid}%::%{_profile}%}*0.25 from {balance::%{_uuid}%::%{_profile}%}
 		wait 5 seconds
 		set metadata tag "NoDropCoins" of player to 1

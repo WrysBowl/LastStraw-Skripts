@@ -24,12 +24,42 @@ on death of mob:
 	clear drops
 	set {_luck} to luckStat(attacker)
 	set {_name} to metadata tag "name" of victim
+	if {_name} contains "&9Guard" or "&cGuard":
+		add 400 of sunflower named "&e&lGold Coin" to {_drops::*}
+		levelIncrease(75, attacker)
+	else if {_name} contains "Caterpillar":
+		levelIncrease(400, attacker)
 	chance of (0.1+({_luck}/10))%:
 		set {_item} to player head named "&5Mount Loot Crate"
 		add "{SkullOwner:{Id:[I;1049324767,745688397,-1636073904,-1503116338],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiY2E0YjY5ZWFmOGRjYjdhYzM3MjgyMjhkZThhNjQ0NDA3ODcwMTMzNDJkZGFhYmMxYjAwZWViOGVlYzFlMiJ9fX0=""}]}}}" to NBT of {_Item}
 		add {_item} to {_drops::*}
 		loop players in radius 5 around victim:
 			message "&dA Rare Drop Has Spawned Near You! &5[Mount Loot Crate]" to loop-player
+	chance of 50%:
+		if {_name} contains "Feathered":
+			chance of 75%:
+				add melon slice named "&eMelon" with lore "&c+10 HP&7 when eaten" to {_drops::*}
+			else:
+				add apple named "&eApple" with lore "&c+20 HP&7 when eaten" to {_drops::*}
+		else if {_name} contains "Porky":
+			chance of 50%:
+				add melon slice named "&eMelon" with lore "&c+10 HP&7 when eaten" to {_drops::*}
+			else if chance of 60%:
+				add apple named "&eApple" with lore "&c+20 HP&7 when eaten" to {_drops::*}
+			else:
+				add bread named "&eBread" with lore "&c+30 HP&7 when eaten" to {_drops::*}
+		else if {_name} contains "Wooly":
+			chance of 40%:
+				add melon slice named "&eMelon" with lore "&c+10 HP&7 when eaten" to {_drops::*}
+			else if chance of 60%:
+				add apple named "&eApple" with lore "&c+20 HP&7 when eaten" to {_drops::*}
+			else:
+				add bread named "&eBread" with lore "&c+30 HP&7 when eaten" to {_drops::*}
+		else if {_name} contains "Moo":
+			if chance of 60%:
+				add apple named "&eApple" with lore "&c+20 HP&7 when eaten" to {_drops::*}
+			else:
+				add bread named "&eBread" with lore "&c+30 HP&7 when eaten" to {_drops::*}
 	drop {_drops::*} at victim
 	wait 1 tick
 	clear metadata tag "currentDamaged" of victim
@@ -49,7 +79,6 @@ function nautilus(loc: location):
 	set {_squid} to last spawned turtle
 	apply invisibility without particles to {_squid} for 20 days
 	set metadata tag "health" of {_squid} to 50
-	wait 1 tick
 	spawn armor stand at {_loc} with nbt "{NoBasePlate:1, Small:1, Invisible:1, ShowArms:1, DisabledSlots:4144959, Pose:{Head:[0f, 0f, 0f],Body:[0f, 0f, 0f],LeftArm:[280f, 180f, 0f],RightArm:[280f, 180f, 0f],LeftLeg:[0f, 0f, 0f],RightLeg:[0f, 0f, 0f]}}"
 	set {_eyes} to last spawned armor stand
 	set {_eyes}'s tool to polished blackstone button
@@ -64,6 +93,9 @@ function nautilus(loc: location):
 	set {_stands::*}'s tool to trident
 	set {_stands::*}'s off hand tool to trident
 	add "{NoAI:0}" to {_squid}'s nbt
+	if {_squid} is not alive:
+		kill {_stands::*}
+		kill {_eyes}
 	while {_squid} is alive:
 		if {_up} = true:
 			if {_counter} < 20:
@@ -121,6 +153,7 @@ function nautilus(loc: location):
 					else:
 						push loop-value {_vec} at speed 0.1
 						make {_squid} damage loop-value by 5
+				delete {_starve}
 				exit loop
 			else if (difference between {_duration} and now) >= 1 second:
 				delete {_duration}
@@ -130,7 +163,10 @@ function nautilus(loc: location):
 				set {_stands::*}'s off hand tool to trident
 				set {_eyes}'s tool to polished blackstone button
 				set {_eyes}'s off hand tool to polished blackstone button
+			add 1 to {_starve}
 		delete {_entities::*}
+		if {_starve} >= 600:
+			damage {_squid} by 1
 	drop 20 of sunflower named "&e&lGold Coin" at {_squid}
 	kill {_stands::*}
 	kill {_eyes}
@@ -145,15 +181,25 @@ on right click with slime spawn egg:
 		wait 1 second
 		hungryCaterpillar({_loc})
 
+command /hungryCaterpillar:
+	trigger:
+		if player's group does not contain "owner", "developer", "admin","builder", "writer", "moderator" or "helper":
+			send "&cThis is a staff only command!"
+			stop
+		hungryCaterpillar(player's location)
 
-every 1 real hour:
+every 30 minutes:
 	set {_pos} to location(-124, 31, 72, world "Hilly_Woods")
-	loop mobs in radius 150 of {_pos} where [metadata tag "name" of input is "&6[25] Hungry Caterpillar &c"]:
+	loop mobs in radius 100 of {_pos} where [metadata tag "name" of input is "&6[25] Hungry Caterpillar &c"]:
 		stop
-	broadcast ""
-	broadcast "&aThe &2Hungry Caterpillar&a has spawned!"
-	broadcast ""
-	hungryCaterpillar({_pos})
+	loop players in radius 150 of {_pos}:
+		loop mobs in radius 20 of {_pos} where [input is a slime]:
+			kill loop-entity-2
+		broadcast ""
+		broadcast "&aThe &2Hungry Caterpillar&a has spawned!"
+		broadcast ""
+		hungryCaterpillar({_pos})
+		exit loop
 
 on skript stop:
 	loop all players:
@@ -169,29 +215,35 @@ function hungryCaterpillar(loc: location):
 	loop 6 times:
 		if loop-value is 1:
 			spawn slime at {_loc} with nbt "{Size:4}"
-			set metadata tag "health" of last spawned slime to 5000
+			set metadata tag "health" of last spawned slime to 10000
 			set metadata tag "name" of last spawned slime to "&6[25] Hungry Caterpillar &c"
 		else:
 			spawn slime (loop-value) meters behind {_slime::1} with nbt "{Size:3,Invulnerable:1,Paper.canWander:0b,Bukkit.Aware:0b}"
 			set metadata tag "name" of last spawned slime to ""
 		set {_slime::%loop-value%} to last spawned slime
-	while {_slime::*} is alive:
+	while {_slime::1} is alive:
 		wait 5 ticks
 		set {_rot} to "Rotation" tag of nbt of {_slime::1}
 		add "{Rotation:[%random integer between ({_rot} - 10) and ({_rot} + 10)%f, 0.0f]}" to {_slime::1}'s nbt
 		loop (size of {_slime::*}) times:
 			add "{Rotation:[%{_slime::1}'s yaw%f, 0.0f]}" to {_slime::%loop-value + 1%}'s nbt
 			teleport {_slime::%loop-value + 1%} 1.5 meters behind {_slime::%loop-value%}
+		loop mobs and players in radius 30 of {_slime::1} where [{_slime::*} does not contain input]:
+			loop-entity is not a npc
+			chance of 0.1%:
+				set {_vec} to vector from {_slime::1} to loop-entity
+				spawn slime at {_slime::1} with nbt "{Size:2}"
+				set {_slime} to last spawned slime
+				set metadata tag "name" of {_slime} to "&2[3] Blob &a"
+				set metadata tag "health" of {_slime} to 10
+				push {_slime} {_vec} at speed 2
+				exit loop
 		if {_spit} is true:
 			add "{NoAI:0}" to {_slime::1}'s nbt
 			delete {_entities::*}
 			delete {_randEntity}
 			delete {_spit}
 			delete {_counter}
-			spawn slime at {_slime::1} with nbt "{Size:2}"
-			set {_slime} to last spawned slime
-			set metadata tag "name" of {_slime} to "&2[3] Blob &a"
-			set metadata tag "health" of {_slime} to 10
 		else:
 			if {_randEntity} is not set:
 				loop mobs and players in radius 6 of {_slime::1} where [{_slime::*} does not contain input]:
@@ -228,13 +280,16 @@ function hungryCaterpillar(loc: location):
 								add "{Size:%{_size}+1%}" to {_slime::%loop-value%}'s nbt
 					if (size of {_slime::*}) <= 12:
 						spawn slime at {_slime::1} with nbt "{Size:3,Invulnerable:1,Paper.canWander:0b,Bukkit.Aware:0b}"
+						set {_slime} to last spawned slime
+						set metadata tag "name" of {_slime} to ""
+						set metadata tag "health" of {_slime} to 100000
 						add last spawned slime to {_slime::*}
 				loop (size of {_slime::*}) times:
 					reset {_slime::%loop-value + 1%}'s display name
 	set {_slime::*}'s health to 0
-	chance of 50%:
+	chance of 70%:
 		drop slime spawn egg named "&aHungry Caterpillar" with lore "&2Click to Spawn" and "&2Unleash the hungry beast!" at {_slime::1}
-	loop 60 times:
+	loop 20 times:
 		spawn slime at {_slime::1} with nbt "{Size:2}"
 		set {_slime} to last spawned slime
 		set metadata tag "name" of {_slime} to "&2[3] Blob &a"
@@ -242,5 +297,5 @@ function hungryCaterpillar(loc: location):
 		push {_slime} upwards at speed 2.5
 		add {_slime} to {_killallslimes::*}
 		wait 1 tick
-	wait 2 seconds
+	wait 1 seconds
 	kill {_killallslimes::*}

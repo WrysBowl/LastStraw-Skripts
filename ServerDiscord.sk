@@ -1,0 +1,70 @@
+options:
+    prefix: /
+    bot: Siege
+    token: Nzc2MjI3MDM3MDU2NzI5MDk4.X6xzww.TbSrRmvhJsXpEIlPkaU6D8q3RQg
+    channel: 745822837448769668
+
+on skript load:
+	login to "Nzc2MjI3MDM3MDU2NzI5MDk4.X6xzww.TbSrRmvhJsXpEIlPkaU6D8q3RQg" with name "Siege"
+	mark "{@bot}" as playing "play.SiegeRPG.net"
+	send "> :green_circle: Server started up" to channel with id "745822837448769668" with "Siege"
+
+on skript stop:
+	send "> :red_circle: Server stopped" to channel with id "745822837448769668" with "Siege"
+
+command botlogin:
+	permission: op
+	trigger:
+		login to "Nzc2MjI3MDM3MDU2NzI5MDk4.X6xzww.TbSrRmvhJsXpEIlPkaU6D8q3RQg" with name "Siege"
+
+on player join:
+	send ":inbox_tray: **%player%** has joined the server" to channel with id "745822837448769668" with "Siege"
+
+on quit:
+	send ":outbox_tray: **%player%** has left the server" to channel with id "745822837448769668" with "Siege"
+
+discord command play [<text>]:
+	prefixes: /
+	trigger:
+		mark event-bot as playing arg-1
+
+on load:
+	mark "{@bot}" as playing "play.SiegeRPG.net"
+
+discord command /cmd [<text>]:
+	trigger:
+		if event-member has permission manage server:
+			make console execute command "/%arg-1%"
+			send "Executed console command ```%arg-1%```" to event-channel with "Siege"
+		else:
+			send "> You do not have permission to use this command!" to event-channel with "Siege"
+
+discord command /players:
+	trigger:
+		make embed:
+			set description of embed to "**All currently online players** (%size of online players%)"
+			set color of the embed to white
+			loop all players:
+				add field named "%loop-player%" to embed
+		send last created embed to event-channel with event-bot
+
+discord command /staff:
+	trigger:
+		loop all players:
+			if loop-player has permission "staff":
+				add 1 to {_onlinestaff}
+		make embed:
+			set description of embed to "**All currently online staff** (%{_onlinestaff}%)"
+			set color of the embed to white
+			loop all players:
+				if loop-player has permission "staff":
+					add field named "%loop-player%" to embed
+		send last created embed to event-channel with event-bot
+
+discord command /ip:
+	trigger:
+		send "**play.SiegeRPG.net**" to event-channel with "Siege"
+
+on guild message received seen by "Siege":
+	if "%event-channel%" is "server-chat":
+		broadcast "&8[&6DISCORD&8] &7%event-user%: &f%event-message%"

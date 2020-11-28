@@ -17,10 +17,6 @@ command /Stats:
 	trigger:
 		StatsGUI(player)
 
-command /Xp [<number>]:
-	trigger:
-		levelIncrease(arg-1, player)
-
 
 
 command /Points:

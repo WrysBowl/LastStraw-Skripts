@@ -215,7 +215,7 @@ on right click:
 		give player {_mount}
 		set {_raindome} to random integer between 1 and 3
 		loop {_raindome} times:
-			set {_raindome3} to random integer between 1 and 5000
+			set {_raindome3} to random integer between 100 and 600
 			message "&e+ &6%{_raindome3}%&6 Coins"
 			add {_raindome3} to {_totalCoinsToGive}
 			set {Balance::%{_uuid}%::%{_profile}%} to {Balance::%{_uuid}%::%{_profile}%}+{_raindome3}
@@ -258,9 +258,7 @@ on right click holding spawn egg:
 	mountmob(player,{_name})
 
 On Target:
-	if event-entity's name is "Mount":
-		cancel event
-	if event-entity's name is "&aBird":
+	if event-entity's name contains "Mount":
 		cancel event
 
 command /mounts [<text>]:
@@ -327,6 +325,7 @@ function mountmob(player: player,mount: text):
 	add "{Tame:1b}" to nbt of last spawned mob
 	add "{IsBaby:0b}" to nbt of last spawned mob
 	add "{SaddleItem:{id:""minecraft:saddle"",Count:1b},ArmorItem:{}}" to nbt of last spawned mob
+	set name of {_entity} to "Mount"
 	force {_player} to leave from any vehicles
 	if {_rock} is true:
 		add "{Silent:1b}" to nbt of {_entity}
@@ -372,7 +371,7 @@ function mountmob(player: player,mount: text):
 		set {_newloc} to location in front of {_newloc}
 		set {_newloc} to location in front of {_newloc}
 		set {_loc} to location of block above target block of {_player}
-		make {_entity} pathfind to {_newloc} with speed 2
+		make {_entity} pathfind to {_newloc} with speed 1.8
 		if {_train} is true:
 			make {_sheepClone.1} pathfind to {_entity} with speed 2.5
 			make {_sheepClone.2} pathfind to {_sheepClone.1} with speed 2.5

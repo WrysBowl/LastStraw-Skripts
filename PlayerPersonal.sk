@@ -7,12 +7,13 @@ on consume of potion:
 		stop
 	if {_amount::3} is 0:
 		set player's tool to air
+		broadcast "1"
 		stop
 	if "%event-item%" contains "Healing Potion":
 		if {_amount::3} >= 1:
-			metadata "health" of player < hpStat(player)
 			set metadata tag "health" of player to (metadata tag "health" of player) + 50
 			set name of player's tool to "%{_amount::1}% %{_amount::2}% %{_amount::3}-1%"
+			set {_tool} to player's tool
 			set {_add} to {_amount::3}-1
 			add "{PotionCount:%{_add}%}" to nbt of player's tool
 			set player's health to (metadata tag "health" of player)/10
@@ -23,17 +24,21 @@ on consume of potion:
 			set player's health to {_php}
 			if {_add} is 0:
 				set player's tool to air
+
 	else if "%event-item%" contains "Mana Potion":
 		if {_amount::3} >= 1:
-			metadata "mana" of player < mpStat(player)
 			set metadata tag "mana" of player to (metadata tag "mana" of player) + 50
 			set name of player's tool to "%{_amount::1}% %{_amount::2}% %{_amount::3}-1%"
+			set {_tool} to player's tool
 			set {_add} to {_amount::3}-1
 			add "{PotionCount:%{_add}%}" to nbt of player's tool
 			if metadata "mana" of player > mpStat(player):
 				set metadata tag "mana" of player to mpStat(player)
 			if {_add} is 0:
+				broadcast "2"
 				set player's tool to air
+	else:
+		cancel event
 
 on click:
 	if player's tool is food:
@@ -45,6 +50,9 @@ on click:
 on eat:
 	if event-item is not player's tool:
 		cancel event
+	if event-item is a potion:
+		cancel event
+		stop
 	set {_item} to player's tool
 	set {_name} to name of {_item}
 	set {_lore::*} to lore of {_item}
@@ -131,6 +139,34 @@ on inventory click:
 			else:
 				stop
 			armorGUI(player)
+			if name of event-item is "&3Water Boots":
+				while {armorPlayer::%player's uuid%::%{_profile}%::4} is event-item:
+					set {_profile} to metadata tag "profile" of {_player}
+					if block below player is water or kelp plant or kelp:
+						if block at player is not water:
+							waterWalk(player)
+					else if block below (location below player) is water or kelp plant or kelp:
+						if block at player is not water:
+							waterWalk(player)
+					wait 1 tick
+			if name of event-item is "&5Night Vision Helmet":
+				while {armorPlayer::%player's uuid%::%{_profile}%::1} is event-item:
+					set {_profile} to metadata tag "profile" of {_player}
+					apply potion of night vision of tier 1 without particles to player for 999 days
+					wait 3 seconds
+				remove night vision from the player
+			if name of event-item is "&aJump Boost Leggings":
+				while {armorPlayer::%player's uuid%::%{_profile}%::3} is event-item:
+					set {_profile} to metadata tag "profile" of {_player}
+					apply potion of jump boost of tier 2 without particles to player for 999 days
+					wait 3 seconds
+				remove jump boost from the player
+			if name of event-item is "&fSpeed Chestplate":
+				while {armorPlayer::%player's uuid%::%{_profile}%::2} is event-item:
+					set {_profile} to metadata tag "profile" of {_player}
+					apply potion of speed of tier 1 without particles to player for 999 days
+					wait 3 seconds
+				remove speed from the player
 		else:
 			if index of event-slot is 16:
 				player has enough space for {armorPlayer::%player's uuid%::%{_profile}%::1}
@@ -149,3 +185,112 @@ on inventory click:
 				give {armorPlayer::%player's uuid%::%{_profile}%::4} to player
 				delete {armorPlayer::%player's uuid%::%{_profile}%::4}
 			armorGUI(player)
+
+
+
+on join:
+	remove night vision from the player
+	remove speed from the player
+	remove jump boost from the player
+
+
+on join:
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	while metadata tag "profile" of {_player} is not set:
+		wait 1 second
+	set {_profile} to metadata tag "profile" of {_player}
+	while name of {armorPlayer::%player's uuid%::%{_profile}%::1} is "&5Night Vision Helmet":
+		set {_profile} to metadata tag "profile" of {_player}
+		apply potion of night vision of tier 1 without particles to player for 999 days
+		wait 3 seconds
+	remove night vision from the player
+
+
+on join:
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	while metadata tag "profile" of {_player} is not set:
+		wait 1 second
+	set {_profile} to metadata tag "profile" of {_player}
+	while name of {armorPlayer::%player's uuid%::%{_profile}%::2} is "&fSpeed Chestplate":
+		set {_profile} to metadata tag "profile" of {_player}
+		apply potion of speed of tier 1 without particles to player for 999 days
+		wait 3 seconds
+	remove speed from the player
+
+
+on join:
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	while metadata tag "profile" of {_player} is not set:
+		wait 1 second
+	set {_profile} to metadata tag "profile" of {_player}
+	while name of {armorPlayer::%player's uuid%::%{_profile}%::3} is "&aJump Boost Leggings":
+		set {_profile} to metadata tag "profile" of {_player}
+		apply potion of jump boost of tier 2 without particles to player for 999 days
+		wait 3 seconds
+	remove jump boost from the player
+
+
+on join:
+	set {_player} to player
+	set {_uuid} to {_player}'s uuid
+	while metadata tag "profile" of {_player} is not set:
+		wait 1 second
+	set {_profile} to metadata tag "profile" of {_player}
+	while name of {armorPlayer::%player's uuid%::%{_profile}%::4} is "&3Water Boots":
+		set {_profile} to metadata tag "profile" of {_player}
+		if block below player is water or kelp plant or kelp:
+			if block at player is not water:
+				waterWalk(player)
+		wait 1 tick
+
+
+function UpdateEffect1(player: player):
+	set {_uuid} to {_player}'s uuid
+	while metadata tag "profile" of {_player} is not set:
+		wait 1 second
+	set {_profile} to metadata tag "profile" of {_player}
+	while name of {armorPlayer::%{_uuid}%::%{_profile}%::4} is "&3Water Boots":
+		set {_profile} to metadata tag "profile" of {_player}
+		if block below {_player} is water or kelp plant or kelp:
+			if block at {_player} is not water:
+				waterWalk({_player})
+		else if block below (location below {_player}) is water or kelp plant or kelp:
+			if block at {_player} is not water:
+				waterWalk({_player})
+		wait 1 tick
+
+function UpdateEffect2(player: player):
+	set {_uuid} to {_player}'s uuid
+	while metadata tag "profile" of {_player} is not set:
+		wait 1 second
+	set {_profile} to metadata tag "profile" of {_player}
+	while name of {armorPlayer::%{_uuid}%::%{_profile}%::3} is "&aJump Boost Leggings":
+		set {_profile} to metadata tag "profile" of {_player}
+		apply potion of jump boost of tier 2 without particles to {_player} for 999 days
+		wait 3 seconds
+	remove jump boost from {_player}
+
+function UpdateEffect3(player: player):
+	set {_uuid} to {_player}'s uuid
+	while metadata tag "profile" of {_player} is not set:
+		wait 1 second
+	set {_profile} to metadata tag "profile" of {_player}
+	while name of {armorPlayer::%{_uuid}%::%{_profile}%::2} is "&fSpeed Chestplate":
+		set {_profile} to metadata tag "profile" of {_player}
+		apply potion of speed of tier 1 without particles to {_player} for 999 days
+		wait 3 seconds
+	remove speed from {_player}
+
+function UpdateEffect4(player: player):
+	set {_uuid} to {_player}'s uuid
+	while metadata tag "profile" of {_player} is not set:
+		wait 1 second
+	set {_profile} to metadata tag "profile" of {_player}
+	while name of {armorPlayer::%{_uuid}%::%{_profile}%::1} is "&5Night Vision Helmet":
+		set {_profile} to metadata tag "profile" of {_player}
+		apply potion of Night Vision of tier 1 without particles to {_player} for 999 days
+		wait 3 seconds
+	remove Night Vision from {_player}

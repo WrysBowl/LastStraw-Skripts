@@ -82,7 +82,7 @@ function RayFirst(player: player):
 		apply invisibility 2 without particles to {_pig} for 10 seconds
 		make {_player} ride {_pig}
 		add "{Rotation:[-47f, -41f]}" to {_pig}'s nbt
-		push {_pig} in direction of {_pig} at speed 6.7
+		push {_pig} in direction of {_pig} at speed 7
 		wait 70 ticks
 		teleport {_player} to {tutorial::3}
 		clear metadata tag "pageNumber" of {_player}

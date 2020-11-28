@@ -33,51 +33,50 @@ function GenMobLoot(player: offline player, loc: entity, level: text, name: text
 		set {_player} to {_player} parsed as player
 	if {_level} is between 1 and 8:
 		set {_Loot.Table} to .5
-		levelIncrease(2, {_player})
-	if {_level} is between 9 and 16:
+		levelIncrease(1, {_player})
+	else if {_level} is between 9 and 16:
 		set {_Loot.Table} to 1
 		levelIncrease(3, {_player})
 	else if {_level} is between 17 and 24:
 		set {_Loot.Table} to 2
-		levelIncrease(5, {_player})
+		levelIncrease(4, {_player})
 	else if {_level} is between 25 and 34:
 		set {_Loot.Table} to 3
 		levelIncrease(7, {_player})
 	else if {_level} is between 35 and 46:
 		set {_Loot.Table} to 4
-		levelIncrease(13, {_player})
+		levelIncrease(9, {_player})
 	else if {_level} is between 47 and 54:
 		set {_Loot.Table} to 5
-		levelIncrease(16, {_player})
+		levelIncrease(13, {_player})
 	else if {_level} is between 55 and 64:
 		set {_Loot.Table} to 6
-		levelIncrease(25, {_player})
+		levelIncrease(16, {_player})
 	else if {_level} is between 65 and 74:
 		set {_Loot.Table} to 7
-		levelIncrease(32, {_player})
+		levelIncrease(21, {_player})
 	else if {_level} is between 75 and 84:
 		set {_Loot.Table} to 8
-		levelIncrease(45, {_player})
+		levelIncrease(25, {_player})
 	else if {_level} is between 85 and 95:
 		set {_Loot.Table} to 9
-		levelIncrease(55, {_player})
+		levelIncrease(31, {_player})
 	else if {_level} is between 96 and 100:
 		set {_Loot.Table} to 10
-		levelIncrease(70, {_player})
+		levelIncrease(36, {_player})
 	else if {_level} is more than 100:
 		set {_Loot.Table} to 10
-		levelIncrease(70, {_player})
+		levelIncrease(43, {_player})
 	else:
-		set {_Loot.Table} to 0
-		levelIncrease(0, {_player})
+		stop
 	set {_item::*} to CreateItem({_Loot.Table}, {_luck}, "%{_name}%", {_mob})
 	add (({_level}/5)+2) of sunflower named "&e&lGold Coin" to {_item::*}
 	drop {_item::*} at {_loc}
 
 function CreateItem(loot: number, luck: number, name: text, mob: entity) :: items:
 	set {_r} to random integer between 1 and 16
-	chance of 40+{_luck}%:
-		if {_loot} < 1:
+	chance of 40+({_luck}/2)%:
+		if {_loot} <= 1:
 			if {_r} is 1:
 				add itemGenerator(Leather Boots, ("Brown Crocs"), (1), (0.5), (""), (1), ("Good luck walking across the barn"), (""), (random integer between 1 and 8)) to {_items::*}
 			else if {_r} is 2:
@@ -411,7 +410,7 @@ function CreateItem(loot: number, luck: number, name: text, mob: entity) :: item
 				dye {_items::1} black
 			chance of .1%:
 				add purple glazed terracotta named "&dEnhancement&5 IV" to {_items::*}
-		else if {_loot} is 9:
+		else if {_loot} > 9:
 			if {_r} is 1:
 				add itemGenerator(Diamond Sword, ("Light Saber"), (1), (9), (""), (1), ("A beam of intense light, totally original"), ("Warrior"), (random integer between 84 and 94)) to {_items::*}
 			else if {_r} is 2:
@@ -454,41 +453,41 @@ function CreateItem(loot: number, luck: number, name: text, mob: entity) :: item
 				dye {_items::1} cyan
 			chance of .1%:
 				add purple glazed terracotta named "&dEnhancement&5 V" to {_items::*}
-		else if {_loot} is 10:
-			if {_r} is 1:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 2:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 3:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 4:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 5:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 6:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 7:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 8:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 9:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 10:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 11:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 12:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 13:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 14:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 15:
-				add dirt named "&6Comming Soon" to {_items::*}
-			else if {_r} is 16:
-				add dirt named "&6Comming Soon" to {_items::*}
-			chance of .1%:
-				add purple glazed terracotta named "&dEnhancement&5 V" to {_items::*}
+		#else if {_loot} is 10:
+			#if {_r} is 1:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 2:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 3:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 4:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 5:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 6:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 7:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 8:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 9:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 10:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 11:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 12:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 13:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 14:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 15:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#else if {_r} is 16:
+				#add dirt named "&6Comming Soon" to {_items::*}
+			#chance of .1%:
+				#add purple glazed terracotta named "&dEnhancement&5 V" to {_items::*}
 	chance of 1+({_luck}/50)%:
 		if {_loot} is 10, 9 or 8:
 			chance of 20%:
@@ -513,21 +512,21 @@ function CreateItem(loot: number, luck: number, name: text, mob: entity) :: item
 		else:
 			add random element of {Books1::*} to {_items::*}
 	chance of 5%:
-		chance of 100%:
+		chance of 60%:
 			add melon slice named "&eMelon" with lore "&c+10 HP&7 when eaten" to {_items::*}
-		else if chance of 45%:
+		else if chance of 65%:
 			add apple named "&eApple" with lore "&c+20 HP&7 when eaten" to {_items::*}
-		else if chance of 30%:
+		else if chance of 70%:
 			add bread named "&eBread" with lore "&c+30 HP&7 when eaten" to {_items::*}
-		else if chance of 10%:
+		else if chance of 75%:
 			add steak named "&eSteak" with lore "&c+40 HP&7 when eaten" to {_items::*}
-		else if chance of 5%:
+		else if chance of 80%:
 			add golden carrot named "&eGolden Carrot" with lore "&c+50 HP&7 when eaten" to {_items::*}
-		else if chance of 4%:
+		else if chance of 85%:
 			add golden apple named "&eGolden Apple" with lore "&c+70 HP&7 when eaten" to {_items::*}
-		else if chance of 2%:
+		else if chance of 90%:
 			add enchanted golden apple named "&eEnchanted Golden Apple" with lore "&c+100 HP&7 when eaten" to {_items::*}
-		else if chance of 1%:
+		else if chance of 95%:
 			add enchanted golden apple named "&eNotch Apple" with lore "&c+200 HP&7 when eaten" to {_items::*}
 		else if chance of 0.001%:
 			add potato named "&ePotato" with lore "&c+∞ HP&7 when eaten" to {_items::*}

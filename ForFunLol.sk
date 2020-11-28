@@ -1,0 +1,162 @@
+
+
+
+
+#Usless Stuff For Fun <<<<<<<<<<<<<<<<< Even if it is not part of server .-.
+
+
+
+on block break:
+	player's tool is not bedrock
+	if player's world is "Fun":
+		clear drops
+		set {_loc} to location of event-block
+		if y-coordinate of event-block is not less than 200.5:
+			set event-block to event-block
+			cancel event
+			stop
+		if player can hold event-block:
+			give player event-block
+		else:
+			message "&cYou inventory is full!"
+			cancel event
+			stop
+		set event-block to moving piston
+		gennewblocks({_loc})
+		set {_loc.Above} to location above {_loc}
+		set {_loc.Below} to location below {_loc}
+		set {_loc.+X} to location 1 meter right of {_loc}
+		set {_loc.-X} to location 1 meter left of {_loc}
+		set {_loc.+Z} to location 1 meter infront of {_loc}
+		set {_loc.-Z} to location 1 meter behind {_loc}
+		gennewblocks({_loc.Above})
+		gennewblocks({_loc.Below})
+		gennewblocks({_loc.+X})
+		gennewblocks({_loc.-X})
+		gennewblocks({_loc.+Z})
+		gennewblocks({_loc.-Z})
+
+
+
+function gennewblocksitem(loc: location) :: item:
+	if y-coordinate of {_loc} is more than 199.5:
+		set {_block} to bedrock
+	else if y-coordinate of {_loc} is more than 120:
+		chance of 100%:
+			set {_block} to stone
+		chance of 5%:
+			set {_block} to coal ore
+		chance of 2%:
+			set {_block} to iron ore
+		chance of 1%:
+			set {_block} to gold ore
+		chance of .5%:
+			set {_block} to diamond ore
+		chance of .1%:
+			set {_block} to emerald ore
+	else if y-coordinate of {_loc} is more than 60:
+		chance of 100%:
+			set {_block} to granite
+		chance of 8%:
+			set {_block} to coal ore
+		chance of 4%:
+			set {_block} to iron ore
+		chance of 2%:
+			set {_block} to gold ore
+		chance of 1%:
+			set {_block} to diamond ore
+		chance of .4%:
+			set {_block} to emerald ore
+	else if y-coordinate of {_loc} is more than 1:
+		chance of 100%:
+			set {_block} to obsidian
+		chance of .1%:
+			set {_block} to coal ore
+		chance of .5%:
+			set {_block} to iron ore
+		chance of 10%:
+			set {_block} to gold ore
+		chance of 5%:
+			set {_block} to diamond ore
+		chance of 1%:
+			set {_block} to emerald ore
+	else:
+		set {_block} to bedrock
+	return {_block}
+
+
+
+function gennewblocks(loc: location):
+	set {_loc.Above} to location above {_loc}
+	set {_loc.Below} to location below {_loc}
+	set {_loc.+X} to location 1 meter right of {_loc}
+	set {_loc.-X} to location 1 meter left of {_loc}
+	set {_loc.+Z} to location 1 meter infront of {_loc}
+	set {_loc.-Z} to location 1 meter behind {_loc}
+	if y-coordinate of {_loc.Above} is not more than 200.5:
+		set block at {_loc.Above} to gennewblocksitem({_loc.Above}) where [(block at {_loc.Above} = air)]
+		#add {_loc.Above} to {chunks::*}
+	if y-coordinate of {_loc.-Z} is not more than 199.5:
+		set block at {_loc.Below} to gennewblocksitem({_loc.Below}) where [(block at {_loc.Below} = air)]
+		#add {_loc.Below} to {chunks::*}
+	if y-coordinate of {_loc.-Z} is not more than 199.5:
+		set block at {_loc.+X} to gennewblocksitem({_loc.+X}) where [(block at {_loc.+X} = air)]
+		#add {_loc.+X} to {chunks::*}
+	if y-coordinate of {_loc.-Z} is not more than 199.5:
+		set block at {_loc.-X} to gennewblocksitem({_loc.-X}) where [(block at {_loc.-X} = air)]
+		#add {_loc.-X} to {chunks::*}
+	if y-coordinate of {_loc.-Z} is not more than 199.5:
+		set block at {_loc.+Z} to gennewblocksitem({_loc.+Z}) where [(block at {_loc.+Z} = air)]
+		#add {_loc.+Z} to {chunks::*}
+	if y-coordinate of {_loc.-Z} is not more than 199.5:
+		set block at {_loc.-Z} to gennewblocksitem({_loc.-Z}) where [(block at {_loc.-Z} = air)]
+		#add {_loc.-Z} to {chunks::*}
+	if size of {chunks::*} > 25000:
+		resetMine()
+
+
+command /ResetMine:
+	permission: staff
+	trigger:
+		resetMine()
+
+
+function resetMine():
+	if {chunks::*} is set:
+		loop all players:
+			if loop-player's world is "Fun":
+				teleport loop-player to location above {MineCord.2}
+				send title "&c&lThe Quarry is Collapsing!" to loop-player for 2 seconds
+				set loop-player's gamemode to adventure
+		loop {chunks::*}:
+			add 1 to {_timer}
+			set block at loop-value to air
+			if {_timer} > 100:
+				wait 1 tick
+				set {_timer} to 0
+		wait 1 tick
+		loop blocks within {MineCord.1} and {MineCord.2}:
+			chance of 10%:
+				set loop-block to gennewblocksitem(location of loop-block)
+			else:
+				set loop-block to stone
+		delete {chunks::*}
+		loop all players:
+			if loop-player's world is "Fun":
+				set loop-player's gamemode to survival
+				send title "&c&lThe Quarry has Reset!" to loop-player for 2 seconds
+
+
+command /setchunkcords1:
+	permission: staff
+	trigger:
+		set {MineCord.1} to location of player
+
+command /setchunkcords2:
+	permission: staff
+	trigger:
+		set {MineCord.2} to location of player
+
+
+
+

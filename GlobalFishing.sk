@@ -1,0 +1,183 @@
+on fish:
+	fish state is not FISHING or REEL_IN or BITE or IN_GROUND or FAILED_ATTEMPT
+	set {_luck} to luckStat(player)
+	if fish state is CAUGHT_ENTITY:
+		cancel event
+		if caught fish is a mob:
+			player's tool is not fishing rod named "&bGrappling Hook"
+			message "&cSorry, fishing rods cannot be used for PvE!"
+		if caught fish is a player:
+			player's tool is not fishing rod named "&bGrappling Hook"
+			message "&cSorry, fishing rods cannot be used for Pvp!"
+		stop
+	set {_e} to caught fish
+	set {_item} to player head named "&2Junk"
+	add "{SkullOwner:{Id:[I;86735655,1594181312,-1523704767,1155921251],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWUzNWJkM2FmZDJhN2VlNjcxNmUxOWEzZDEyZThlNTlhOTY2ZTE5MjgzMjFhM2IzMmM0ZjM5NDJiMDkwIn19fQ==""}]}}}" to NBT of {_Item}
+	chance of 80+({_luck}/1.5)%:
+		levelIncrease(1, player)
+	else if chance of 3%:
+		levelIncrease(2, player)
+		summon tropical fish at fishing hook
+		set name of last spawned mob to "&9Fish"
+		push last spawned mob direction from last spawned mob to location of player at speed 1.5
+		clear caught fish
+	else if chance of 10%:
+		levelIncrease(1, player)
+		set item of {_e} to {_item}
+	else if chance of 5%:
+		levelIncrease(10, player)
+		set {_item2} to random element out of {Books1::*}
+		set item of {_e} to {_item2}
+	else if chance of 3%:
+		levelIncrease(10, player)
+		set {_item2} to random element out of {Books2::*}
+		set item of {_e} to {_item2}
+	else if chance of 5%:
+		if chance of 25%:
+			set {_item} to leather helmet named "&5Night Vision Helmet"
+			dye {_item} purple
+			add "{Unbreakable:1b}" to nbt of {_item}
+			add "{HideFlags:63}" to nbt of {_item}
+			set {_item} to {_item} with all flags hidden
+			set item of {_e} to {_item}
+		else if chance of 25%:
+			set {_item} to leather chestplate named "&fSpeed Chestplate"
+			dye {_item} white
+			add "{Unbreakable:1b}" to nbt of {_item}
+			add "{HideFlags:63}" to nbt of {_item}
+			set {_item} to {_item} with all flags hidden
+			set item of {_e} to {_item}
+		else if chance of 25%:
+			set {_item} to leather leggings named "&aJump Boost Leggings"
+			dye {_item} green
+			add "{Unbreakable:1b}" to nbt of {_item}
+			add "{HideFlags:63}" to nbt of {_item}
+			set {_item} to {_item} with all flags hidden
+			set item of {_e} to {_item}
+		else:
+			set {_item} to leather boots named "&3Water Boots"
+			dye {_item} cyan
+			add "{Unbreakable:1b}" to nbt of {_item}
+			add "{HideFlags:63}" to nbt of {_item}
+			set {_item} to {_item} with all flags hidden
+			set item of {_e} to {_item}
+	else if chance of 50%:
+		levelIncrease(25, player)
+		set {_item2} to random element out of {gearDrops1::*}
+		set item of {_e} to {_item2}
+	else if chance of 50%:
+		levelIncrease(50, player)
+		set {_item2} to random element out of {gearDrops2::*}
+		set item of {_e} to {_item2}
+	else if chance of 40%:
+		levelIncrease(75, player)
+		set {_item2} to random element out of {gearDrops3::*}
+		set item of {_e} to {_item2}
+	else if chance of 30%:
+		levelIncrease(100, player)
+		set {_item2} to random element out of {gearDrops4::*}
+		set item of {_e} to {_item2}
+	else if chance of 100%:
+		levelIncrease(3, player)
+		set item of {_e} to random number between 1 and 3 of cod named "&eCod" with lore "&c+10 HP&7 when eaten"
+	if chance of 50%:
+		levelIncrease(3, player)
+		if "%name of item of {_e}%" is not "<none>":
+			drop random number between 1 and 64 of sunflower named "&e&lGold Coin" at player
+	if player's tool is fishing rod named "&bGrappling Hook":
+		clear caught fish
+		cancel event
+		stop
+	if "%name of item of {_e}%" is not "<none>":
+		player's tool is not fishing rod named "&bGrappling Hook"
+		message "&eYou found &b+&3%item amount of item of {_e}%&3x %name of item of {_e}%&e from your catch!"
+	else:
+		player's tool is not fishing rod named "&bGrappling Hook"
+		message "&eNo bite!"
+		clear caught fish
+
+
+
+
+command /Console [<text>]:
+	trigger:
+		if player has permission "op":
+			execute console command "%arg-1%"
+		else if player's name is "Wrys":
+			execute console command "%arg-1%"
+
+command /waterwalk:
+	trigger:
+		loop 200 times:
+			if block below player is water:
+				block at player is not water
+				waterWalk(player)
+			wait 1 tick
+
+
+
+
+function waterWalk(player: player):
+	if {_player} is set:
+		drawSphere style 1, particle "redstone", RGB 0, 0, 255, center {_player}, id "WaterWalk1%{_player}%", rainbowMode false, radius 2, density 2, visibleRange 100, pulseDelay 4
+		set {_loc} to location of block below {_player}
+		loop all blocks in radius 1.5 of {_loc} where [input = water or kelp plant or kelp]:
+			block above loop-block is air
+			make {_player} see loop-block as blue stained glass
+		wait 1 second
+		stopEffect id "WaterWalk1%{_player}%"
+		while distance between {_player} and {_loc} < 2.5:
+			wait 1 second
+		loop all blocks in radius 1.5 of {_loc} where [input = water or kelp plant or kelp]:
+			make {_player} see loop-block as loop-block
+
+
+
+
+
+
+
+on world change:
+	clear metadata tag "Grappling_Hook" of player
+
+
+on fish:
+	fish state is FISHING
+	wait 1 tick
+	set {_test} to direction from fishing hook to location above (location infront of player)
+	push fishing hook {_test} at speed .1
+
+on fish:
+	player's tool is fishing rod named "&bGrappling Hook"
+#	fish state is REEL_IN
+	fish state is IN_GROUND or CAUGHT_ENTITY
+	cancel event
+	if metadata tag "Grappling_Hook" of player is set:
+		message "&cPlease wait!" to player
+		stop
+	#push player (direction from player to location above fishing hook) at speed 3
+	if fish state is CAUGHT_ENTITY:
+		set {_test} to direction from player to location below fishing hook
+	else:
+		set {_test} to direction from player to location of fishing hook
+	while (distance between fishing hook and player) > 2:
+		add 1 to {_timer}
+		set metadata tag "Grappling_Hook" of player to true
+		wait 2 ticks
+		play sound "entity.fishing_bobber.throw" with volume .1 and pitch 2 to player
+		push player {_test} at speed (.6 - ({_timer} / 200))
+		if {_timer} > 100:
+			exit 1 loop
+		if player's tool is not fishing rod named "&bGrappling Hook":
+			clear metadata tag "Grappling_Hook" of player
+			stop
+		if fish state is CAUGHT_ENTITY:
+			set {_test} to direction from player to location below fishing hook
+		else:
+			set {_test} to direction from player to location of fishing hook
+	set {_loc} to location of fishing hook
+	set yaw of {_loc} to yaw of player
+	set pitch of {_loc} to pitch of player
+	teleport player to {_loc}
+	clear metadata tag "Grappling_Hook" of player
+	kill fishing hook
