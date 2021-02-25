@@ -1,11 +1,11 @@
 options:
     prefix: /
     bot: Siege
-    token: Nzc2MjI3MDM3MDU2NzI5MDk4.X6xzww.TbSrRmvhJsXpEIlPkaU6D8q3RQg
+    token: 
     channel: 745822837448769668
 
 on skript load:
-	login to "Nzc2MjI3MDM3MDU2NzI5MDk4.X6xzww.TbSrRmvhJsXpEIlPkaU6D8q3RQg" with name "Siege"
+	login to "" with name "Siege"
 	mark "{@bot}" as playing "play.SiegeRPG.net"
 	send "> :green_circle: Server started up" to channel with id "745822837448769668" with "Siege"
 
@@ -15,7 +15,7 @@ on skript stop:
 command botlogin:
 	permission: op
 	trigger:
-		login to "Nzc2MjI3MDM3MDU2NzI5MDk4.X6xzww.TbSrRmvhJsXpEIlPkaU6D8q3RQg" with name "Siege"
+		login to "" with name "Siege"
 
 on player join:
 	send ":inbox_tray: **%player%** has joined the server" to channel with id "745822837448769668" with "Siege"
